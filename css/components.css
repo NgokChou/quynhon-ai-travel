@@ -1,0 +1,1310 @@
+/* ===================================================================
+   Quy Nhon AI Travel Assistant - Component Stylesheet
+   Covers: AI Assistant Box, Interactive Map, Timeline, Hotel Cards, Roadmap & Modal
+   =================================================================== */
+
+/* ===================================================================
+   1. AI Travel Assistant Card (Centerpiece)
+   =================================================================== */
+.ai-assistant-card {
+    position: relative;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(7, 13, 24, 0.9));
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(2, 132, 199, 0.2);
+    overflow: hidden;
+    margin-bottom: 3.5rem;
+}
+
+.ai-assistant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0284c7, #38bdf8, #10b981, #8b5cf6);
+    background-size: 200% 100%;
+    animation: gradientShift 4s infinite linear;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.ai-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ai-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ai-avatar-aura {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0284c7, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.35rem;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+.ai-avatar-aura::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--primary-light);
+    animation: pulseAura 2.2s infinite ease-out;
+}
+
+@keyframes pulseAura {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.45); opacity: 0; }
+}
+
+.ai-title-wrap h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ai-title-wrap .ai-model-tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    background: rgba(139, 92, 246, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    font-weight: 600;
+}
+
+.ai-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ai-status-badge .active-ring {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+/* Progress bar inside AI Card */
+.ai-progress-container {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    overflow: hidden;
+}
+
+.ai-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #0284c7, #10b981);
+    transition: width 0.4s ease;
+}
+
+.ai-card-body {
+    padding: 1.75rem 2rem;
+}
+
+.ai-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.9rem;
+    color: var(--primary-light);
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+}
+
+.ai-message-box {
+    background: rgba(7, 13, 24, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    min-height: 90px;
+    position: relative;
+}
+
+.ai-output-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #e2e8f0;
+    font-weight: 400;
+}
+
+.ai-typing-placeholder {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+/* Voice Controls & Equalizer */
+.ai-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ai-voice-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-voice-speak {
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--primary-light);
+    border: 1px solid var(--border-highlight);
+}
+
+.btn-voice-speak:hover {
+    background: rgba(56, 189, 248, 0.25);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.btn-voice-stop {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.btn-voice-stop:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+/* Sound Wave Equalizer */
+.sound-wave-box {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.85rem;
+    color: var(--primary-light);
+}
+
+.wave-bars {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 18px;
+}
+
+.wave-bar {
+    width: 3px;
+    height: 100%;
+    background-color: var(--primary-light);
+    border-radius: 2px;
+    animation: soundWave 1.2s infinite ease-in-out;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0.1s; }
+.wave-bar:nth-child(2) { animation-delay: 0.3s; }
+.wave-bar:nth-child(3) { animation-delay: 0.5s; }
+.wave-bar:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes soundWave {
+    0%, 100% { height: 4px; }
+    50% { height: 18px; }
+}
+
+/* ===================================================================
+   2. Interactive World Map (Leaflet.js)
+   =================================================================== */
+.map-container-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    background: #0f172a;
+}
+
+#route-map {
+    width: 100%;
+    height: 480px;
+    z-index: 1;
+}
+
+/* Leaflet Custom UI & Markers */
+.leaflet-container {
+    background-color: #aad3df !important; /* Soft natural ocean tone while tiles render */
+    font-family: var(--font-main) !important;
+}
+
+/* Explicitly preserve bright, clear OpenStreetMap tiles */
+.leaflet-tile {
+    filter: none !important;
+    -webkit-filter: none !important;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+}
+
+.leaflet-tile-pane {
+    filter: none !important;
+    -webkit-filter: none !important;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+}
+
+.marker-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.marker-pin {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+
+.marker-origin .marker-pin {
+    background: linear-gradient(135deg, #0284c7, #38bdf8);
+}
+
+.marker-transit .marker-pin {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.marker-destination .marker-pin {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.marker-halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    animation: markerPulse 2s infinite ease-out;
+    z-index: 1;
+}
+
+.marker-origin .marker-halo {
+    border: 2px solid #38bdf8;
+}
+
+.marker-transit .marker-halo {
+    border: 2px solid #f59e0b;
+}
+
+.marker-destination .marker-halo {
+    border: 2px solid #10b981;
+}
+
+@keyframes markerPulse {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+.marker-tooltip-tag {
+    position: absolute;
+    top: 38px;
+    background: rgba(15, 23, 42, 0.9);
+    color: #f8fafc;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
+/* Map Popups */
+.leaflet-popup-content-wrapper {
+    background: rgba(15, 23, 42, 0.95) !important;
+    color: #f8fafc !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-popup-tip {
+    background: #0f172a !important;
+}
+
+.map-popup-card {
+    padding: 0.2rem;
+    font-family: var(--font-main);
+}
+
+.map-popup-card .popup-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.popup-badge.origin { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+.popup-badge.transit { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.popup-badge.dest { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+
+.map-popup-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    color: #f8fafc;
+}
+
+.map-popup-card p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+/* Map Legend Overlay */
+.map-legend-overlay {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 10;
+    background: rgba(14, 23, 38, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-origin { background: #38bdf8; }
+.dot-transit { background: #f59e0b; }
+.dot-dest { background: #10b981; }
+
+/* Visual Mid-Route Badges (Flight & Transfer) */
+.custom-route-badge-marker {
+    background: transparent;
+    border: none;
+    pointer-events: none;
+}
+
+.route-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-main);
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    transform: translate(-50%, -50%);
+    animation: badgeFloat 3s infinite ease-in-out;
+}
+
+@keyframes badgeFloat {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-3px); }
+}
+
+.route-badge-pill.badge-flight {
+    background: rgba(15, 23, 42, 0.92);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.6);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
+}
+
+.route-badge-pill.badge-flight i {
+    color: #38bdf8;
+    font-size: 0.8rem;
+}
+
+.route-badge-pill.badge-transfer {
+    background: rgba(15, 23, 42, 0.92);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
+}
+
+.route-badge-pill.badge-transfer i {
+    color: #34d399;
+    font-size: 0.8rem;
+}
+
+/* ===================================================================
+   3. Journey Route Timeline
+   =================================================================== */
+.timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.timeline-step-card {
+    display: flex;
+    gap: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    position: relative;
+    transition: var(--transition);
+}
+
+.timeline-step-card:hover {
+    border-color: var(--border-highlight);
+    background: var(--bg-card-hover);
+    transform: translateX(4px);
+}
+
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 44px;
+}
+
+.step-number {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-dim);
+    margin-bottom: 0.4rem;
+}
+
+.step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    color: white;
+}
+
+.step-flight .step-icon {
+    background: linear-gradient(135deg, #0284c7, #38bdf8);
+    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+}
+
+.step-domestic-flight .step-icon {
+    background: linear-gradient(135deg, #0284c7, #06b6d4);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+}
+
+.step-transfer .step-icon {
+    background: linear-gradient(135deg, #0d9488, #10b981);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.step-hotel .step-icon {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.step-explore .step-icon {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.step-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tag-flight, .tag-domestic-flight {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.tag-transfer {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tag-hotel {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.tag-explore {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.step-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.step-locations {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+}
+
+.loc-from { color: #94a3b8; }
+.loc-arrow { color: var(--primary-light); font-size: 0.85rem; }
+.loc-to { color: #f8fafc; }
+
+.step-subinfo {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.step-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ocean-emerald);
+    background: rgba(16, 185, 129, 0.08);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ===================================================================
+   4. Hotel Recommendation Cards
+   =================================================================== */
+.hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+}
+
+.hotel-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.hotel-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-highlight);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+.hotel-image-wrapper {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.hotel-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.hotel-card:hover .hotel-image-wrapper img {
+    transform: scale(1.06);
+}
+
+.hotel-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    color: var(--primary-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.hotel-mock-tag {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(245, 158, 11, 0.9);
+    color: #1e1b4b;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.hotel-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.hotel-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.hotel-rating .stars {
+    color: var(--accent-gold);
+    font-weight: 700;
+}
+
+.hotel-rating .reviews {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.hotel-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.3rem;
+}
+
+.hotel-location {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.hotel-desc {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.hotel-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.feature-tag {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+}
+
+.feature-tag i {
+    color: var(--ocean-emerald);
+    font-size: 0.65rem;
+}
+
+.hotel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hotel-price .price-val {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--primary-light);
+    display: block;
+}
+
+.hotel-price .price-unit {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+}
+
+.btn-hotel-detail {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--primary-light);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: var(--transition);
+}
+
+.btn-hotel-detail:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* ===================================================================
+   5. Future Roadmap ("Coming Next")
+   =================================================================== */
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.roadmap-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.roadmap-card:hover {
+    border-color: var(--border-highlight);
+    transform: translateY(-3px);
+}
+
+.roadmap-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border-color);
+}
+
+.roadmap-info h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+}
+
+.roadmap-info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ===================================================================
+   6. Hotel Modal Details
+   =================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-box {
+    background: #0f172a;
+    border: 1px solid var(--border-highlight);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    animation: modalAppear 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalAppear {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.modal-close-btn:hover {
+    background: rgba(239, 68, 68, 0.8);
+}
+
+.modal-hotel-header {
+    position: relative;
+    height: 220px;
+}
+
+.modal-hotel-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-banner-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.25rem;
+    background: linear-gradient(to top, #0f172a 20%, transparent 100%);
+}
+
+.modal-banner-overlay h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: white;
+}
+
+.modal-banner-overlay p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.modal-hotel-details {
+    padding: 1.5rem;
+}
+
+.modal-notice-mock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+}
+
+.modal-desc {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.modal-hotel-details h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.65rem;
+    color: var(--text-main);
+}
+
+.modal-feature-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal-feature-list li {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.modal-feature-list li i {
+    color: var(--ocean-emerald);
+}
+
+.modal-price-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1rem;
+}
+
+.modal-price-box small {
+    color: var(--text-dim);
+    display: block;
+    font-size: 0.75rem;
+}
+
+.btn-disabled-booking {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 0.65rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    cursor: not-allowed;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Helper Utilities */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .hotels-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .roadmap-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hotels-grid {
+        grid-template-columns: 1fr;
+    }
+    .roadmap-grid {
+        grid-template-columns: 1fr;
+    }
+    .ai-card-header, .ai-card-body, .ai-card-footer {
+        padding: 1.25rem;
+    }
+    .modal-feature-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================================================
+   7. Conversational AI Voice Orb (Pitching Feature)
+   =================================================================== */
+.ai-voice-orb-widget {
+    position: fixed;
+    bottom: 2rem;
+    right: 2.2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+/* Speech Subtitle Bubble */
+.orb-speech-bubble {
+    pointer-events: auto;
+    max-width: 340px;
+    background: rgba(14, 23, 42, 0.94);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.2);
+    color: #f1f5f9;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    position: relative;
+    transform-origin: bottom right;
+    animation: bubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: var(--transition);
+}
+
+.orb-speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 32px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(14, 23, 42, 0.94);
+}
+
+.orb-bubble-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.orb-bubble-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.orb-bubble-close {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 2px 4px;
+}
+
+.orb-bubble-close:hover {
+    color: white;
+}
+
+.orb-bubble-text {
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+/* Orb Button & Ripple Rings */
+.orb-button-container {
+    position: relative;
+    width: 78px;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.ai-orb-button {
+    position: relative;
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: radial-gradient(circle at 35% 35%, #7dd3fc 0%, #0284c7 45%, #8b5cf6 85%, #0369a1 100%);
+    box-shadow: 
+        0 0 25px rgba(56, 189, 248, 0.6),
+        0 8px 25px rgba(0, 0, 0, 0.6),
+        inset 0 0 14px rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.4rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 5;
+    outline: none;
+}
+
+.ai-orb-button:hover {
+    transform: scale(1.08);
+    box-shadow: 
+        0 0 35px rgba(56, 189, 248, 0.8),
+        0 10px 30px rgba(0, 0, 0, 0.7),
+        inset 0 0 18px rgba(255, 255, 255, 0.8);
+}
+
+/* Idle State: Nhịp thở nhẹ nhàng */
+.ai-orb-button:not(.is-speaking) {
+    animation: orbBreath 3.5s infinite ease-in-out;
+}
+
+@keyframes orbBreath {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 22px rgba(56, 189, 248, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.5); }
+    50% { transform: scale(1.04); box-shadow: 0 0 32px rgba(139, 92, 246, 0.6), inset 0 0 16px rgba(255, 255, 255, 0.7); }
+}
+
+/* Speaking State: Quả bóng rung rung & biến dạng chất lỏng sinh động như Siri / Gemini Live */
+.ai-orb-button.is-speaking {
+    animation: orbVibrate 0.8s infinite alternate ease-in-out, orbGradientShift 2.5s infinite linear;
+    box-shadow: 
+        0 0 45px rgba(56, 189, 248, 0.9),
+        0 0 25px rgba(139, 92, 246, 0.8),
+        inset 0 0 20px rgba(255, 255, 255, 0.9);
+}
+
+@keyframes orbVibrate {
+    0% {
+        transform: scale(1.02) translate(0, 0);
+        border-radius: 46% 54% 60% 40% / 50% 45% 55% 50%;
+    }
+    33% {
+        transform: scale(1.14) translate(-2px, 3px);
+        border-radius: 58% 42% 48% 52% / 44% 56% 44% 56%;
+    }
+    66% {
+        transform: scale(1.08) translate(3px, -2px);
+        border-radius: 42% 58% 65% 35% / 55% 40% 60% 45%;
+    }
+    100% {
+        transform: scale(1.16) translate(-1px, -3px);
+        border-radius: 54% 46% 38% 62% / 40% 60% 40% 60%;
+    }
+}
+
+@keyframes orbGradientShift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* Sound Wave Ripple Rings */
+.orb-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    border: 2px solid rgba(56, 189, 248, 0.6);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1;
+}
+
+.ai-orb-button.is-speaking ~ .orb-ripple-1 {
+    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
+    animation-delay: 0s;
+}
+
+.ai-orb-button.is-speaking ~ .orb-ripple-2 {
+    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
+    animation-delay: 0.6s;
+}
+
+.ai-orb-button.is-speaking ~ .orb-ripple-3 {
+    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
+    animation-delay: 1.2s;
+}
+
+@keyframes rippleWave {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; border-color: rgba(56, 189, 248, 0.8); }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; border-color: rgba(139, 92, 246, 0.1); }
+}
+
+/* Micro Tooltip beneath orb */
+.orb-label-badge {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-color);
+    color: var(--primary-light);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+
+@keyframes bubblePop {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}

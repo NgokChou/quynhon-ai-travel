@@ -1,0 +1,12 @@
+{
+  "name": "quynhon-ai-travel",
+  "version": "1.0.0",
+  "description": "Quy Nhon AI Travel Assistant Prototype",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

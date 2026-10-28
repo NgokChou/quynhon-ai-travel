@@ -38,11 +38,12 @@
             </a>
 
             <ul class="nav-center-menu">
-                <li><a href="#planner-section" data-i18n="navPlanner">AI Planner</a></li>
-                <li><a href="#map-section" data-i18n="navMap">World Route</a></li>
-                <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
-                <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
-            </ul>
+    <li><a href="#planner-section" data-i18n="navPlanner">AI Planner</a></li>
+    <li><a href="#map-section" data-i18n="navMap">World Route</a></li>
+    <li><a href="#itinerary-section">My Journey</a></li>
+    <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
+    <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
+</ul>
 
             <div class="nav-actions">
                 <div class="proto-pill">
@@ -138,6 +139,51 @@
                         <!-- Language -->
                         <div class="form-group">
                             <label for="form-lang-select">
+
+                               <!-- Budget -->
+<div class="form-group" id="budget-form-group" style="display: none;">
+    <label for="budget-select">
+        <i class="fa-solid fa-wallet"></i>
+        <span>Travel Budget</span>
+    </label>
+
+    <div class="input-icon-box">
+        <i class="fa-solid fa-dollar-sign"></i>
+
+        <select id="budget-select" class="custom-select">
+            <option value="1000">$1,000</option>
+            <option value="1500">$1,500</option>
+            <option value="2000" selected>$2,000</option>
+            <option value="2500">$2,500</option>
+            <option value="3000">$3,000</option>
+            <option value="4000">$4,000</option>
+            <option value="5000">$5,000</option>
+            <option value="custom">Custom Budget</option>
+        </select>
+    </div>
+
+    <!-- Custom Budget Input -->
+    <div
+        id="custom-budget-container"
+        class="custom-budget-container"
+        style="display: none;"
+    >
+        <div class="input-icon-box">
+            <i class="fa-solid fa-pen"></i>
+
+            <input
+                type="number"
+                id="custom-budget-input"
+                class="custom-input"
+                placeholder="Enter your budget"
+                min="1"
+                step="0.1"
+            />
+
+            <span class="currency-label">USD</span>
+        </div>
+    </div>
+</div>
                                 <i class="fa-solid fa-language"></i>
                                 <span data-i18n="labelLanguage">Assistant Language</span>
                             </label>
@@ -173,6 +219,227 @@
         </div>
     </section>
 
+
+<!-- ===================================================================
+     4. Personalized Itinerary Preferences
+     =================================================================== -->
+<section id="itinerary-section" class="itinerary-section">
+    <div class="container">
+
+        <div class="glass-card itinerary-preference-card">
+
+            <div class="planner-header-group">
+                <div class="badge-tag">
+                    <i class="fa-solid fa-sparkles"></i>
+                    <span>PERSONALIZED TRAVEL EXPERIENCE</span>
+                </div>
+
+                <h3 class="section-title">
+                    What Do You Love?
+                </h3>
+
+                <p class="section-subtitle">
+                    Tell us what you enjoy and we'll create a personalized
+                    3-day journey in Quy Nhon.
+                </p>
+            </div>
+
+            <div class="interest-grid">
+
+    <!-- Beaches -->
+    <label class="interest-option">
+        <input
+            type="checkbox"
+            name="travel-interest"
+            value="beaches"
+            checked
+        >
+
+        <span class="interest-content">
+
+            <span class="interest-icon">
+                <i class="fa-solid fa-umbrella-beach"></i>
+            </span>
+
+            <span class="interest-text">
+                <strong>Beaches</strong>
+                <small>Relax by the sea</small>
+            </span>
+
+            <span class="interest-check">
+                <i class="fa-solid fa-check"></i>
+            </span>
+
+        </span>
+    </label>
+
+
+    <!-- Local Food -->
+    <label class="interest-option">
+        <input
+            type="checkbox"
+            name="travel-interest"
+            value="food"
+            checked
+        >
+
+        <span class="interest-content">
+
+            <span class="interest-icon">
+                <i class="fa-solid fa-bowl-food"></i>
+            </span>
+
+            <span class="interest-text">
+                <strong>Local Food</strong>
+                <small>Taste Quy Nhon's flavors</small>
+            </span>
+
+            <span class="interest-check">
+                <i class="fa-solid fa-check"></i>
+            </span>
+
+        </span>
+    </label>
+
+
+    <!-- Culture -->
+    <label class="interest-option">
+        <input
+            type="checkbox"
+            name="travel-interest"
+            value="culture"
+            checked
+        >
+
+        <span class="interest-content">
+
+            <span class="interest-icon">
+                <i class="fa-solid fa-landmark"></i>
+            </span>
+
+            <span class="interest-text">
+                <strong>Culture</strong>
+                <small>History and heritage</small>
+            </span>
+
+            <span class="interest-check">
+                <i class="fa-solid fa-check"></i>
+            </span>
+
+        </span>
+    </label>
+
+    <!-- Adventure -->
+<label class="interest-option">
+    <input
+        type="checkbox"
+        name="travel-interest"
+        value="adventure"
+    >
+
+    <span class="interest-content">
+
+        <span class="interest-icon">
+            <i class="fa-solid fa-person-hiking"></i>
+        </span>
+
+        <span class="interest-text">
+            <strong>Adventure</strong>
+            <small>Explore and discover</small>
+        </span>
+
+        <span class="interest-check">
+            <i class="fa-solid fa-check"></i>
+        </span>
+
+    </span>
+</label>
+
+
+<!-- Nightlife -->
+<label class="interest-option">
+    <input
+        type="checkbox"
+        name="travel-interest"
+        value="nightlife"
+    >
+
+    <span class="interest-content">
+
+        <span class="interest-icon">
+            <i class="fa-solid fa-moon"></i>
+        </span>
+
+        <span class="interest-text">
+            <strong>Nightlife</strong>
+            <small>Enjoy Quy Nhon at night</small>
+        </span>
+
+        <span class="interest-check">
+            <i class="fa-solid fa-check"></i>
+        </span>
+
+    </span>
+</label>
+
+    
+
+</div>
+
+
+            <div class="itinerary-action-row">
+
+                <div class="mock-disclaimer-pill">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>DEMO EXPERIENCE</span>
+                </div>
+
+                <button
+                    type="button"
+                    id="btn-generate-itinerary"
+                    class="btn-generate-plan"
+                >
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Generate My 3-Day Journey</span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<!-- ===================================================================
+     4.5 Generated 3-Day Itinerary
+     =================================================================== -->
+<section id="generated-itinerary-section" class="generated-itinerary-section" style="display: none;">
+    <div class="container">
+
+        <div class="planner-header-group">
+            <div class="badge-tag">
+                <i class="fa-solid fa-route"></i>
+                <span>YOUR PERSONALIZED JOURNEY</span>
+            </div>
+
+            <h3 class="section-title">
+                3-Day Quy Nhon Experience
+            </h3>
+
+            <p class="section-subtitle">
+                A journey created around your interests.
+            </p>
+        </div>
+
+        <div id="generated-itinerary" class="generated-itinerary">
+            <!-- JavaScript will render itinerary here -->
+        </div>
+
+    </div>
+</section>
+
+<!-- ===================================================================
+     5. Main Results & AI Assistant Section
+     =================================================================== -->
     <!-- ===================================================================
          4. Main Results & AI Assistant Section
          =================================================================== -->

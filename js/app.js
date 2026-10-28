@@ -5,19 +5,25 @@
 
 const App = (function() {
     // State của ứng dụng
-    const state = {
-        currentLang: 'en',
-        currentCountryKey: 'belgium',
-        isAnalyzing: false,
-        activeSpeechText: ''
-    };
+const state = {
+    currentLang: 'en',
+    currentCountryKey: 'belgium',
+    currentBudget: 2000,
+    isAnalyzing: false,
+    activeSpeechText: ''
+};
 
     // DOM Elements
     const elements = {
         langSelect: document.getElementById('app-lang-select'),
         countrySelect: document.getElementById('country-select'),
+        budgetFormGroup: document.getElementById('budget-form-group'),
+        budgetSelect: document.getElementById('budget-select'),
+        customBudgetContainer: document.getElementById('custom-budget-container'),
+        customBudgetInput: document.getElementById('custom-budget-input'),
         planForm: document.getElementById('journey-planner-form'),
         planBtn: document.getElementById('btn-plan-journey'),
+        btnGenerateItinerary: document.getElementById('btn-generate-itinerary'),
         
         // AI Assistant Card
         aiCard: document.getElementById('ai-assistant-card'),
@@ -67,7 +73,18 @@ const App = (function() {
         // 5. Update initial translations
         updateLanguage(state.currentLang);
 
-        // 6. Generate initial default route (Belgium -> Quy Nhon)
+
+
+// 6. Hiển thị Budget sau khi có quốc gia mặc định
+if (elements.budgetFormGroup) {
+    elements.budgetFormGroup.style.display = 'block';
+}
+
+if (elements.budgetSelect) {
+    state.currentBudget = Number(elements.budgetSelect.value);
+}
+
+        // 7. Generate initial default route (Belgium -> Quy Nhon)
         generateJourneyPlan(false);
     }
 
@@ -89,11 +106,55 @@ const App = (function() {
 
     function bindEvents() {
         // Thay đổi ngôn ngữ từ thanh Header hoặc Form
-        if (elements.langSelect) {
-            elements.langSelect.addEventListener('change', (e) => {
-                updateLanguage(e.target.value);
-            });
+        if (elements.countrySelect) {
+    elements.countrySelect.addEventListener('change', (e) => {
+        state.currentCountryKey = e.target.value;
+
+        // Hiển thị Budget sau khi người dùng chọn nơi khởi hành
+        if (elements.budgetFormGroup) {
+            elements.budgetFormGroup.style.display = 'block';
         }
+    });
+}
+
+if (elements.budgetSelect) {
+    elements.budgetSelect.addEventListener('change', (e) => {
+
+        const value = e.target.value;
+
+        // Người dùng chọn Custom Budget
+        if (value === 'custom') {
+
+            if (elements.customBudgetContainer) {
+                elements.customBudgetContainer.style.display = 'block';
+            }
+
+            if (elements.customBudgetInput) {
+                elements.customBudgetInput.focus();
+            }
+
+            return;
+        }
+
+        // Người dùng chọn budget có sẵn
+        if (elements.customBudgetContainer) {
+            elements.customBudgetContainer.style.display = 'none';
+        }
+
+        state.currentBudget = Number(value);
+    });
+}
+// for the char
+if (elements.customBudgetInput) {
+    elements.customBudgetInput.addEventListener('input', (e) => {
+
+        const value = Number(e.target.value);
+
+        if (value > 0) {
+            state.currentBudget = value;
+        }
+    });
+}
 
         // Thay đổi quốc gia xuất phát
         if (elements.countrySelect) {
@@ -109,6 +170,11 @@ const App = (function() {
                 generateJourneyPlan(true);
             });
         }
+
+// Nút "Generate My 3-Day Journey"
+if (elements.btnGenerateItinerary) {
+    elements.btnGenerateItinerary.addEventListener('click', generateItinerary);
+}
 
         // Nút phát giọng nói AI
         if (elements.btnSpeak) {
@@ -147,6 +213,326 @@ const App = (function() {
         });
     }
 
+    function generateItinerary() {
+
+    const section = document.getElementById(
+        'generated-itinerary-section'
+    );
+
+    const container = document.getElementById(
+        'generated-itinerary'
+    );
+
+    if (!section || !container) {
+        return;
+    }
+
+    const button = elements.btnGenerateItinerary;
+
+    if (button) {
+        button.disabled = true;
+
+        button.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>Creating Your Journey...</span>
+        `;
+    }
+
+    // Demo delay để tạo cảm giác hệ thống đang xử lý
+    setTimeout(() => {
+
+        container.innerHTML = `
+            <!-- DAY 1 -->
+            <div class="itinerary-day-card">
+
+                <div class="itinerary-day-header">
+
+                    <div class="itinerary-day-number">
+                        DAY 1
+                    </div>
+
+                    <div class="itinerary-day-heading">
+                        <span class="itinerary-day-label">
+                            Day 1
+                        </span>
+
+                        <h4 class="itinerary-day-title">
+                            Beach & Local Flavors
+                        </h4>
+                    </div>
+
+                </div>
+
+
+                <div class="itinerary-activities">
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            09:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Quy Nhon Beach
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Start your journey with a relaxing morning by the sea.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            BEACH
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            12:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Local Food Experience
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Discover authentic local flavors and traditional dishes.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            FOOD
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            15:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Coastal Walk
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Enjoy the coastline and the atmosphere of Quy Nhon.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            BEACH
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DAY 2 -->
+            <div class="itinerary-day-card">
+
+                <div class="itinerary-day-header">
+
+                    <div class="itinerary-day-number">
+                        DAY 2
+                    </div>
+
+                    <div class="itinerary-day-heading">
+                        <span class="itinerary-day-label">
+                            Day 2
+                        </span>
+
+                        <h4 class="itinerary-day-title">
+                            Culture & Heritage
+                        </h4>
+                    </div>
+
+                </div>
+
+
+                <div class="itinerary-activities">
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            09:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Binh Dinh Heritage
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Discover the history and cultural heritage of the region.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            CULTURE
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            12:30
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Traditional Lunch
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Enjoy another taste of Quy Nhon's local cuisine.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            FOOD
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            15:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Cultural Discovery
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Explore the stories and traditions of Binh Dinh.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            CULTURE
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DAY 3 -->
+            <div class="itinerary-day-card">
+
+                <div class="itinerary-day-header">
+
+                    <div class="itinerary-day-number">
+                        DAY 3
+                    </div>
+
+                    <div class="itinerary-day-heading">
+                        <span class="itinerary-day-label">
+                            Day 3
+                        </span>
+
+                        <h4 class="itinerary-day-title">
+                            Coastal Escape
+                        </h4>
+                    </div>
+
+                </div>
+
+
+                <div class="itinerary-activities">
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            08:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Morning by the Sea
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Enjoy a peaceful morning surrounded by the coastline.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            BEACH
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            12:00
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Quy Nhon Specialties
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            Finish your food journey with more local specialties.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            FOOD
+                        </span>
+
+                    </div>
+
+
+                    <div class="itinerary-activity">
+
+                        <div class="itinerary-activity-time">
+                            15:30
+                        </div>
+
+                        <div class="itinerary-activity-title">
+                            Final Coastal Experience
+                        </div>
+
+                        <div class="itinerary-activity-description">
+                            End your journey with a relaxing experience by the sea.
+                        </div>
+
+                        <span class="itinerary-activity-category">
+                            BEACH
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+        section.style.display = 'block';
+
+        section.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+        if (button) {
+            button.disabled = false;
+
+            button.innerHTML = `
+                <i class="fa-solid fa-check"></i>
+                <span>Journey Created</span>
+            `;
+        }
+
+    }, 1200);
+}
     function updateLanguage(newLang) {
         state.currentLang = newLang;
 
@@ -249,46 +635,227 @@ const App = (function() {
     }
 
     function renderTimeline(countryData) {
-        if (!elements.timelineList) return;
-        elements.timelineList.innerHTML = '';
+    if (!elements.timelineList) return;
 
-        const lang = state.currentLang;
-        const steps = countryData.route.steps;
+    elements.timelineList.innerHTML = '';
 
-        steps.forEach((step, index) => {
-            const stepCard = document.createElement('div');
-            stepCard.className = `timeline-step-card step-${step.type}`;
+    const lang = state.currentLang;
+    const budget = state.currentBudget;
+
+    /*
+     * Generate Best-Value price randomly between
+     * 10% and 30% below the selected budget.
+     *
+     * Example:
+     * Budget = $2,000
+     * Price can be between $1,400 and $1,800.
+     *
+     * Result is rounded to 1 decimal place.
+     */
+    const minBestValue = budget * 0.70;
+    const maxBestValue = budget * 0.90;
+
+    const bestValuePrice =
+        Math.round(
+            (Math.random() * (maxBestValue - minBestValue) + minBestValue) * 10
+        ) / 10;
+
+    const routes = [
+        {
+            id: 'fastest',
+            title: {
+                en: 'FASTEST ROUTE',
+                vi: 'LỘ TRÌNH NHANH NHẤT'
+            },
+            icon: 'bolt',
+            description: {
+                en: 'Optimized primarily for the shortest total travel time.',
+                vi: 'Tối ưu chủ yếu cho tổng thời gian di chuyển ngắn nhất.'
+            },
+            price: budget,
+            priceLabel: {
+                en: 'Estimated budget',
+                vi: 'Ngân sách ước tính'
+            },
+            badge: {
+                en: 'FASTEST',
+                vi: 'NHANH NHẤT'
+            }
+        },
+        {
+            id: 'best-value',
+            title: {
+                en: 'BEST-VALUE ROUTE',
+                vi: 'LỘ TRÌNH ĐÁNG GIÁ NHẤT'
+            },
+            icon: 'scale-balanced',
+            description: {
+                en: 'The best balance between travel cost, comfort and journey time.',
+                vi: 'Cân bằng tốt nhất giữa chi phí, sự thoải mái và thời gian di chuyển.'
+            },
+            price: bestValuePrice,
+            priceLabel: {
+                en: 'Best-value estimate',
+                vi: 'Chi phí tối ưu ước tính'
+            },
+            badge: {
+                en: 'BEST VALUE',
+                vi: 'ĐÁNG GIÁ NHẤT'
+            }
+        },
+        {
+            id: 'smart-stopover',
+            title: {
+                en: 'SMART STOPOVER',
+                vi: 'DỪNG CHÂN THÔNG MINH'
+            },
+            icon: 'route',
+            description: {
+                en: 'Adds a strategic stopover to create a smoother and more flexible journey.',
+                vi: 'Thêm điểm dừng chiến lược để tạo hành trình linh hoạt và thuận tiện hơn.'
+            },
+            price: Math.round(budget * 0.82 * 10) / 10,
+            priceLabel: {
+                en: 'Estimated budget',
+                vi: 'Ngân sách ước tính'
+            },
+            badge: {
+                en: 'SMART',
+                vi: 'THÔNG MINH'
+            }
+        }
+    ];
+
+    routes.forEach((route) => {
+
+        const routeCard = document.createElement('div');
+        routeCard.className = `route-option-card route-${route.id}`;
+
+        routeCard.innerHTML = `
+            <div class="route-option-header">
+
+                <div class="route-option-title">
+                    <div class="route-option-icon">
+                        <i class="fa-solid fa-${route.icon}"></i>
+                    </div>
+
+                    <div>
+                        <span class="route-option-badge">
+                            ${route.badge[lang]}
+                        </span>
+
+                        <h3>
+                            ${route.title[lang]}
+                        </h3>
+
+                        <p>
+                            ${route.description[lang]}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="route-option-price">
+                    <span>
+                        ${route.priceLabel[lang]}
+                    </span>
+
+                    <strong>
+                        $${route.price.toFixed(1)}
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="route-option-timeline">
+                <div class="route-timeline-title">
+                    <i class="fa-solid fa-route"></i>
+                    <span>
+                        ${lang === 'vi' ? 'Các chặng hành trình' : 'Journey stages'}
+                    </span>
+                </div>
+
+                <div class="route-steps-list"></div>
+            </div>
+        `;
+
+        const stepsContainer =
+            routeCard.querySelector('.route-steps-list');
+
+        /*
+         * Reuse the existing mock route steps.
+         * We do NOT modify mockData.js.
+         */
+        countryData.route.steps.forEach((step, index) => {
+
+            const stepItem = document.createElement('div');
+
+            stepItem.className =
+                `route-mini-step step-${step.type}`;
 
             let tagLabel = '';
-            if (step.type === 'flight' || step.type === 'domestic-flight') tagLabel = t('stepFlightTag', lang);
-            else if (step.type === 'transfer') tagLabel = t('stepTransferTag', lang);
-            else if (step.type === 'hotel') tagLabel = t('stepHotelTag', lang);
-            else if (step.type === 'explore') tagLabel = t('stepExploreTag', lang);
 
-            stepCard.innerHTML = `
-                <div class="step-indicator">
-                    <div class="step-number">${index + 1}</div>
-                    <div class="step-icon"><i class="fa-solid fa-${step.icon}"></i></div>
+            if (
+                step.type === 'flight' ||
+                step.type === 'domestic-flight'
+            ) {
+                tagLabel = t('stepFlightTag', lang);
+            }
+            else if (step.type === 'transfer') {
+                tagLabel = t('stepTransferTag', lang);
+            }
+            else if (step.type === 'hotel') {
+                tagLabel = t('stepHotelTag', lang);
+            }
+            else if (step.type === 'explore') {
+                tagLabel = t('stepExploreTag', lang);
+            }
+
+            stepItem.innerHTML = `
+                <div class="route-mini-number">
+                    ${index + 1}
                 </div>
-                <div class="step-content">
-                    <div class="step-header">
-                        <span class="step-tag tag-${step.type}">${tagLabel}</span>
-                        <h4 class="step-title">${step.title[lang]}</h4>
+
+                <div class="route-mini-icon">
+                    <i class="fa-solid fa-${step.icon}"></i>
+                </div>
+
+                <div class="route-mini-content">
+
+                    <div class="route-mini-top">
+                        <span class="step-tag tag-${step.type}">
+                            ${tagLabel}
+                        </span>
+
+                        <strong>
+                            ${step.title[lang]}
+                        </strong>
                     </div>
-                    <div class="step-locations">
-                        <span class="loc-from"><i class="fa-regular fa-circle-dot"></i> ${step.from}</span>
-                        <span class="loc-arrow"><i class="fa-solid fa-arrow-right-long"></i></span>
-                        <span class="loc-to"><i class="fa-solid fa-location-dot"></i> ${step.to}</span>
+
+                    <div class="route-mini-location">
+                        <span>
+                            ${step.from}
+                        </span>
+
+                        <i class="fa-solid fa-arrow-right-long"></i>
+
+                        <span>
+                            ${step.to}
+                        </span>
                     </div>
-                    <p class="step-subinfo">${step.subInfo[lang]}</p>
-                    <div class="step-highlight">
-                        <i class="fa-solid fa-lightbulb"></i> <span>${step.highlight[lang]}</span>
-                    </div>
+
+                    <p>
+                        ${step.subInfo[lang]}
+                    </p>
+
                 </div>
             `;
-            elements.timelineList.appendChild(stepCard);
+
+            stepsContainer.appendChild(stepItem);
         });
-    }
+
+        elements.timelineList.appendChild(routeCard);
+    });
+}
 
     function renderHotels() {
         if (!elements.hotelsGrid) return;

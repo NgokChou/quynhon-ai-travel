@@ -1,0 +1,17 @@
+{
+    "name": "Quy Nhon Travel",
+    "short_name": "Quy Nhon",
+    "start_url": "/airport.html",
+    "display": "standalone",
+    "background_color": "#07111f",
+    "theme_color": "#07111f",
+    "orientation": "portrait",
+
+    "icons": [
+        {
+            "src": "/assets/airport-icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

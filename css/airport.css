@@ -1,0 +1,331 @@
+/* ============================================================
+   PHU CAT AIRPORT PAGE
+   ============================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(14, 165, 233, 0.10),
+            transparent 35%
+        ),
+        #07111f;
+
+    color: #f8fafc;
+}
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+.airport-page {
+    min-height: 100vh;
+    min-height: 100svh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+}
+
+/* ============================================================
+   MAIN CARD
+   ============================================================ */
+
+.arrival-card {
+    width: min(100%, 720px);
+
+    padding: 48px;
+
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 30, 50, 0.92),
+            rgba(7, 17, 31, 0.96)
+        );
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.40),
+        0 0 60px rgba(14, 165, 233, 0.06);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+/* ============================================================
+   AIRPORT ICON
+   ============================================================ */
+
+.airport-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 28px;
+
+    border-radius: 18px;
+
+    color: #38bdf8;
+
+    background: rgba(56, 189, 248, 0.10);
+
+    border: 1px solid rgba(56, 189, 248, 0.22);
+
+    font-size: 1.5rem;
+
+    box-shadow:
+        0 0 30px rgba(56, 189, 248, 0.08);
+}
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+
+.eyebrow {
+    margin-bottom: 12px;
+
+    color: #38bdf8;
+
+    font-size: 0.72rem;
+    font-weight: 800;
+
+    letter-spacing: 0.16em;
+}
+
+h1 {
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: clamp(2rem, 5vw, 3.5rem);
+
+    line-height: 1.08;
+
+    letter-spacing: -0.035em;
+}
+
+.question {
+    margin: 28px 0 22px;
+
+    color: #94a3b8;
+
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   TRANSPORT OPTIONS
+   ============================================================ */
+
+.transport-options {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.transport-option {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 72px;
+
+    padding: 14px 18px;
+
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    color: #f8fafc;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.transport-option:hover {
+    transform: translateY(-2px);
+
+    background: rgba(56, 189, 248, 0.08);
+
+    border-color: rgba(56, 189, 248, 0.35);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.transport-option:active {
+    transform: scale(0.99);
+}
+
+/* ============================================================
+   TRANSPORT ICON
+   ============================================================ */
+
+.transport-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    margin-right: 14px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    font-size: 1.35rem;
+}
+
+.transport-text {
+    flex: 1;
+
+    font-size: 0.98rem;
+}
+
+.transport-text strong {
+    font-weight: 700;
+}
+
+.transport-option > i {
+    color: #64748b;
+
+    font-size: 0.75rem;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.transport-option:hover > i {
+    color: #38bdf8;
+
+    transform: translateX(3px);
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .airport-page {
+        padding: 16px;
+    }
+
+    .arrival-card {
+        padding: 30px 22px;
+
+        border-radius: 22px;
+    }
+
+    .airport-icon {
+        width: 56px;
+        height: 56px;
+
+        margin-bottom: 22px;
+
+        border-radius: 16px;
+    }
+
+    .eyebrow {
+        font-size: 0.65rem;
+
+        letter-spacing: 0.13em;
+    }
+
+    h1 {
+        font-size: clamp(1.8rem, 9vw, 2.5rem);
+
+        line-height: 1.1;
+    }
+
+    .question {
+        margin-top: 22px;
+
+        font-size: 0.92rem;
+    }
+
+    .transport-option {
+        min-height: 68px;
+
+        padding: 12px 14px;
+    }
+
+    .transport-icon {
+        width: 40px;
+        height: 40px;
+
+        margin-right: 12px;
+
+        font-size: 1.2rem;
+    }
+
+    .transport-text {
+        font-size: 0.92rem;
+    }
+}
+
+/* ============================================================
+   VERY SMALL PHONES
+   ============================================================ */
+
+@media (max-width: 380px) {
+
+    .airport-page {
+        padding: 12px;
+    }
+
+    .arrival-card {
+        padding: 26px 18px;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .question {
+        font-size: 0.88rem;
+    }
+}

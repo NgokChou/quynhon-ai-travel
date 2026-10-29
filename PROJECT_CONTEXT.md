@@ -48,13 +48,10 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 | 3 | **Cá nhân hóa hành trình 3 ngày (Personalized Itinerary)** | Cho phép người dùng chọn các sở thích (Biển, Ẩm thực, Văn hóa, Phiêu lưu, Cuộc sống về đêm) và nhấn nút tạo hành trình 3 ngày tại Quy Nhơn. | Hoàn thành một phần | Giao diện và hiệu ứng hoạt động tốt; nội dung lịch trình hiện tại là nội dung mẫu đại diện cho bản demo. |
 | 4 | **Bản đồ vệ tinh đường bay tương tác (Interactive Route Map)** | Bản đồ vệ tinh thế giới trực quan hóa đường bay uốn cong từ điểm xuất phát qua trạm trung chuyển (Đà Nẵng / Hà Nội / TP.HCM) về Quy Nhơn, kèm huy hiệu chỉ dẫn. | Hoàn thành | Tích hợp Leaflet.js mượt mà, hỗ trợ phóng to, thu nhỏ và kéo bản đồ. |
 | 5 | **Mô phỏng tư duy AI & Hiệu ứng gõ chữ (AI Simulator)** | Mô phỏng quá trình AI suy nghĩ qua thanh tiến trình 4 giai đoạn và hiệu ứng gõ chữ từng ký tự câu tóm tắt hành trình. | Hoàn thành | Tạo cảm giác hệ thống AI đang làm việc thực tế, rất phù hợp khi demo pitching. |
-| 6 | **Trợ lý phát giọng nói AI (Text-to-Speech Assistant)** | Nút bấm "Listen to AI" đọc lời giải thích hành trình bằng tiếng Anh hoặc tiếng Việt, có sóng âm động và nút dừng âm thanh. | Hoàn thành | Đã có cơ chế chạy dự phòng (fallback) đảm bảo luôn phát được âm thanh trên mọi trình duyệt. |
-| 7 | **Quả bóng thuyết trình nổi (AI Voice Orb)** | Quả cầu tương tác ở góc màn hình; khi bấm sẽ kích hoạt bài phát biểu giới thiệu ý tưởng dự án kèm bong bóng phụ đề trực quan. | Hoàn thành | Hoạt động ổn định trên giao diện chính, hỗ trợ cả tiếng Anh và tiếng Việt. |
-| 8 | **Gợi ý & Xem trước khu nghỉ dưỡng (Curated Hotels & Modal)** | Hiển thị danh sách khách sạn tiêu biểu (Anantara, Maia, FLC) kèm xếp hạng, ảnh chụp; bấm vào xem popup chi tiết tiện ích và mức giá ước tính. | Hoàn thành một phần | Hiển thị thông tin chi tiết đầy đủ; nút đặt phòng đang khóa ở chế độ thử nghiệm (chưa có cổng booking thật). |
-| 9 | **Chuyển đổi song ngữ Anh - Việt (Bilingual Switcher)** | Chuyển đổi toàn bộ ngôn ngữ hiển thị (nút bấm, tiêu đề, nội dung tóm tắt, bản đồ và giọng nói) tức thì giữa Tiếng Anh và Tiếng Việt. | Hoàn thành | Cơ chế chuyển đổi hoàn thiện 100% trên giao diện chính. |
-| 10 | **Trang thuyết trình chuyên biệt (`pitch.html`)** | Màn hình tối giản tập trung vào quả cầu AI phát giọng nói giới thiệu dự án, kết nối qua cổng proxy server. | Hoàn thành | Dành riêng cho kịch bản pitching dự án. |
-| 11 | **Trang chào đón tại sân bay (`airport.html`)** | Màn hình dành cho thiết bị di động mô phỏng khi du khách vừa hạ cánh tại Sân bay Phù Cát, cho phép chọn xe Taxi, Shuttle để về thành phố. | Hoàn thành một phần | Giao diện đã có hiệu ứng chọn phương tiện, chưa chuyển tiếp đến màn hình chi tiết hoặc đặt xe. |
-| 12 | **Lộ trình tương lai (Startup Roadmap)** | Khối thông tin giới thiệu 4 định hướng phát triển sản phẩm tiếp theo (Vé thời gian thực, Tối ưu lộ trình tự động, Đặt chỗ 1 chạm, Trợ lý giọng nói 24/7). | Hoàn thành | Khối thông tin hiển thị rõ ràng trên giao diện. |
+| 6 | **Trợ lý phát giọng nói AI (Text-to-Speech Assistant)** | Nút bấm "Listen to AI" đọc lời giải thích hành trình bằng tiếng Anh hoặc tiếng Việt, đa tầng (ưu tiên ElevenLabs, tự động fallback Web Speech API và Audio Stream chất lượng cao). | Hoàn thành | Đã chuyển giao đầy đủ từ màn hình pitch cũ sang trang chủ, an toàn bảo mật API key trên server. |
+| 7 | **Gợi ý & Xem trước khu nghỉ dưỡng (Curated Hotels & Modal)** | Hiển thị danh sách khách sạn tiêu biểu (Anantara, Maia, FLC) kèm xếp hạng, ảnh chụp; bấm vào xem popup chi tiết tiện ích và mức giá ước tính. | Hoàn thành một phần | Hiển thị thông tin chi tiết đầy đủ; nút đặt phòng đang khóa ở chế độ thử nghiệm (chưa có cổng booking thật). |
+| 8 | **Chuyển đổi song ngữ Anh - Việt (Bilingual Switcher)** | Chuyển đổi toàn bộ ngôn ngữ hiển thị (nút bấm, tiêu đề, nội dung tóm tắt, bản đồ và giọng nói) tức thì giữa Tiếng Anh và Tiếng Việt. | Hoàn thành | Cơ chế chuyển đổi hoàn thiện 100% trên giao diện chính. |
+| 9 | **Lộ trình tương lai (Startup Roadmap)** | Khối thông tin giới thiệu 4 định hướng phát triển sản phẩm tiếp theo (Vé thời gian thực, Tối ưu lộ trình tự động, Đặt chỗ 1 chạm, Trợ lý giọng nói 24/7). | Hoàn thành | Khối thông tin hiển thị rõ ràng trên giao diện. |
 
 ---
 
@@ -105,9 +102,7 @@ Khi tiếp nhận bất kỳ yêu cầu mới nào từ Người quản lý dự
 - **Cách 2 (Tiện lợi nhất trên Windows)**: Nhấp đúp chuột vào file `start.bat` trong thư mục dự án.
 
 ### 2. Các địa chỉ kiểm tra
-- **Giao diện chính**: `http://localhost:3000`
-- **Màn hình Pitching**: `http://localhost:3000/pitch.html`
-- **Màn hình Sân bay Phù Cát**: `http://localhost:3000/airport.html`
+- **Giao diện chính**: `http://localhost:3000` (Hỗ trợ đầy đủ chức năng độc lập trên trang chủ)
 
 ### 3. Tắt ứng dụng
 - Nhấn tổ hợp phím **`Ctrl + C`** trên cửa sổ dòng lệnh đang chạy server.

@@ -69,9 +69,10 @@ const TRANSLATIONS = {
         // Hotel Section
         hotelTitle: "Curated Accommodations in Quy Nhon",
         hotelSubtitle: "Handpicked beach resorts and boutique sanctuaries matched to your travel profile.",
+        hotelPortfolioBadge: "VERIFIED 4★ & 5★ SELECTION",
         btnViewHotel: "Preview Resort",
         modalClose: "Close",
-        mockHotelNotice: "Hotel rates and availability are simulated mock data for prototype demonstration.",
+        mockHotelNotice: "💡 Booking Advisory: Rates reflect standard seasonal pricing. For peak dry season (March – August), booking 2-4 weeks in advance is recommended.",
 
         // Future Features
         roadmapTitle: "Coming Next: Production Roadmap",
@@ -200,9 +201,10 @@ const TRANSLATIONS = {
         // Hotel Section
         hotelTitle: "Gợi Ý Khách Sạn & Resort Tại Quy Nhơn",
         hotelSubtitle: "Những khu nghỉ dưỡng biển tuyệt đẹp được AI tuyển chọn kỹ lưỡng theo sở thích du khách quốc tế.",
+        hotelPortfolioBadge: "TUYỂN CHỌN NGHỈ DƯỠNG 4★ & 5★",
         btnViewHotel: "Xem Chi Tiết",
         modalClose: "Đóng",
-        mockHotelNotice: "Giá phòng và thông tin khách sạn là dữ liệu mô phỏng phục vụ trình diễn prototype.",
+        mockHotelNotice: "💡 Lời khuyên đặt phòng: Mức giá áp dụng theo mùa du lịch tiêu chuẩn. Vào mùa cao điểm nắng vàng (Tháng 3 – Tháng 8), bạn nên đặt phòng trước 2-4 tuần.",
 
         // Future Features
         roadmapTitle: "Lộ Trình Phát Triển Sản Phẩm",

@@ -286,6 +286,34 @@ function generateLocalKnowledgeReply(message, lang, context) {
     };
 }
 
+// In-memory Rate Limiter: max 20 questions per 10 minutes per IP
+const chatRateLimits = new Map();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 20;
+
+function checkChatRateLimit(ip) {
+    const now = Date.now();
+    if (chatRateLimits.size > 1000) {
+        for (const [key, val] of chatRateLimits.entries()) {
+            if (now > val.resetTime) chatRateLimits.delete(key);
+        }
+    }
+
+    const record = chatRateLimits.get(ip);
+    if (!record || now > record.resetTime) {
+        chatRateLimits.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+        return { allowed: true, remaining: RATE_LIMIT_MAX - 1 };
+    }
+
+    if (record.count >= RATE_LIMIT_MAX) {
+        const waitMinutes = Math.max(1, Math.ceil((record.resetTime - now) / 60000));
+        return { allowed: false, waitMinutes };
+    }
+
+    record.count += 1;
+    return { allowed: true, remaining: RATE_LIMIT_MAX - record.count };
+}
+
 async function handleChatRequest(req, res) {
     try {
         const body = await getRequestBody(req);
@@ -302,6 +330,19 @@ async function handleChatRequest(req, res) {
             sendJson(res, 400, { error: 'Message is too long. Max 1000 characters.' });
             return;
         }
+
+        const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '127.0.0.1';
+        const rateCheck = checkChatRateLimit(clientIp);
+        if (!rateCheck.allowed) {
+            console.warn(`[RateLimit] IP ${clientIp} exceeded rate limit (${RATE_LIMIT_MAX} requests/10m)`);
+            const warningMsg = lang === 'vi'
+                ? `⏳ **Tạm nghỉ một chút:** Bạn đã gửi khá nhiều câu hỏi trong thời gian ngắn để bảo vệ hệ thống. Vui lòng chờ khoảng ${rateCheck.waitMinutes} phút nữa rồi tiếp tục trò chuyện nhé!`
+                : `⏳ **Rate Limit Notice:** You have reached the limit of ${RATE_LIMIT_MAX} questions per 10 minutes to protect AI server quota. Please wait about ${rateCheck.waitMinutes} minute(s) before sending more questions!`;
+            sendJson(res, 429, { success: false, reply: warningMsg, source: 'rate-limit' });
+            return;
+        }
+
+        console.log(`[Chat API] [IP: ${clientIp}] Request accepted. (Remaining: ${rateCheck.remaining}/${RATE_LIMIT_MAX} in 10m)`);
 
         const apiKey = process.env.GEMINI_API_KEY;
         if (apiKey) {

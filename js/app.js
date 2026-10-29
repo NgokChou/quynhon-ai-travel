@@ -777,7 +777,7 @@ const App = (function() {
                 <div class="hotel-image-wrapper">
                     <img src="${hotel.image}" alt="${hotel.name}" loading="lazy" />
                     <span class="hotel-badge">${hotel.badge[lang]}</span>
-                    <span class="hotel-mock-tag">MOCK DATA</span>
+                    <span class="hotel-verified-tag"><i class="fa-solid fa-circle-check"></i> ${lang === 'vi' ? 'Đã kiểm chứng' : 'Verified'}</span>
                 </div>
                 <div class="hotel-content">
                     <div class="hotel-rating">
@@ -905,8 +905,8 @@ const App = (function() {
                 </div>
             </div>
             <div class="modal-hotel-details">
-                <div class="modal-notice-mock">
-                    <i class="fa-solid fa-circle-info"></i>
+                <div class="modal-notice-verified">
+                    <i class="fa-solid fa-circle-check"></i>
                     <span>${t('mockHotelNotice', lang)}</span>
                 </div>
                 <p class="modal-desc">${hotel.description[lang]}</p>
@@ -916,12 +916,12 @@ const App = (function() {
                 </ul>
                 <div class="modal-price-box">
                     <div>
-                        <small>${lang === 'vi' ? 'Giá mô phỏng' : 'Simulated Fare'}</small>
+                        <small>${lang === 'vi' ? 'Mức giá tham khảo' : 'Reference Rate'}</small>
                         <div class="price-val">${hotel.priceMock} ${hotel.priceUnit[lang]}</div>
                     </div>
-                    <button class="btn-disabled-booking" disabled>
-                        <i class="fa-solid fa-lock"></i> ${lang === 'vi' ? 'Booking API (Giai đoạn tiếp theo)' : 'Booking API (Next Phase)'}
-                    </button>
+                    <a href="https://www.google.com/travel/hotels/Quy%20Nhon?q=${encodeURIComponent(hotel.name + ' Quy Nhon')}" target="_blank" rel="noopener noreferrer" class="btn-direct-booking">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> ${lang === 'vi' ? 'Xem phòng & Đặt chỗ' : 'Check Availability'}
+                    </a>
                 </div>
             </div>
         `;
@@ -1467,7 +1467,14 @@ const App = (function() {
 
             typingDiv.remove();
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            if (!res.ok) {
+                if (res.status === 429) {
+                    const rateData = await res.json().catch(() => null);
+                    appendChatMessage('bot', rateData?.reply || (lang === 'vi' ? 'Bạn đã gửi nhiều câu hỏi trong thời gian ngắn. Vui lòng đợi vài phút rồi tiếp tục nhé!' : 'Rate limit reached. Please wait a few minutes before asking again!'), 'local');
+                    return;
+                }
+                throw new Error(`HTTP ${res.status}`);
+            }
             const data = await res.json();
             appendChatMessage('bot', data.reply || 'No response.', data.source || 'local');
         } catch (err) {

@@ -1370,58 +1370,115 @@ const MOCK_HOTELS = [
     {
         id: "anantara-quynhon",
         name: "Anantara Quy Nhon Villas",
-        badge: { en: "Ultra Luxury", vi: "Sang trọng bậc nhất" },
-        location: "Bai Dai Beach, Quy Nhon",
+        badge: { en: "5★ Ultra Luxury", vi: "5★ Nghỉ Dưỡng Thượng Lưu" },
+        location: "Bai Dai Beach, Ghenh Rang, Quy Nhon",
         rating: 4.9,
-        reviewsCount: 384,
-        priceMock: "$450 - $680",
-        priceUnit: { en: "/ night (Estimate)", vi: "/ đêm (Tham khảo)" },
-        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+        reviewsCount: 420,
+        priceMock: "$420 - $680",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
+        image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
         features: {
-            en: ["Private Oceanfront Pool", "Personal Butler Service", "Cliffside Wine Cellar", "Secluded Beach Bay"],
-            vi: ["Hồ bơi riêng hướng biển", "Dịch vụ quản gia riêng", "Hầm rượu trên vách đá", "Bãi biển biệt lập"]
+            en: ["Private Oceanfront Infinity Pool", "Personal Butler Service 24/7", "Cliffside Wine & Cigar Cellar", "Sea.Fire.Salt Fine Dining"],
+            vi: ["Biệt thự hồ bơi vô cực hướng biển", "Dịch vụ quản gia riêng 24/7", "Hầm rượu & xì gà trên vách đá", "Nhà hàng ẩm thực Sea.Fire.Salt"]
         },
         description: {
-            en: "Nestled in a private cove, offering 26 ocean-facing villas surrounded by lush tropical mountains.",
-            vi: "Tọa lạc tại vịnh biển riêng tư, gồm 26 biệt thự hướng biển nép mình bên núi rừng nhiệt đới xanh mát."
+            en: "Nestled in a private cove along Bai Dai, offering 26 ocean-facing pool villas surrounded by lush tropical cliffs and turquoise waters.",
+            vi: "Nép mình trong vịnh biển Bãi Dài riêng tư, gồm 26 biệt thự hồ bơi riêng hướng biển bao quanh bởi vách đá nhiệt đới hùng vĩ và làn nước xanh ngọc bích."
         }
     },
     {
         id: "maia-resort",
         name: "Maia Resort Quy Nhon",
-        badge: { en: "Culinary & Wellness", vi: "Ẩm thực & Nghỉ dưỡng" },
-        location: "Nhon Ly, Phu Cat, Quy Nhon",
+        badge: { en: "5★ Culinary & Wellness", vi: "5★ Ẩm Thực & Sức Khỏe" },
+        location: "Nhon Hoi Economic Zone, Cat Tien, Quy Nhon",
         rating: 4.8,
-        reviewsCount: 512,
-        priceMock: "$220 - $350",
-        priceUnit: { en: "/ night (Estimate)", vi: "/ đêm (Tham khảo)" },
-        image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+        reviewsCount: 580,
+        priceMock: "$210 - $350",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
+        image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80",
         features: {
-            en: ["Farm-to-table Gastronomy", "Daily Spa Treatment included", "Infinity Beach Pool", "Golden Sand Access"],
-            vi: ["Ẩm thực nông trại đến bàn ăn", "Bao gồm liệu trình Spa hàng ngày", "Hồ bơi vô cực sát biển", "Bờ cát vàng mịn màng"]
+            en: ["Daily Inclusive Spa Therapy", "Farm-to-table Gastronomy (Vi Restaurant)", "Beachfront Infinity Pool", "Pristine Golden Sand Bay"],
+            vi: ["Bao gồm liệu trình Spa hàng ngày", "Ẩm thực nông trại chuẩn vị (Nhà hàng Vị)", "Hồ bơi vô cực sát bờ biển", "Bãi biển cát vàng nguyên sơ"]
         },
         description: {
-            en: "A culinary-led beach sanctuary designed for foodies and wellness seekers looking to recharge.",
-            vi: "Khu nghỉ dưỡng chú trọng trải nghiệm ẩm thực và chăm sóc sức khỏe, mang lại kỳ nghỉ tái tạo năng lượng."
+            en: "A culinary-led beach sanctuary designed for foodies and wellness seekers looking to rejuvenate amid breezy tropical gardens.",
+            vi: "Khu nghỉ dưỡng 5 sao chú trọng tinh hoa ẩm thực bản địa kết hợp chăm sóc sức khỏe toàn diện giữa khu vườn nhiệt đới lộng gió biển."
+        }
+    },
+    {
+        id: "crown-retreat",
+        name: "Crown Retreat Quy Nhon Resort",
+        badge: { en: "4.5★ Seaside Bungalows", vi: "4.5★ Bungalow Biển Bắc Âu" },
+        location: "Trung Luong Beach, Cat Tien, Phu Cat, Quy Nhon",
+        rating: 4.7,
+        reviewsCount: 490,
+        priceMock: "$115 - $190",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
+        image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
+        features: {
+            en: ["Nordic Beachfront Bungalows", "Panoramic Oceanview Pool", "Pine Kitchen International Dining", "Adjacent to Trung Luong Picnic Park"],
+            vi: ["Bungalow phong cách Bắc Âu sát biển", "Hồ bơi tràn bờ view đại dương", "Nhà hàng Pine Kitchen hải sản tươi sống", "Cạnh khu dã ngoại Trung Lương & bãi đá"]
+        },
+        description: {
+            en: "Charming beachfront bungalows nestled along Trung Luong's rocky coastline, offering calm turquoise seas and dramatic sunrises.",
+            vi: "Khu nghỉ dưỡng bungalow mái vòm độc đáo bên bờ biển Trung Lương, sở hữu bãi cát trắng mịn, làn nước biển trong vắt và bình minh tuyệt sắc."
         }
     },
     {
         id: "flc-city-hotel",
         name: "FLC City Hotel Beach Quy Nhon",
-        badge: { en: "City & Beachfront", vi: "Trung tâm phố biển" },
-        location: "An Duong Vuong St, Quy Nhon Center",
+        badge: { en: "5★ City & Beachfront", vi: "5★ Đại Lộ Biển Trung Tâm" },
+        location: "11 An Duong Vuong St, Quy Nhon Center",
         rating: 4.6,
-        reviewsCount: 740,
-        priceMock: "$75 - $130",
-        priceUnit: { en: "/ night (Estimate)", vi: "/ đêm (Tham khảo)" },
+        reviewsCount: 820,
+        priceMock: "$70 - $130",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
         image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
         features: {
-            en: ["Central City Location", "Sky Bar on 27th Floor", "Direct Beach Walkway", "Close to Night Food Market"],
-            vi: ["Vị trí trung tâm sầm uất", "Sky Bar tầng 27 ngắm toàn cảnh", "Hầm ngầm ra thẳng bãi biển", "Gần chợ đêm ẩm thực"]
+            en: ["Private Underground Beach Tunnel", "Sky Bar on 27th Floor", "Indoor Four-Season Pool", "Direct Ocean Boulevard Location"],
+            vi: ["Đường hầm ngầm riêng thông ra biển", "Sky Bar tầng 27 ngắm toàn vịnh", "Bể bơi bốn mùa trong nhà", "Tọa lạc ngay mặt tiền đại lộ An Dương Vương"]
         },
         description: {
-            en: "Modern high-rise hotel right along Quy Nhon's main beach boulevard, ideal for exploring local city life.",
-            vi: "Khách sạn hiện đại cao cấp trên đại lộ biển An Dương Vương, lý tưởng để hòa mình vào nhịp sống phố biển."
+            en: "Modern 27-storey architectural icon along Quy Nhon's coastal promenade, featuring an underground walkway straight onto the beach.",
+            vi: "Khách sạn 27 tầng biểu tượng ngay trung tâm đường biển Quy Nhơn, kết nối độc đáo với hầm ngầm ra thẳng bãi tắm và quầy bar tầng thượng ngoạn mục."
+        }
+    },
+    {
+        id: "anya-premier",
+        name: "Anya Premier Hotel Quy Nhon",
+        badge: { en: "5★ Modern Ocean Landmark", vi: "5★ Biểu Tượng Quảng Trường Biển" },
+        location: "44 An Duong Vuong & Le Duan, Quy Nhon",
+        rating: 4.7,
+        reviewsCount: 650,
+        priceMock: "$65 - $120",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
+        image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=800&q=80",
+        features: {
+            en: ["Rooftop Infinity Sunrise Pool", "Facing Nguyen Tat Thanh Central Square", "Cabana Pool Bar & Cheer Pub", "Full-Service Luxury Spa & Gym"],
+            vi: ["Hồ bơi vô cực ngắm bình minh trên mái", "Đối diện quảng trường Nguyễn Tất Thành", "Quầy bar Cabana & Cheer Pub sôi động", "Spa trị liệu & phòng gym hiện đại"]
+        },
+        description: {
+            en: "First 5-star hotel in downtown Quy Nhon situated at the central coastal square, blending Scandinavian elegance with local coastal warmth.",
+            vi: "Khách sạn 5 sao sang trọng ngay quảng trường trung tâm thành phố biển, thiết kế giao hòa giữa nét tối giản Bắc Âu và văn hóa duyên hải nồng hậu."
+        }
+    },
+    {
+        id: "avani-quynhon",
+        name: "Avani Quy Nhon Resort",
+        badge: { en: "4.5★ Cliffside Beach Sanctuary", vi: "4.5★ Thiên Đường Vịnh Biển Biệt Lập" },
+        location: "Bai Dai Beach, Ghenh Rang, Quy Nhon",
+        rating: 4.7,
+        reviewsCount: 510,
+        priceMock: "$120 - $210",
+        priceUnit: { en: "/ night", vi: "/ đêm" },
+        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+        features: {
+            en: ["100% Private Ocean-facing Balconies", "Secluded Soft Sand Beach Cove", "Open-air Cliffside Tre Restaurant", "Yoga & Meditation on the Shore"],
+            vi: ["100% phòng có ban công hướng đại dương", "Vịnh biển Bãi Dài hoang sơ êm đềm", "Nhà hàng Tre lãng mạn trên vách đá", "Lớp học Yoga & thiền định ven bờ sóng"]
+        },
+        description: {
+            en: "Charming tropical sanctuary inspired by ancient Champa architecture, boasting an idyllic private bay with calm emerald waves.",
+            vi: "Khu nghỉ dưỡng thanh bình mang hơi thở kiến trúc Champa cổ điển, ôm trọn bờ biển Bãi Dài riêng tư với bãi cát thoai thoải và sóng biển êm đềm."
         }
     }
 ];

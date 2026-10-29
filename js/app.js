@@ -1414,9 +1414,12 @@ const App = (function() {
         const msgDiv = document.createElement('div');
         msgDiv.className = `chat-msg msg-${sender}`;
 
-        const formattedHtml = text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n•/g, '<br>•')
+        const formattedHtml = (text || '')
+            .replace(/^###\s*(.*?)$/gm, '<strong>$1</strong>')
+            .replace(/^##\s*(.*?)$/gm, '<strong>$1</strong>')
+            .replace(/^\s*[*•-]\s+/gm, '• ')
+            .replace(/\*\*(.*?)\*\*/gs, '<strong>$1</strong>')
+            .replace(/\*\*/g, '')
             .replace(/\n\n/g, '<br><br>')
             .replace(/\n/g, '<br>');
 

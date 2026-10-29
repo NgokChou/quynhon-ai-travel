@@ -12,7 +12,7 @@ const ELEVENLABS_CONFIG = require('./js/elevenlabsConfig.js');
 
 loadDotEnv(path.join(__dirname, '.env'));
 
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 const MAX_TTS_TEXT_LENGTH = 2000;
 const ELEVENLABS_TTS_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
 
@@ -151,10 +151,10 @@ async function handleTextToSpeech(req, res) {
 async function callGeminiApi(apiKey, userMessage, lang, context) {
     const candidateModels = Array.from(new Set([
         process.env.GEMINI_MODEL,
+        'gemini-3-flash-preview',
         'gemini-2.5-flash',
-        'gemini-flash-latest',
-        'gemini-2.5-flash-lite'
-    ])).filter(m => m && m !== 'gemini-1.5-flash');
+        'gemini-flash-latest'
+    ])).filter(m => m && m !== 'gemini-1.5-flash' && m !== 'gemini-2.5-flash-lite');
 
     const systemInstruction = `You are the Quy Nhon AI Travel Concierge, a helpful and knowledgeable bilingual travel assistant for Quy Nhon, Binh Dinh, Vietnam.
 Current Trip Configuration:
@@ -168,12 +168,13 @@ Instructions:
 1. Respond strictly in ${lang === 'vi' ? 'Vietnamese' : 'English'}.
 2. Focus on practical Quy Nhon travel, transit, food (Bánh xèo tôm nhảy, Bún chả cá), attractions (Ky Co, Eo Gio, Cham towers), and trip advice.
 3. Distinguish confirmed facts from estimates. Avoid fabricating exact flight schedules or fares.
-4. Keep answer concise, well-structured with clear bullet points (under 180 words).`;
+4. Provide well-structured answers with clear bullet points, practical details, and complete explanations without cutting off mid-sentence.`;
 
     for (const model of candidateModels) {
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 6000);
+        const timeoutMs = model.includes('3.8') ? 3500 : 8000;
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
             const response = await fetch(endpoint, {
@@ -190,7 +191,8 @@ Instructions:
                     ],
                     generationConfig: {
                         temperature: 0.7,
-                        maxOutputTokens: 350
+                        maxOutputTokens: 2048,
+                        thinkingConfig: { thinkingBudget: 0 }
                     }
                 }),
                 signal: controller.signal
@@ -201,6 +203,7 @@ Instructions:
                 const data = await response.json();
                 const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (typeof replyText === 'string' && replyText.trim()) {
+                    console.log(`[Gemini AI] Trả lời thành công qua model: ${model}`);
                     return replyText.trim();
                 }
             } else {

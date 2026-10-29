@@ -149,8 +149,12 @@ async function handleTextToSpeech(req, res) {
 }
 
 async function callGeminiApi(apiKey, userMessage, lang, context) {
-    const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const candidateModels = Array.from(new Set([
+        process.env.GEMINI_MODEL,
+        'gemini-2.5-flash',
+        'gemini-flash-latest',
+        'gemini-2.5-flash-lite'
+    ])).filter(m => m && m !== 'gemini-1.5-flash');
 
     const systemInstruction = `You are the Quy Nhon AI Travel Concierge, a helpful and knowledgeable bilingual travel assistant for Quy Nhon, Binh Dinh, Vietnam.
 Current Trip Configuration:
@@ -166,44 +170,49 @@ Instructions:
 3. Distinguish confirmed facts from estimates. Avoid fabricating exact flight schedules or fares.
 4. Keep answer concise, well-structured with clear bullet points (under 180 words).`;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    for (const model of candidateModels) {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 6000);
 
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            { text: `${systemInstruction}\n\nUser Question: ${userMessage}` }
-                        ]
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [
+                                { text: `${systemInstruction}\n\nUser Question: ${userMessage}` }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 350
                     }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 350
+                }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeout);
+            if (response.ok) {
+                const data = await response.json();
+                const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (typeof replyText === 'string' && replyText.trim()) {
+                    return replyText.trim();
                 }
-            }),
-            signal: controller.signal
-        });
-
-        clearTimeout(timeout);
-        if (!response.ok) {
-            console.warn(`[Gemini API] Returned status ${response.status}`);
-            return null;
+            } else {
+                console.warn(`[Gemini API] Model ${model} returned status ${response.status}`);
+            }
+        } catch (err) {
+            clearTimeout(timeout);
+            console.warn(`[Gemini API] Model ${model} failed or timed out: ${err.message}`);
         }
-
-        const data = await response.json();
-        const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        return typeof replyText === 'string' && replyText.trim() ? replyText.trim() : null;
-    } catch (err) {
-        clearTimeout(timeout);
-        console.warn(`[Gemini API] Failed or timed out: ${err.message}`);
-        return null;
     }
+
+    return null;
 }
 
 function generateLocalKnowledgeReply(message, lang, context) {

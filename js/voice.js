@@ -1,7 +1,10 @@
 /**
  * Quy Nhon AI Travel Assistant - Voice Module
- * Hỗ trợ song ngữ Tiếng Anh (Web Speech API) và Tiếng Việt (Web Speech API + Smart Audio Fallback)
- * Đảm bảo 100% đọc được trơn tru cả Tiếng Việt và Tiếng Anh trên mọi hệ điều hành/trình duyệt.
+ * Kết hợp đa tầng âm thanh:
+ * 1. Ưu tiên: ElevenLabs AI Voice qua backend proxy /api/tts (giọng đọc AI cao cấp, bảo mật API key)
+ * 2. Dự phòng 1: Web Speech API tích hợp sẵn trên trình duyệt (cho cả Tiếng Anh và Tiếng Việt)
+ * 3. Dự phòng 2: Audio Stream chất lượng cao (Google Natural TTS fallback cho Tiếng Việt)
+ * Đảm bảo 100% người dùng luôn nghe được âm thanh mượt mà trên mọi trình duyệt/thiết bị.
  */
 
 const VoiceController = (function() {
@@ -11,6 +14,8 @@ const VoiceController = (function() {
     let currentUtterance = null;
     let currentAudio = null;
     let audioQueue = [];
+    const audioCache = new Map();
+    let currentSessionToken = 0;
 
     function init() {
         if ('speechSynthesis' in window) {
@@ -46,14 +51,55 @@ const VoiceController = (function() {
     }
 
     /**
-     * Phát âm thanh Tiếng Việt qua Audio Stream chất lượng cao (Google Natural TTS - Miễn phí, không cần API key)
+     * Gọi backend /api/tts để lấy âm thanh ElevenLabs (đã lưu cache)
      */
-    function speakVietnameseAudioFallback(text, onStartCallback, onEndCallback, onErrorCallback) {
-        stop();
+    async function fetchElevenLabsAudio(text, lang) {
+        const cacheKey = `${lang}:${text}`;
+        if (audioCache.has(cacheKey)) {
+            return audioCache.get(cacheKey);
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+        try {
+            const response = await fetch('/api/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, language: lang }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                let errorMsg = 'ElevenLabs API call failed';
+                try {
+                    const data = await response.json();
+                    if (data && data.error) errorMsg = data.error;
+                } catch (_) {}
+                throw new Error(errorMsg);
+            }
+
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            audioCache.set(cacheKey, blobUrl);
+            return blobUrl;
+        } catch (err) {
+            clearTimeout(timeoutId);
+            throw err;
+        }
+    }
+
+    /**
+     * Phát âm thanh Tiếng Việt qua Audio Stream dự phòng (Google Natural TTS - Miễn phí, không cần API key)
+     */
+    function speakVietnameseAudioFallback(text, sessionToken, onStartCallback, onEndCallback, onErrorCallback) {
+        if (sessionToken !== currentSessionToken) return;
+
         isSpeaking = true;
         if (onStartCallback) onStartCallback();
 
-        // Tách câu để mỗi URL không vượt quá giới hạn ký tự
         const sentences = text
             .split(/([.!?]+)/)
             .filter(Boolean)
@@ -69,7 +115,7 @@ const VoiceController = (function() {
         audioQueue = sentences.length > 0 ? sentences : [text];
 
         function playNextSentence() {
-            if (!isSpeaking) return;
+            if (sessionToken !== currentSessionToken || !isSpeaking) return;
 
             if (audioQueue.length === 0) {
                 isSpeaking = false;
@@ -89,63 +135,65 @@ const VoiceController = (function() {
             };
 
             currentAudio.onerror = function(err) {
-                console.warn("Audio stream playback failed, continuing...", err);
+                console.warn("[VoiceController] Fallback sentence error, skipping:", err);
                 playNextSentence();
             };
 
             currentAudio.play().catch(err => {
-                console.warn("Audio play prevented:", err);
-                isSpeaking = false;
-                currentAudio = null;
-                if (onErrorCallback) onErrorCallback(err);
+                console.warn("[VoiceController] Audio play prevented:", err);
+                if (sessionToken === currentSessionToken) {
+                    isSpeaking = false;
+                    currentAudio = null;
+                    if (onErrorCallback) onErrorCallback(err);
+                }
             });
         }
 
         playNextSentence();
     }
 
-    function speak(text, lang = 'en', onStartCallback, onEndCallback, onErrorCallback) {
-        // Dừng mọi âm thanh đang phát
-        stop();
-
-        if (!text || text.trim() === '') return;
+    /**
+     * Phát âm qua Web Speech API (trình duyệt)
+     */
+    function speakWithBrowserSpeech(text, lang, sessionToken, onStartCallback, onEndCallback, onErrorCallback) {
+        if (sessionToken !== currentSessionToken) return;
 
         const isVietnamese = lang.toLowerCase().startsWith('vi');
 
-        // Nếu là Tiếng Việt: Kiểm tra xem trình duyệt có sẵn giọng Tiếng Việt tự nhiên không
         if (isVietnamese) {
             const viVoice = findVietnameseVoice();
-
             if (viVoice && synth) {
-                // Trình duyệt có voice Tiếng Việt (như Edge Hoài My / Chrome Google Tiếng Việt)
                 currentUtterance = new SpeechSynthesisUtterance(text);
                 currentUtterance.voice = viVoice;
                 currentUtterance.lang = viVoice.lang || 'vi-VN';
                 currentUtterance.rate = 0.95;
 
                 currentUtterance.onstart = function() {
+                    if (sessionToken !== currentSessionToken) return;
                     isSpeaking = true;
                     if (onStartCallback) onStartCallback();
                 };
                 currentUtterance.onend = function() {
+                    if (sessionToken !== currentSessionToken) return;
                     isSpeaking = false;
                     currentUtterance = null;
                     if (onEndCallback) onEndCallback();
                 };
-                currentUtterance.onerror = function() {
-                    // Nếu Web Speech API lỗi, tự động chuyển sang Audio Fallback
-                    speakVietnameseAudioFallback(text, onStartCallback, onEndCallback, onErrorCallback);
+                currentUtterance.onerror = function(e) {
+                    if (sessionToken !== currentSessionToken) return;
+                    console.warn("[VoiceController] Web Speech VI error, switching to Audio Stream Fallback:", e);
+                    speakVietnameseAudioFallback(text, sessionToken, onStartCallback, onEndCallback, onErrorCallback);
                 };
 
                 synth.speak(currentUtterance);
-            } else {
-                // Nếu trình duyệt chưa có gói giọng Tiếng Việt, dùng trực tiếp Audio Fallback chuẩn giọng Việt
-                speakVietnameseAudioFallback(text, onStartCallback, onEndCallback, onErrorCallback);
+                return;
             }
+
+            speakVietnameseAudioFallback(text, sessionToken, onStartCallback, onEndCallback, onErrorCallback);
             return;
         }
 
-        // Nếu là Tiếng Anh: Sử dụng Web Speech API chuẩn
+        // Tiếng Anh
         if (!synth) {
             if (onErrorCallback) onErrorCallback("Speech synthesis not supported");
             return;
@@ -164,37 +212,96 @@ const VoiceController = (function() {
         currentUtterance.pitch = 1.0;
 
         currentUtterance.onstart = function() {
+            if (sessionToken !== currentSessionToken) return;
             isSpeaking = true;
             if (onStartCallback) onStartCallback();
         };
 
         currentUtterance.onend = function() {
+            if (sessionToken !== currentSessionToken) return;
             isSpeaking = false;
             currentUtterance = null;
             if (onEndCallback) onEndCallback();
         };
 
         currentUtterance.onerror = function(event) {
+            if (sessionToken !== currentSessionToken) return;
             isSpeaking = false;
             currentUtterance = null;
-            console.error("SpeechSynthesis error:", event);
+            console.error("[VoiceController] SpeechSynthesis error:", event);
             if (onErrorCallback) onErrorCallback(event);
         };
 
         synth.speak(currentUtterance);
     }
 
+    /**
+     * Phương thức phát chính: Tự động thử ElevenLabs trước, nếu lỗi chuyển sang Browser Fallback
+     */
+    async function speak(text, lang = 'en', onStartCallback, onEndCallback, onErrorCallback, onLoadingCallback) {
+        stop();
+
+        if (!text || text.trim() === '') return;
+
+        const sessionToken = ++currentSessionToken;
+        const normalizedLang = lang.toLowerCase().startsWith('vi') ? 'vi' : 'en';
+
+        if (onLoadingCallback) onLoadingCallback();
+
+        // 1. Thử phát bằng ElevenLabs qua backend proxy
+        try {
+            const audioUrl = await fetchElevenLabsAudio(text, normalizedLang);
+
+            if (sessionToken !== currentSessionToken) return;
+
+            currentAudio = new Audio(audioUrl);
+            currentAudio.preload = 'auto';
+
+            currentAudio.onplay = function() {
+                if (sessionToken !== currentSessionToken) return;
+                isSpeaking = true;
+                if (onStartCallback) onStartCallback();
+            };
+
+            currentAudio.onended = function() {
+                if (sessionToken !== currentSessionToken) return;
+                isSpeaking = false;
+                currentAudio = null;
+                if (onEndCallback) onEndCallback();
+            };
+
+            currentAudio.onerror = function(err) {
+                if (sessionToken !== currentSessionToken) return;
+                console.warn("[VoiceController] ElevenLabs audio playback error, falling back:", err);
+                currentAudio = null;
+                speakWithBrowserSpeech(text, normalizedLang, sessionToken, onStartCallback, onEndCallback, onErrorCallback);
+            };
+
+            await currentAudio.play();
+            return;
+        } catch (error) {
+            if (sessionToken !== currentSessionToken) return;
+            // ElevenLabs chưa cấu hình hoặc lỗi quota/mạng -> chuyển êm sang Browser Voice Fallback
+            console.info("[VoiceController] ElevenLabs voice service unavailable (" + (error.message || 'offline') + "). Using native voice engine fallback.");
+            speakWithBrowserSpeech(text, normalizedLang, sessionToken, onStartCallback, onEndCallback, onErrorCallback);
+        }
+    }
+
     function stop() {
+        currentSessionToken++;
+
         // Dừng Web Speech API
         if (synth && synth.speaking) {
             synth.cancel();
         }
-        // Dừng Audio Fallback
+
+        // Dừng Audio stream / ElevenLabs Audio
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
             currentAudio = null;
         }
+
         audioQueue = [];
         isSpeaking = false;
         currentUtterance = null;

@@ -38,14 +38,20 @@
             </a>
 
             <ul class="nav-center-menu">
-    <li><a href="#planner-section" data-i18n="navPlanner">AI Planner</a></li>
-    <li><a href="#map-section" data-i18n="navMap">World Route</a></li>
-    <li><a href="#itinerary-section">My Journey</a></li>
-    <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
-    <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
-</ul>
+                <li><a href="#planner-section" data-i18n="navPlanner">AI Planner</a></li>
+                <li><a href="#map-section" data-i18n="navMap">World Route</a></li>
+                <li><a href="#itinerary-section">My Journey</a></li>
+                <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
+                <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
+            </ul>
 
             <div class="nav-actions">
+                <div id="nav-weather-pill" class="nav-weather-pill" title="Live Quy Nhon Weather">
+                    <span id="nav-weather-icon"><i class="fa-solid fa-cloud-sun"></i></span>
+                    <span id="nav-weather-temp">28°C</span>
+                    <span id="nav-weather-badge" class="weather-source-dot live" title="Live Open-Meteo"></span>
+                </div>
+
                 <div class="proto-pill">
                     <span class="pulse-dot"></span>
                     <span data-i18n="protoBadge">Interactive Prototype Demo</span>
@@ -115,6 +121,45 @@
     <section id="planner-section" class="planner-section">
         <div class="container">
             <div class="glass-card planner-card-inner">
+
+                <!-- Feature 2: Live Weather & Seasonal Intelligence Widget -->
+                <div id="quynhon-weather-widget" class="weather-advisor-card">
+                    <div class="weather-widget-header">
+                        <div class="weather-widget-title">
+                            <i class="fa-solid fa-cloud-sun-rain"></i>
+                            <span data-i18n="weatherWidgetTitle">Quy Nhon Live Weather & Seasonal Intelligence</span>
+                        </div>
+                        <div id="weather-data-status" class="weather-data-status live">
+                            <span class="status-pulse-dot"></span>
+                            <span id="weather-status-label" data-i18n="weatherLiveStatus">Live Open-Meteo Data</span>
+                        </div>
+                    </div>
+                    <div class="weather-widget-body">
+                        <div class="weather-metrics-col">
+                            <div class="weather-current-temp">
+                                <span id="weather-main-icon" class="weather-icon"><i class="fa-solid fa-sun"></i></span>
+                                <span id="weather-temp-val" class="temp-val">28°C</span>
+                            </div>
+                            <div class="weather-details-row">
+                                <span class="weather-detail-item">
+                                    <i class="fa-solid fa-wind"></i> <span data-i18n="weatherWind">Wind</span>: <strong id="weather-wind-val">12 km/h</strong>
+                                </span>
+                                <span class="weather-detail-item">
+                                    <i class="fa-solid fa-droplet"></i> <span data-i18n="weatherHumidity">Humidity</span>: <strong id="weather-humidity-val">78%</strong>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="weather-tip-col">
+                            <div class="seasonal-tip-badge">
+                                <i class="fa-solid fa-compass"></i> <span data-i18n="weatherSeasonalTip">Seasonal Advice</span>
+                            </div>
+                            <p id="weather-seasonal-tip" class="seasonal-tip-text">
+                                Quy Nhon coastal conditions loading...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="planner-header-group">
                     <h3 class="section-title" data-i18n="plannerTitle">AI Journey Planner</h3>
                     <p class="section-subtitle" data-i18n="plannerSubtitle">Select your departure country and let AI calculate the optimal multi-stage route to Quy Nhon.</p>
@@ -136,75 +181,74 @@
                             </div>
                         </div>
 
+                        <!-- Budget -->
+                        <div class="form-group" id="budget-form-group">
+                            <label for="budget-select">
+                                <i class="fa-solid fa-wallet"></i>
+                                <span data-i18n="labelBudget">Travel Budget</span>
+                            </label>
+                            <div class="input-icon-box">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                                <select id="budget-select" class="custom-select">
+                                    <option value="1000">$1,000</option>
+                                    <option value="1500">$1,500</option>
+                                    <option value="2000" selected>$2,000</option>
+                                    <option value="2500">$2,500</option>
+                                    <option value="3000">$3,000</option>
+                                    <option value="4000">$4,000</option>
+                                    <option value="5000">$5,000</option>
+                                    <option value="custom">Custom Budget</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Budget Input -->
+                            <div id="custom-budget-container" class="custom-budget-container" style="display: none; margin-top: 0.5rem;">
+                                <div class="input-icon-box">
+                                    <i class="fa-solid fa-pen"></i>
+                                    <input
+                                        type="number"
+                                        id="custom-budget-input"
+                                        class="custom-input"
+                                        placeholder="Enter your budget"
+                                        min="1"
+                                        step="1"
+                                    />
+                                    <span class="currency-label" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.8rem;">USD</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Language -->
                         <div class="form-group">
                             <label for="form-lang-select">
-
-                               <!-- Budget -->
-<div class="form-group" id="budget-form-group" style="display: none;">
-    <label for="budget-select">
-        <i class="fa-solid fa-wallet"></i>
-        <span>Travel Budget</span>
-    </label>
-
-    <div class="input-icon-box">
-        <i class="fa-solid fa-dollar-sign"></i>
-
-        <select id="budget-select" class="custom-select">
-            <option value="1000">$1,000</option>
-            <option value="1500">$1,500</option>
-            <option value="2000" selected>$2,000</option>
-            <option value="2500">$2,500</option>
-            <option value="3000">$3,000</option>
-            <option value="4000">$4,000</option>
-            <option value="5000">$5,000</option>
-            <option value="custom">Custom Budget</option>
-        </select>
-    </div>
-
-    <!-- Custom Budget Input -->
-    <div
-        id="custom-budget-container"
-        class="custom-budget-container"
-        style="display: none;"
-    >
-        <div class="input-icon-box">
-            <i class="fa-solid fa-pen"></i>
-
-            <input
-                type="number"
-                id="custom-budget-input"
-                class="custom-input"
-                placeholder="Enter your budget"
-                min="1"
-                step="0.1"
-            />
-
-            <span class="currency-label">USD</span>
-        </div>
-    </div>
-</div>
                                 <i class="fa-solid fa-language"></i>
                                 <span data-i18n="labelLanguage">Assistant Language</span>
                             </label>
                             <div class="input-icon-box">
                                 <i class="fa-solid fa-comment-dots"></i>
-                                <select id="form-lang-select" class="custom-select" onchange="App.init ? document.getElementById('app-lang-select').value = this.value, document.getElementById('app-lang-select').dispatchEvent(new Event('change')) : null">
+                                <select id="form-lang-select" class="custom-select">
                                     <option value="en">English (US/UK)</option>
                                     <option value="vi">Tiếng Việt</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Destination (Fixed to Quy Nhon) -->
+                        <!-- Destination (Interactive & Expandable) -->
                         <div class="form-group">
-                            <label>
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span data-i18n="labelDestination">Destination</span>
-                            </label>
+                            <div class="dest-label-row">
+                                <label for="destination-select">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span data-i18n="labelDestination">Destination</span>
+                                </label>
+                                <button type="button" id="btn-explore-destination" class="btn-dest-explore-inline" title="Xem môi trường, cảnh quan và đánh giá">
+                                    <i class="fa-solid fa-leaf"></i> <span data-i18n="btnViewDestInsights">Xem Môi Trường & Cảnh Quan</span>
+                                </button>
+                            </div>
                             <div class="input-icon-box">
                                 <i class="fa-solid fa-umbrella-beach"></i>
-                                <input type="text" class="custom-input" value="Quy Nhon, Binh Dinh (Vietnam)" readonly disabled />
+                                <select id="destination-select" class="custom-select">
+                                    <option value="quynhon" selected>Quy Nhon, Binh Dinh (Vietnam)</option>
+                                </select>
                             </div>
                         </div>
 
@@ -213,6 +257,11 @@
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                             <span data-i18n="btnPlan">Generate AI Journey Plan</span>
                         </button>
+                    </div>
+
+                    <!-- Feature 1C: Dynamic Budget Allocation Bar -->
+                    <div id="budget-allocation-container" class="budget-allocation-card">
+                        <!-- Populated dynamically via App.renderBudgetAllocation() -->
                     </div>
                 </form>
             </div>
@@ -403,6 +452,14 @@
                     <span>Generate My 3-Day Journey</span>
                 </button>
 
+                <button
+                    type="button"
+                    id="btn-open-trip-pass"
+                    class="btn-trip-pass"
+                >
+                    <i class="fa-solid fa-ticket"></i>
+                    <span data-i18n="btnGetTripPass">Get Digital Trip Pass</span>
+                </button>
             </div>
 
         </div>
@@ -604,6 +661,20 @@
     </main>
 
     <!-- ===================================================================
+         5.5 Destination Insights Modal (Environment, Landscape & Ratings)
+         =================================================================== -->
+    <div id="destination-detail-modal" class="modal-overlay hidden">
+        <div class="modal-box modal-box-large">
+            <button id="dest-modal-close-btn" class="modal-close-btn" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="dest-modal-body-content">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
          5. Hotel Modal Preview
          =================================================================== -->
     <div id="hotel-detail-modal" class="modal-overlay hidden">
@@ -618,6 +689,74 @@
     </div>
 
     <!-- ===================================================================
+         5.6 Digital Trip Pass Modal (Feature 4)
+         =================================================================== -->
+    <div id="trip-pass-modal" class="modal-overlay hidden">
+        <div class="modal-box modal-box-trip-pass">
+            <button id="trip-pass-close-btn" class="modal-close-btn" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="trip-pass-modal-content">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         5.7 Floating AI Travel Concierge (Feature 3)
+         =================================================================== -->
+    <div id="ai-concierge-container" class="ai-concierge-container">
+        <button id="ai-concierge-toggle" class="ai-concierge-toggle" aria-label="Open AI Concierge Chat">
+            <div class="concierge-avatar-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <span class="concierge-toggle-label" data-i18n="chatOpenBtn">AI Concierge</span>
+            <span class="concierge-status-dot"></span>
+        </button>
+
+        <div id="ai-concierge-drawer" class="ai-concierge-drawer hidden">
+            <div class="concierge-drawer-header">
+                <div class="concierge-header-identity">
+                    <div class="concierge-header-icon">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+                    <div>
+                        <h4 data-i18n="chatDrawerTitle">Quy Nhon AI Concierge</h4>
+                        <p data-i18n="chatDrawerSubtitle">Ask anything about transit, dining, culture & hidden gems</p>
+                    </div>
+                </div>
+                <button id="concierge-close-btn" class="concierge-close-btn" aria-label="Close Chat">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Quick Prompt Chips -->
+            <div class="concierge-quick-chips">
+                <button type="button" class="quick-chip" data-prompt="rainy"><span data-i18n="chatQuickPrompt1">☔ Rainy-day backup plan</span></button>
+                <button type="button" class="quick-chip" data-prompt="airport"><span data-i18n="chatQuickPrompt2">✈️ Phu Cat Airport to Quy Nhon</span></button>
+                <button type="button" class="quick-chip" data-prompt="food"><span data-i18n="chatQuickPrompt3">🍲 Must-try local dishes</span></button>
+                <button type="button" class="quick-chip" data-prompt="budget"><span data-i18n="chatQuickPrompt4">💰 Optimize my budget</span></button>
+            </div>
+
+            <!-- Chat Messages List -->
+            <div id="concierge-messages-list" class="concierge-messages-list">
+                <!-- Injected via app.js -->
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="concierge-input-form" class="concierge-input-form">
+                <input type="text" id="concierge-input-text" class="concierge-input-text" placeholder="Ask about transit, beaches, food..." autocomplete="off" />
+                <button type="submit" id="concierge-submit-btn" class="concierge-submit-btn" aria-label="Send message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Toast Notifications -->
+    <div id="app-toast-container" class="app-toast-container"></div>
+
+    <!-- ===================================================================
          6. Footer
          =================================================================== -->
     <footer class="site-footer">
@@ -629,7 +768,7 @@
                     </div>
                     <div>
                         <strong style="color: var(--text-main);">Quy Nhon AI Travel Assistant</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-dim);">Pitching Prototype Edition</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Smart Multi-Modal Travel Edition</div>
                     </div>
                 </div>
                 <div>
@@ -643,35 +782,6 @@
     </footer>
 
     <!-- ===================================================================
-         Conversational AI Voice Orb (Interactive Pitching Widget)
-         =================================================================== -->
-    <aside class="ai-voice-orb-widget">
-        <!-- Floating Subtitle Bubble -->
-        <div id="ai-orb-bubble" class="orb-speech-bubble hidden">
-            <div class="orb-bubble-header">
-                <span class="orb-bubble-title">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>AI Pitch Communicator</span>
-                </span>
-                <button type="button" id="btn-close-orb-bubble" class="orb-bubble-close" aria-label="Close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div id="orb-bubble-text" class="orb-bubble-text"></div>
-        </div>
-
-        <!-- Interactive Vibrating Orb Button -->
-        <div class="orb-button-container">
-            <button type="button" id="btn-ai-orb" class="ai-orb-button" title="Nhấn để AI nói kịch bản video (Click to Speak / Stop)" aria-label="Toggle AI Pitch Voice">
-                <i id="ai-orb-icon" class="fa-solid fa-microphone-lines"></i>
-            </button>
-            <div class="orb-ripple orb-ripple-1"></div>
-            <div class="orb-ripple orb-ripple-2"></div>
-            <div class="orb-ripple orb-ripple-3"></div>
-            <span class="orb-label-badge" id="orb-status-badge">AI Pitch</span>
-        </div>
-    </aside>
-
-    <!-- ===================================================================
          7. Scripts (Modular Architecture)
          =================================================================== -->
     <!-- Leaflet.js CDN -->
@@ -679,7 +789,6 @@
     
     <!-- Application Modules -->
     <script src="js/mockData.js"></script>
-    <script src="js/pitchScript.js"></script>
     <script src="js/translations.js"></script>
     <script src="js/voice.js"></script>
     <script src="js/map.js"></script>

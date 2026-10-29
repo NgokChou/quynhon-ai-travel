@@ -1083,231 +1083,7 @@
     }
 }
 
-/* ===================================================================
-   7. Conversational AI Voice Orb (Pitching Feature)
-   =================================================================== */
-.ai-voice-orb-widget {
-    position: fixed;
-    bottom: 2rem;
-    right: 2.2rem;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    pointer-events: none;
-}
 
-/* Speech Subtitle Bubble */
-.orb-speech-bubble {
-    pointer-events: auto;
-    max-width: 340px;
-    background: rgba(14, 23, 42, 0.94);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    border-radius: var(--radius-md);
-    padding: 0.85rem 1.15rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.2);
-    color: #f1f5f9;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    position: relative;
-    transform-origin: bottom right;
-    animation: bubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    transition: var(--transition);
-}
-
-.orb-speech-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    right: 32px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid rgba(14, 23, 42, 0.94);
-}
-
-.orb-bubble-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.35rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.orb-bubble-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary-light);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.orb-bubble-close {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    cursor: pointer;
-    font-size: 0.8rem;
-    padding: 2px 4px;
-}
-
-.orb-bubble-close:hover {
-    color: white;
-}
-
-.orb-bubble-text {
-    color: #e2e8f0;
-    font-size: 0.85rem;
-    max-height: 140px;
-    overflow-y: auto;
-}
-
-/* Orb Button & Ripple Rings */
-.orb-button-container {
-    position: relative;
-    width: 78px;
-    height: 78px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-}
-
-.ai-orb-button {
-    position: relative;
-    width: 66px;
-    height: 66px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background: radial-gradient(circle at 35% 35%, #7dd3fc 0%, #0284c7 45%, #8b5cf6 85%, #0369a1 100%);
-    box-shadow: 
-        0 0 25px rgba(56, 189, 248, 0.6),
-        0 8px 25px rgba(0, 0, 0, 0.6),
-        inset 0 0 14px rgba(255, 255, 255, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.4rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    z-index: 5;
-    outline: none;
-}
-
-.ai-orb-button:hover {
-    transform: scale(1.08);
-    box-shadow: 
-        0 0 35px rgba(56, 189, 248, 0.8),
-        0 10px 30px rgba(0, 0, 0, 0.7),
-        inset 0 0 18px rgba(255, 255, 255, 0.8);
-}
-
-/* Idle State: Nhịp thở nhẹ nhàng */
-.ai-orb-button:not(.is-speaking) {
-    animation: orbBreath 3.5s infinite ease-in-out;
-}
-
-@keyframes orbBreath {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 22px rgba(56, 189, 248, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.5); }
-    50% { transform: scale(1.04); box-shadow: 0 0 32px rgba(139, 92, 246, 0.6), inset 0 0 16px rgba(255, 255, 255, 0.7); }
-}
-
-/* Speaking State: Quả bóng rung rung & biến dạng chất lỏng sinh động như Siri / Gemini Live */
-.ai-orb-button.is-speaking {
-    animation: orbVibrate 0.8s infinite alternate ease-in-out, orbGradientShift 2.5s infinite linear;
-    box-shadow: 
-        0 0 45px rgba(56, 189, 248, 0.9),
-        0 0 25px rgba(139, 92, 246, 0.8),
-        inset 0 0 20px rgba(255, 255, 255, 0.9);
-}
-
-@keyframes orbVibrate {
-    0% {
-        transform: scale(1.02) translate(0, 0);
-        border-radius: 46% 54% 60% 40% / 50% 45% 55% 50%;
-    }
-    33% {
-        transform: scale(1.14) translate(-2px, 3px);
-        border-radius: 58% 42% 48% 52% / 44% 56% 44% 56%;
-    }
-    66% {
-        transform: scale(1.08) translate(3px, -2px);
-        border-radius: 42% 58% 65% 35% / 55% 40% 60% 45%;
-    }
-    100% {
-        transform: scale(1.16) translate(-1px, -3px);
-        border-radius: 54% 46% 38% 62% / 40% 60% 40% 60%;
-    }
-}
-
-@keyframes orbGradientShift {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-
-/* Sound Wave Ripple Rings */
-.orb-ripple {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 66px;
-    height: 66px;
-    border-radius: 50%;
-    border: 2px solid rgba(56, 189, 248, 0.6);
-    pointer-events: none;
-    opacity: 0;
-    z-index: 1;
-}
-
-.ai-orb-button.is-speaking ~ .orb-ripple-1 {
-    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
-    animation-delay: 0s;
-}
-
-.ai-orb-button.is-speaking ~ .orb-ripple-2 {
-    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
-    animation-delay: 0.6s;
-}
-
-.ai-orb-button.is-speaking ~ .orb-ripple-3 {
-    animation: rippleWave 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
-    animation-delay: 1.2s;
-}
-
-@keyframes rippleWave {
-    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; border-color: rgba(56, 189, 248, 0.8); }
-    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; border-color: rgba(139, 92, 246, 0.1); }
-}
-
-/* Micro Tooltip beneath orb */
-.orb-label-badge {
-    position: absolute;
-    bottom: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid var(--border-color);
-    color: var(--primary-light);
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-full);
-    white-space: nowrap;
-    letter-spacing: 0.04em;
-    pointer-events: none;
-}
-
-@keyframes bubblePop {
-    from { opacity: 0; transform: scale(0.9) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
 
 /* ===================================================================
    8. AI ROUTE OPTIONS
@@ -1321,12 +1097,84 @@
     margin-bottom: 1.5rem;
     transition: var(--transition);
     overflow: hidden;
+    cursor: pointer;
+    position: relative;
 }
 
 .route-option-card:hover {
-    border-color: var(--border-highlight);
+    border-color: rgba(56, 189, 248, 0.5);
     background: var(--bg-card-hover);
     transform: translateY(-2px);
+}
+
+.route-option-card.is-active {
+    border-color: #38bdf8;
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.25), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.route-option-card.is-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #34d399);
+}
+
+.route-active-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    margin-bottom: 0.4rem;
+}
+
+.data-source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+.data-source-tag.verified {
+    background: rgba(16, 185, 129, 0.12);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.data-source-tag.simulated {
+    background: rgba(148, 163, 184, 0.12);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.route-duration-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    background: rgba(14, 165, 233, 0.1);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    margin-top: 0.35rem;
 }
 
 /* Route Header */
@@ -2130,5 +1978,1390 @@
 
     .itinerary-day-card {
         width: 100%;
+    }
+}
+
+
+/* ===================================================================
+   9. Destination Insights (Environment, Landscape & Ratings)
+   =================================================================== */
+
+.dest-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+}
+
+.btn-dest-explore-inline {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: var(--transition);
+}
+
+.btn-dest-explore-inline:hover {
+    background: rgba(16, 185, 129, 0.22);
+    color: #6ee7b7;
+    border-color: rgba(16, 185, 129, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Destination Modal Sizing */
+.modal-box-large {
+    max-width: 860px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-dest-header {
+    position: relative;
+    height: 220px;
+    flex-shrink: 0;
+}
+
+.modal-dest-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-dest-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.25rem 1.75rem;
+    background: linear-gradient(to top, #0f172a 35%, transparent 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.modal-dest-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.badge-clean-city {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.badge-rating-top {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.modal-dest-overlay h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+}
+
+.modal-dest-overlay p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0.15rem 0 0 0;
+}
+
+/* Modal Navigation Tabs */
+.dest-modal-tabs {
+    display: flex;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.5rem 1.75rem 0;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.dest-modal-tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.dest-modal-tab:hover {
+    color: var(--text-main);
+}
+
+.dest-modal-tab.active {
+    color: #38bdf8;
+    border-bottom-color: #38bdf8;
+}
+
+.dest-tab-content-area {
+    padding: 1.5rem 1.75rem 2rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* Tab 1: Environment Grid */
+.dest-env-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.env-metric-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.env-metric-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+}
+
+.env-metric-icon {
+    font-size: 1.4rem;
+    color: #38bdf8;
+    margin-bottom: 0.4rem;
+}
+
+.env-metric-val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: white;
+}
+
+.env-metric-label {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 0.2rem;
+}
+
+.env-metric-status {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-full);
+    display: inline-block;
+    margin-top: 0.4rem;
+}
+
+.dest-env-details-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.dest-env-details-box h4 {
+    color: #38bdf8;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dest-env-details-box p {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Tab 2: Landscapes Grid */
+.dest-landscapes-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.landscape-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.landscape-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+}
+
+.landscape-img-box {
+    position: relative;
+    height: 140px;
+}
+
+.landscape-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.landscape-tag-pill {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #38bdf8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-full);
+}
+
+.landscape-body {
+    padding: 0.9rem 1rem;
+}
+
+.landscape-body h4 {
+    color: white;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+
+.landscape-body p {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Tab 3: Ratings & Reviews */
+.dest-ratings-overview {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 1.5rem;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.rating-score-large {
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding-right: 1.25rem;
+}
+
+.score-num {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #fbbf24;
+    line-height: 1;
+}
+
+.score-stars {
+    color: #fbbf24;
+    font-size: 0.95rem;
+    margin: 0.35rem 0 0.2rem;
+}
+
+.score-reviews-count {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.criteria-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.criteria-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.criteria-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #e2e8f0;
+}
+
+.criteria-bar-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.criteria-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #34d399);
+    border-radius: 3px;
+}
+
+.traveler-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.traveler-review-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+}
+
+.review-user-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.review-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.review-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.review-user-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+}
+
+.review-user-country {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+}
+
+.review-stars {
+    color: #fbbf24;
+    font-size: 0.75rem;
+}
+
+.review-comment {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Map popup explore button */
+.btn-popup-explore {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #34d399;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-popup-explore:hover {
+    background: rgba(16, 185, 129, 0.35);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .dest-env-metrics {
+        grid-template-columns: 1fr 1fr;
+    }
+    .dest-landscapes-list {
+        grid-template-columns: 1fr;
+    }
+    .dest-ratings-overview {
+        grid-template-columns: 1fr;
+    }
+    .rating-score-large {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-right: 0;
+        padding-bottom: 1rem;
+    }
+}
+
+/* ===================================================================
+   FEATURE UPGRADES: WEATHER, BUDGET BAR, AI CONCIERGE & TRIP PASS
+   =================================================================== */
+
+/* -------------------------------------------------------------
+   1. Nav Weather Pill & Live Status
+   ------------------------------------------------------------- */
+.nav-weather-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    backdrop-filter: blur(8px);
+    transition: var(--transition);
+}
+.nav-weather-pill:hover {
+    border-color: rgba(56, 189, 248, 0.6);
+    background: rgba(15, 23, 42, 0.95);
+}
+.weather-source-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.weather-source-dot.live {
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+.weather-source-dot.sample {
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+}
+
+/* -------------------------------------------------------------
+   2. Weather & Seasonal Advisor Widget Card
+   ------------------------------------------------------------- */
+.weather-advisor-card {
+    background: linear-gradient(135deg, rgba(14, 23, 42, 0.92), rgba(15, 30, 54, 0.85));
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-md);
+    padding: 1.15rem 1.35rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+.weather-advisor-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #38bdf8, #10b981, #f59e0b);
+}
+.weather-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+}
+.weather-widget-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.weather-widget-title i {
+    color: #38bdf8;
+}
+.weather-data-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-full);
+}
+.weather-data-status.live {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.weather-data-status.sample {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: statusBlink 2s infinite;
+}
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+.weather-widget-body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: center;
+}
+.weather-metrics-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding-right: 1.5rem;
+}
+.weather-current-temp {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.weather-icon {
+    font-size: 1.8rem;
+    color: #f59e0b;
+}
+.temp-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+}
+.weather-details-row {
+    display: flex;
+    gap: 0.85rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+.weather-detail-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.weather-tip-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.seasonal-tip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #38bdf8;
+}
+.seasonal-tip-text {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* -------------------------------------------------------------
+   3. Dynamic Budget Allocation Stacked Bar
+   ------------------------------------------------------------- */
+.budget-allocation-card {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    border-radius: var(--radius-md);
+    padding: 1.15rem 1.35rem;
+    margin-top: 1.5rem;
+    backdrop-filter: blur(8px);
+}
+.budget-alloc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+.budget-alloc-title-group h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+.budget-alloc-title-group h4 i {
+    color: #10b981;
+}
+.budget-alloc-title-group p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+.budget-total-pill {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #38bdf8;
+    white-space: nowrap;
+}
+.budget-bar-track {
+    height: 14px;
+    background: rgba(30, 41, 59, 0.8);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    display: flex;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0.85rem 0;
+    position: relative;
+}
+.budget-bar-seg {
+    height: 100%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+.budget-bar-seg.seg-transit {
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+.budget-bar-seg.seg-stay {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+.budget-bar-seg.seg-experience {
+    background: linear-gradient(90deg, #059669, #34d399);
+}
+.budget-bar-seg.seg-shortfall {
+    background: repeating-linear-gradient(45deg, #ef4444, #ef4444 8px, #b91c1c 8px, #b91c1c 16px);
+}
+.budget-legend-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+.budget-legend-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+}
+.budget-legend-card.is-shortfall {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.1);
+}
+.legend-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+.legend-dot-sq {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+.legend-dot-sq.dot-transit { background: #38bdf8; }
+.legend-dot-sq.dot-stay { background: #a78bfa; }
+.legend-dot-sq.dot-exp { background: #34d399; }
+.legend-dot-sq.dot-shortfall { background: #ef4444; }
+.legend-amt {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+.legend-amt.shortfall-amt {
+    color: #f87171;
+}
+.legend-pct {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-left: 0.25rem;
+}
+.budget-alert-box {
+    margin-top: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.budget-alert-box.alert-warning {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+}
+.budget-alert-box.alert-success {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+/* -------------------------------------------------------------
+   4. Carbon Footprint Badges & Route Cards Upgrades
+   ------------------------------------------------------------- */
+.route-carbon-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.65rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--radius-sm);
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.route-carbon-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+}
+.route-carbon-stat i {
+    color: #38bdf8;
+}
+.eco-choice-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-full);
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.route-carbon-footnote {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* -------------------------------------------------------------
+   5. Floating AI Travel Concierge
+   ------------------------------------------------------------- */
+.ai-concierge-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 999;
+}
+.ai-concierge-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #0284c7, #0d9488);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: white;
+    padding: 0.65rem 1.15rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.4), 0 0 15px rgba(13, 148, 136, 0.3);
+    transition: var(--transition);
+}
+.ai-concierge-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(2, 132, 199, 0.55);
+}
+.concierge-avatar-icon {
+    font-size: 1.05rem;
+}
+.concierge-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+}
+.ai-concierge-drawer {
+    position: absolute;
+    bottom: 4.2rem;
+    right: 0;
+    width: 375px;
+    max-width: 90vw;
+    height: 520px;
+    max-height: 80vh;
+    background: rgba(14, 23, 38, 0.96);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(2, 132, 199, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    transition: var(--transition);
+    transform-origin: bottom right;
+}
+.ai-concierge-drawer.hidden {
+    display: none !important;
+}
+.concierge-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.8);
+}
+.concierge-header-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.concierge-header-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0284c7, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+.concierge-header-identity h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+}
+.concierge-header-identity p {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+.concierge-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: var(--transition);
+}
+.concierge-close-btn:hover {
+    color: white;
+}
+.concierge-quick-chips {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.65rem 0.85rem;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(15, 23, 42, 0.4);
+    scrollbar-width: none;
+}
+.concierge-quick-chips::-webkit-scrollbar {
+    display: none;
+}
+.quick-chip {
+    white-space: nowrap;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.quick-chip:hover {
+    background: rgba(56, 189, 248, 0.25);
+    color: white;
+    border-color: #38bdf8;
+}
+.concierge-messages-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+.chat-msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 88%;
+}
+.chat-msg.msg-user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+.chat-msg.msg-bot {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+.msg-bubble {
+    padding: 0.65rem 0.95rem;
+    border-radius: 14px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+.msg-user .msg-bubble {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+.msg-bot .msg-bubble {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    border-bottom-left-radius: 4px;
+}
+.msg-source-tag {
+    font-size: 0.65rem;
+    margin-top: 0.25rem;
+    color: var(--text-dim);
+}
+.msg-source-tag.source-gemini {
+    color: #c084fc;
+}
+.msg-source-tag.source-local {
+    color: #38bdf8;
+}
+.concierge-input-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.8);
+}
+.concierge-input-text {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: #f8fafc;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    outline: none;
+    font-family: var(--font-main);
+    transition: var(--transition);
+}
+.concierge-input-text:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+.concierge-submit-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0284c7;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.concierge-submit-btn:hover {
+    background: #0369a1;
+    transform: scale(1.05);
+}
+.concierge-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------
+   6. Digital Trip Pass Modal & Styling
+   ------------------------------------------------------------- */
+.modal-box-trip-pass {
+    max-width: 680px;
+    padding: 2rem;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(10, 16, 28, 0.95));
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(2, 132, 199, 0.3);
+}
+.btn-trip-pass {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    padding: 0.75rem 1.4rem;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+.btn-trip-pass:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45);
+}
+.boarding-pass-card {
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-md);
+    background: rgba(18, 28, 45, 0.6);
+    overflow: hidden;
+    position: relative;
+}
+.boarding-pass-header {
+    background: linear-gradient(90deg, #0369a1, #0d9488);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+.boarding-pass-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.boarding-pass-brand h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    margin: 0;
+}
+.boarding-pass-brand span {
+    font-size: 0.72rem;
+    opacity: 0.85;
+}
+.boarding-pass-serial {
+    font-family: monospace;
+    font-size: 0.8rem;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+}
+.boarding-pass-route-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 1.5rem 1rem;
+    background: rgba(15, 23, 42, 0.4);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+}
+.route-endpoint {
+    text-align: center;
+}
+.endpoint-code {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: 0.05em;
+}
+.endpoint-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+.route-connector-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: #f59e0b;
+}
+.connector-dash {
+    width: 80px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, #f59e0b, #f59e0b 6px, transparent 6px, transparent 12px);
+}
+.boarding-pass-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.pass-grid-item small {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+}
+.pass-grid-item strong {
+    font-size: 0.9rem;
+    color: #f8fafc;
+}
+.boarding-pass-itinerary-preview {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.boarding-pass-itinerary-preview h5 {
+    font-size: 0.85rem;
+    color: #38bdf8;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+.pass-highlights-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0;
+    margin: 0;
+}
+.pass-highlights-list li {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+.pass-highlights-list li i {
+    color: #10b981;
+    margin-top: 0.2rem;
+}
+.boarding-pass-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: rgba(15, 23, 42, 0.5);
+    gap: 1.5rem;
+}
+.pass-qr-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+.pass-qr-img {
+    width: 110px;
+    height: 110px;
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.pass-qr-box small {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    max-width: 140px;
+    line-height: 1.25;
+}
+.pass-share-info {
+    flex: 1;
+}
+.pass-share-link-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.pass-share-input {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-sm);
+    color: #94a3b8;
+    font-size: 0.75rem;
+    padding: 0.45rem 0.65rem;
+    outline: none;
+}
+.pass-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+.btn-pass-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.15rem;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-copy-link {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+}
+.btn-copy-link:hover {
+    background: rgba(56, 189, 248, 0.3);
+    color: white;
+}
+.btn-print-pass {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+.btn-print-pass:hover {
+    background: rgba(16, 185, 129, 0.3);
+    color: white;
+}
+
+/* -------------------------------------------------------------
+   7. Toast Notifications
+   ------------------------------------------------------------- */
+.app-toast-container {
+    position: fixed;
+    top: 5rem;
+    right: 2rem;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+}
+.toast-item {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid #38bdf8;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.35);
+    backdrop-filter: blur(12px);
+    animation: toastSlideIn 0.3s ease-out;
+    pointer-events: auto;
+}
+@keyframes toastSlideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* -------------------------------------------------------------
+   8. Print Stylesheet (@media print)
+   ------------------------------------------------------------- */
+@media print {
+    /* Hide everything on page */
+    body * {
+        visibility: hidden !important;
+    }
+    
+    /* Make trip pass modal content visible */
+    #trip-pass-modal,
+    #trip-pass-modal * {
+        visibility: visible !important;
+    }
+    
+    #trip-pass-modal {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 999999 !important;
+    }
+    
+    .modal-box-trip-pass {
+        box-shadow: none !important;
+        border: 2px solid #000 !important;
+        background: #ffffff !important;
+        color: #000 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 1.5rem !important;
+        margin: 0 auto !important;
+    }
+    
+    .pass-actions-row,
+    .modal-close-btn,
+    .ai-concierge-container,
+    .site-header,
+    .site-footer {
+        display: none !important;
+    }
+    
+    .boarding-pass-card {
+        border: 2px solid #000 !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    .boarding-pass-header {
+        background: #000 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .boarding-pass-brand h3,
+    .boarding-pass-brand span,
+    .boarding-pass-serial {
+        color: #fff !important;
+    }
+    
+    .boarding-pass-card * {
+        color: #000 !important;
+    }
+    
+    .endpoint-code {
+        color: #000 !important;
+        font-weight: 800 !important;
+    }
+    
+    .pass-qr-img {
+        border: 1px solid #000 !important;
     }
 }

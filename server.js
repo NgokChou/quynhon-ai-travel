@@ -361,6 +361,15 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`\n[LỖI] Cổng ${PORT} đang bị một ứng dụng khác chiếm dụng (EADDRINUSE).`);
+        console.error(`Vui lòng đóng cửa sổ server đang chạy trước đó hoặc thử lại.\n`);
+    } else {
+        console.error('[Server Error]', err);
+    }
+});
+
 server.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Quy Nhon AI Travel Assistant is RUNNING!`);

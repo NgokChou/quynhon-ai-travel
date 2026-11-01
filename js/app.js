@@ -773,18 +773,24 @@ const App = (function() {
         MOCK_HOTELS.forEach(hotel => {
             const card = document.createElement('div');
             card.className = 'hotel-card glass-card';
+            const bookingUrl = lang === 'vi'
+                ? `https://www.booking.com/searchresults.vi.html?ss=${encodeURIComponent(hotel.name)}`
+                : `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(hotel.name)}`;
+
             card.innerHTML = `
-                <div class="hotel-image-wrapper">
+                <div class="hotel-image-wrapper" style="cursor: pointer;" onclick="App.openHotelModal('${hotel.id}')" title="${t('btnViewHotel', lang)}">
                     <img src="${hotel.image}" alt="${hotel.name}" loading="lazy" />
-                    <span class="hotel-badge">${hotel.badge[lang]}</span>
-                    <span class="hotel-verified-tag"><i class="fa-solid fa-circle-check"></i> ${lang === 'vi' ? 'Đã kiểm chứng' : 'Verified'}</span>
+                    <div class="hotel-image-top-bar">
+                        <span class="hotel-badge">${hotel.badge[lang]}</span>
+                        <span class="hotel-verified-tag"><i class="fa-solid fa-shield-halved"></i> ${lang === 'vi' ? 'Đã duyệt' : 'Verified'}</span>
+                    </div>
                 </div>
                 <div class="hotel-content">
                     <div class="hotel-rating">
                         <span class="stars"><i class="fa-solid fa-star"></i> ${hotel.rating}</span>
                         <span class="reviews">(${hotel.reviewsCount} ${lang === 'vi' ? 'đánh giá' : 'reviews'})</span>
                     </div>
-                    <h4 class="hotel-name">${hotel.name}</h4>
+                    <h4 class="hotel-name" style="cursor: pointer;" onclick="App.openHotelModal('${hotel.id}')" title="${t('btnViewHotel', lang)}">${hotel.name}</h4>
                     <p class="hotel-location"><i class="fa-solid fa-location-dot"></i> ${hotel.location}</p>
                     <p class="hotel-desc">${hotel.description[lang]}</p>
                     <div class="hotel-features">
@@ -795,9 +801,14 @@ const App = (function() {
                             <span class="price-val">${hotel.priceMock}</span>
                             <span class="price-unit">${hotel.priceUnit[lang]}</span>
                         </div>
-                        <button class="btn-hotel-detail" onclick="App.openHotelModal('${hotel.id}')">
-                            ${t('btnViewHotel', lang)} <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                        <div class="hotel-card-actions">
+                            <button class="btn-hotel-detail" onclick="App.openHotelModal('${hotel.id}')" title="${t('btnViewHotel', lang)}">
+                                ${t('btnViewHotel', lang)}
+                            </button>
+                            <a href="${bookingUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-booking" title="${lang === 'vi' ? 'Kiểm tra phòng trên Booking.com' : 'Check availability on Booking.com'}">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Booking
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -894,12 +905,18 @@ const App = (function() {
         if (!hotel || !elements.hotelModal || !elements.modalBody) return;
 
         const lang = state.currentLang;
+        const bookingUrl = lang === 'vi'
+            ? `https://www.booking.com/searchresults.vi.html?ss=${encodeURIComponent(hotel.name)}`
+            : `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(hotel.name)}`;
 
         elements.modalBody.innerHTML = `
             <div class="modal-hotel-header">
                 <img src="${hotel.image}" alt="${hotel.name}" class="modal-hotel-banner" />
                 <div class="modal-banner-overlay">
-                    <span class="hotel-badge">${hotel.badge[lang]}</span>
+                    <div class="modal-hotel-top-tags">
+                        <span class="modal-hotel-badge">${hotel.badge[lang]}</span>
+                        <span class="modal-hotel-verified"><i class="fa-solid fa-circle-check"></i> ${lang === 'vi' ? 'Đã kiểm chứng' : 'Verified'}</span>
+                    </div>
                     <h3>${hotel.name}</h3>
                     <p><i class="fa-solid fa-location-dot"></i> ${hotel.location}</p>
                 </div>
@@ -915,12 +932,13 @@ const App = (function() {
                     ${hotel.features[lang].map(f => `<li><i class="fa-solid fa-circle-check"></i> ${f}</li>`).join('')}
                 </ul>
                 <div class="modal-price-box">
-                    <div>
-                        <small>${lang === 'vi' ? 'Mức giá tham khảo' : 'Reference Rate'}</small>
-                        <div class="price-val">${hotel.priceMock} ${hotel.priceUnit[lang]}</div>
+                    <div class="modal-price-info">
+                        <small>${t('modalRefRate', lang)}</small>
+                        <div class="modal-price-num">${hotel.priceMock} <span class="price-unit">${hotel.priceUnit[lang]}</span></div>
                     </div>
-                    <a href="https://www.google.com/travel/hotels/Quy%20Nhon?q=${encodeURIComponent(hotel.name + ' Quy Nhon')}" target="_blank" rel="noopener noreferrer" class="btn-direct-booking">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> ${lang === 'vi' ? 'Xem phòng & Đặt chỗ' : 'Check Availability'}
+                    <a href="${bookingUrl}" target="_blank" rel="noopener noreferrer" class="btn-booking-large">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <span>${t('btnCheckAvailability', lang)}</span>
                     </a>
                 </div>
             </div>

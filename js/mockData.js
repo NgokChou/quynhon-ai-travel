@@ -1370,7 +1370,8 @@ const MOCK_HOTELS = [
     {
         id: "anantara-quynhon",
         name: "Anantara Quy Nhon Villas",
-        badge: { en: "5★ Ultra Luxury", vi: "5★ Nghỉ Dưỡng Thượng Lưu" },
+        bookingSlug: "anantara-quy-nhon-villas",
+        badge: { en: "5★ Ultra Luxury", vi: "5★ Nghỉ Dưỡng Cao Cấp" },
         location: "Bai Dai Beach, Ghenh Rang, Quy Nhon",
         rating: 4.9,
         reviewsCount: 420,
@@ -1389,7 +1390,8 @@ const MOCK_HOTELS = [
     {
         id: "maia-resort",
         name: "Maia Resort Quy Nhon",
-        badge: { en: "5★ Culinary & Wellness", vi: "5★ Ẩm Thực & Sức Khỏe" },
+        bookingSlug: "maia-resort-quy-nhon",
+        badge: { en: "5★ Culinary & Spa", vi: "5★ Ẩm Thực & Spa" },
         location: "Nhon Hoi Economic Zone, Cat Tien, Quy Nhon",
         rating: 4.8,
         reviewsCount: 580,
@@ -1408,7 +1410,8 @@ const MOCK_HOTELS = [
     {
         id: "crown-retreat",
         name: "Crown Retreat Quy Nhon Resort",
-        badge: { en: "4.5★ Seaside Bungalows", vi: "4.5★ Bungalow Biển Bắc Âu" },
+        bookingSlug: "crown-retreat-quy-nhon-resort",
+        badge: { en: "4.5★ Seaside Bungalow", vi: "4.5★ Bungalow Biển" },
         location: "Trung Luong Beach, Cat Tien, Phu Cat, Quy Nhon",
         rating: 4.7,
         reviewsCount: 490,
@@ -1427,7 +1430,8 @@ const MOCK_HOTELS = [
     {
         id: "flc-city-hotel",
         name: "FLC City Hotel Beach Quy Nhon",
-        badge: { en: "5★ City & Beachfront", vi: "5★ Đại Lộ Biển Trung Tâm" },
+        bookingSlug: "flc-city-hotel-beach-quy-nhon",
+        badge: { en: "5★ Beach Boulevard", vi: "5★ Khách Sạn Phố Biển" },
         location: "11 An Duong Vuong St, Quy Nhon Center",
         rating: 4.6,
         reviewsCount: 820,
@@ -1446,7 +1450,8 @@ const MOCK_HOTELS = [
     {
         id: "anya-premier",
         name: "Anya Premier Hotel Quy Nhon",
-        badge: { en: "5★ Modern Ocean Landmark", vi: "5★ Biểu Tượng Quảng Trường Biển" },
+        bookingSlug: "anya-premier-hotel-quy-nhon",
+        badge: { en: "5★ Central Square", vi: "5★ Trung Tâm Phố Biển" },
         location: "44 An Duong Vuong & Le Duan, Quy Nhon",
         rating: 4.7,
         reviewsCount: 650,
@@ -1465,7 +1470,8 @@ const MOCK_HOTELS = [
     {
         id: "avani-quynhon",
         name: "Avani Quy Nhon Resort",
-        badge: { en: "4.5★ Cliffside Beach Sanctuary", vi: "4.5★ Thiên Đường Vịnh Biển Biệt Lập" },
+        bookingSlug: "avani-quy-nhon-resort",
+        badge: { en: "4.5★ Private Cove", vi: "4.5★ Vịnh Biển Riêng" },
         location: "Bai Dai Beach, Ghenh Rang, Quy Nhon",
         rating: 4.7,
         reviewsCount: 510,

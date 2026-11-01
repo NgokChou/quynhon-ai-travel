@@ -70,9 +70,11 @@ const TRANSLATIONS = {
         hotelTitle: "Curated Accommodations in Quy Nhon",
         hotelSubtitle: "Handpicked beach resorts and boutique sanctuaries matched to your travel profile.",
         hotelPortfolioBadge: "VERIFIED 4★ & 5★ SELECTION",
-        btnViewHotel: "Preview Resort",
+        btnViewHotel: "Resort Details",
+        btnCheckAvailability: "Check Availability on Booking.com",
+        modalRefRate: "Reference Rate",
         modalClose: "Close",
-        mockHotelNotice: "💡 Booking Advisory: Rates reflect standard seasonal pricing. For peak dry season (March – August), booking 2-4 weeks in advance is recommended.",
+        mockHotelNotice: "💡 Booking.com Verified: Rates reflect real-time seasonal estimates. Instant confirmation and free cancellation available on select rates.",
 
         // Future Features
         roadmapTitle: "Coming Next: Production Roadmap",
@@ -200,11 +202,13 @@ const TRANSLATIONS = {
 
         // Hotel Section
         hotelTitle: "Gợi Ý Khách Sạn & Resort Tại Quy Nhơn",
-        hotelSubtitle: "Những khu nghỉ dưỡng biển tuyệt đẹp được AI tuyển chọn kỹ lưỡng theo sở thích du khách quốc tế.",
+        hotelSubtitle: "Những khu nghỉ dưỡng biển tuyệt đẹp được tuyển chọn kỹ lưỡng theo sở thích du khách.",
         hotelPortfolioBadge: "TUYỂN CHỌN NGHỈ DƯỠNG 4★ & 5★",
         btnViewHotel: "Xem Chi Tiết",
+        btnCheckAvailability: "Kiểm tra phòng trên Booking.com",
+        modalRefRate: "Mức giá tham khảo",
         modalClose: "Đóng",
-        mockHotelNotice: "💡 Lời khuyên đặt phòng: Mức giá áp dụng theo mùa du lịch tiêu chuẩn. Vào mùa cao điểm nắng vàng (Tháng 3 – Tháng 8), bạn nên đặt phòng trước 2-4 tuần.",
+        mockHotelNotice: "💡 Xác thực Booking.com: Giá phòng theo mùa du lịch thực tế. Hỗ trợ giữ phòng nhanh chóng và chính sách hủy miễn phí tùy hạng phòng.",
 
         // Future Features
         roadmapTitle: "Lộ Trình Phát Triển Sản Phẩm",

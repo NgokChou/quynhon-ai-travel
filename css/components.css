@@ -1572,6 +1572,201 @@
     font-weight: 700;
 }
 
+/* Fare Tiers Strip (Economy vs Business Class Reference) */
+.fare-tiers-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+    padding: 0.85rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+}
+
+.fare-tier-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: var(--transition);
+}
+
+.fare-tier-card:hover {
+    background: rgba(30, 41, 59, 0.75);
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+.fare-tier-card.economy {
+    border-color: rgba(56, 189, 248, 0.25);
+}
+
+.fare-tier-card.business {
+    border-color: rgba(245, 158, 11, 0.25);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(245, 158, 11, 0.06) 100%);
+}
+
+.fare-tier-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.fare-tier-card.economy .fare-tier-icon {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.fare-tier-card.business .fare-tier-icon {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.fare-tier-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.fare-tier-name {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    line-height: 1.2;
+}
+
+.fare-tier-card.economy .fare-tier-name { color: #38bdf8; }
+.fare-tier-card.business .fare-tier-name { color: #f59e0b; }
+
+.fare-tier-price {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin: 0.15rem 0;
+    line-height: 1.2;
+}
+
+.fare-tier-price small {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--text-dim);
+}
+
+.fare-tier-perk {
+    font-size: 0.7rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    line-height: 1.2;
+}
+
+.fare-tier-perk i {
+    font-size: 0.65rem;
+    color: #34d399;
+}
+
+/* Live Flight Search CTA Bar */
+.flight-search-cta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(56, 189, 248, 0.04) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 12px;
+}
+
+.flight-search-cta-text {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: #e2e8f0;
+}
+
+.flight-search-cta-text i {
+    font-size: 1.35rem;
+    color: #38bdf8;
+    flex-shrink: 0;
+}
+
+.flight-search-cta-text strong {
+    display: block;
+    font-size: 0.88rem;
+    color: #f8fafc;
+    font-weight: 700;
+}
+
+.flight-search-cta-text small {
+    display: block;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+.btn-google-flights {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.15rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-google-flights:hover {
+    background: linear-gradient(135deg, #0369a1, #0284c7);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    transform: translateY(-2px);
+    border-color: #38bdf8;
+    color: #ffffff !important;
+}
+
+.btn-google-flights i.fa-google {
+    font-size: 0.95rem;
+}
+
+.btn-google-flights i.fa-arrow-up-right-from-square {
+    font-size: 0.72rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .flight-search-cta-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+        text-align: left;
+    }
+
+    .btn-google-flights {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
 /* Transit Pipeline (Node-by-node visual journey) */
 .transit-pipeline {
     display: flex;
@@ -1680,14 +1875,67 @@
     gap: 0.25rem;
 }
 
+.node-flight-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: 0.04em;
+}
+
 .node-route-codes {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     font-size: 0.88rem;
     font-weight: 700;
     color: #f8fafc;
+}
+
+.node-schedule-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin: 0.35rem 0 0.5rem;
+    padding: 0.35rem 0.6rem;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.node-schedule {
+    font-size: 0.75rem;
+    color: #f1f5f9;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.node-schedule i {
+    color: #38bdf8;
+    font-size: 0.7rem;
+}
+
+.node-aircraft-chip {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.node-aircraft-chip i {
+    color: #818cf8;
+    font-size: 0.65rem;
 }
 
 .node-arrow {
@@ -2108,7 +2356,8 @@
         align-items: stretch;
     }
 
-    .itinerary-action-row .mock-disclaimer-pill {
+    .itinerary-action-row .mock-disclaimer-pill,
+    .itinerary-action-row .planner-experience-pill {
         justify-content: center;
     }
 

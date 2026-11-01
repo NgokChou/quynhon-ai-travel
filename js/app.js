@@ -634,6 +634,16 @@ const App = (function() {
             ? `<span class="board-stat-pill eco"><i class="fa-solid fa-leaf"></i> ${activeRouteData.carbonSavedPercent >= 30 ? (isVi ? 'Tiết kiệm 38% CO₂e' : 'Save 38% CO₂e') : (isVi ? 'Phát thải thấp hơn' : 'Lower Emission')}</span>`
             : '';
 
+        const fareTiers = activeRouteData.fareTiers || {
+            economy: { price: activeFare, perks: { en: "Standard seat • 23kg checked bag", vi: "Ghế tiêu chuẩn • 23kg hành lý" } },
+            business: { price: Math.round(activeFare * 2.6), perks: { en: "Flat-bed seat • Lotus Lounge", vi: "Ghế ngả phẳng • Phòng chờ VIP" } }
+        };
+
+        // Xây dựng liên kết tìm chuyến bay trực tiếp trên Google Flights
+        const originAirportCode = countryData.airport ? (countryData.airport.match(/\(([A-Z]{3})/)?.[1] || 'CDG') : 'CDG';
+        const destAirportCode = (state.selectedRouteType === 'fastest') ? 'UIH' : (activeRouteData.steps?.[0]?.to?.match(/\(([A-Z]{3})\)/)?.[1] || 'UIH');
+        const googleFlightsUrl = `https://www.google.com/travel/flights?q=flights+from+${originAirportCode}+to+${destAirportCode}`;
+
         board.innerHTML = `
             <div class="route-board-header">
                 <div class="board-header-left">
@@ -661,6 +671,42 @@ const App = (function() {
                     ${ecoBadge}
                 </div>
             </div>
+
+            <!-- Bảng phân khúc giá vé chuẩn theo hạng ghế (Phương án 1) -->
+            <div class="fare-tiers-strip">
+                <div class="fare-tier-card economy">
+                    <div class="fare-tier-icon"><i class="fa-solid fa-chair"></i></div>
+                    <div class="fare-tier-info">
+                        <span class="fare-tier-name">${isVi ? 'Hạng Phổ Thông (Economy)' : 'Standard Economy'}</span>
+                        <div class="fare-tier-price">~$${fareTiers.economy.price} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
+                        <span class="fare-tier-perk"><i class="fa-solid fa-check"></i> ${fareTiers.economy.perks[lang]}</span>
+                    </div>
+                </div>
+                <div class="fare-tier-card business">
+                    <div class="fare-tier-icon"><i class="fa-solid fa-crown"></i></div>
+                    <div class="fare-tier-info">
+                        <span class="fare-tier-name">${isVi ? 'Hạng Thương Gia (Business)' : 'Business Class'}</span>
+                        <div class="fare-tier-price">~$${fareTiers.business.price} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
+                        <span class="fare-tier-perk"><i class="fa-solid fa-star"></i> ${fareTiers.business.perks[lang]}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút liên kết tra cứu chuyến bay thời gian thực trên Google Flights -->
+            <div class="flight-search-cta-bar">
+                <div class="flight-search-cta-text">
+                    <i class="fa-solid fa-plane-circle-check"></i>
+                    <div>
+                        <strong>${isVi ? 'Tra cứu giá vé theo ngày khởi hành thực tế' : 'Check Live Fares for Your Travel Dates'}</strong>
+                        <small>${isVi ? `Chuyển tiếp sang Google Flights với tuyến bay ${originAirportCode} ➔ ${destAirportCode} được điền sẵn` : `Directly opens Google Flights pre-filled for ${originAirportCode} ➔ ${destAirportCode}`}</small>
+                    </div>
+                </div>
+                <a href="${googleFlightsUrl}" target="_blank" rel="noopener noreferrer" class="btn-google-flights">
+                    <i class="fa-brands fa-google"></i>
+                    <span>${isVi ? 'Tìm chuyến bay trên Google Flights' : 'Search on Google Flights'}</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
         `;
 
         const pipeline = document.createElement('div');
@@ -678,6 +724,25 @@ const App = (function() {
                 let subDetails = step.subInfo ? step.subInfo[lang] : '';
                 let highlightText = step.highlight ? step.highlight[lang] : '';
 
+                // Huy hiệu số hiệu chuyến thật (VN18, VN1396, v.v.)
+                let flightBadge = '';
+                if (step.flightNo) {
+                    const iconName = (step.type === 'transfer' ? (step.icon || 'car') : 'plane');
+                    flightBadge = `<span class="node-flight-badge"><i class="fa-solid fa-${iconName}"></i> ${step.flightNo}</span>`;
+                }
+
+                // Hàng thông tin giờ cất/hạ cánh thực tế và dòng máy bay
+                let scheduleHtml = '';
+                if (step.schedule) {
+                    const vehicleIcon = (step.type === 'transfer' ? 'road' : 'plane-departure');
+                    scheduleHtml = `
+                        <div class="node-schedule-row">
+                            <span class="node-schedule"><i class="fa-regular fa-clock"></i> <strong>${step.schedule}</strong></span>
+                            ${step.aircraft ? `<span class="node-aircraft-chip"><i class="fa-solid fa-${vehicleIcon}"></i> ${step.aircraft}</span>` : ''}
+                        </div>
+                    `;
+                }
+
                 const node = document.createElement('div');
                 node.className = `transit-node transit-type-${step.type}`;
 
@@ -691,13 +756,14 @@ const App = (function() {
                     <div class="node-body">
                         <div class="node-top-row">
                             <span class="node-leg-tag">${stageName}</span>
-                            ${step.duration ? `<span class="node-duration-chip"><i class="fa-regular fa-clock"></i> ${step.duration}</span>` : ''}
+                            ${flightBadge || (step.duration ? `<span class="node-duration-chip"><i class="fa-regular fa-clock"></i> ${step.duration}</span>` : '')}
                         </div>
                         <div class="node-route-codes">
                             <span class="code-origin">${step.from}</span>
                             <i class="fa-solid fa-arrow-right-long node-arrow"></i>
                             <span class="code-dest">${step.to}</span>
                         </div>
+                        ${scheduleHtml}
                         <div class="node-sub-info">
                             <i class="fa-solid fa-circle-dot node-bullet"></i>
                             <span>${subDetails}</span>

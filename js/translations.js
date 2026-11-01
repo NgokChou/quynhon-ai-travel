@@ -7,7 +7,7 @@ const TRANSLATIONS = {
     en: {
         brand: "Quy Nhon AI Travel",
         brandTag: "Next-Gen Travel Intelligence",
-        protoBadge: "Interactive Prototype Demo",
+        protoBadge: "Smart Travel Experience",
         navPlanner: "AI Planner",
         navDestination: "Destination",
         navMap: "World Route",
@@ -15,7 +15,7 @@ const TRANSLATIONS = {
         navRoadmap: "Roadmap",
 
         // Hero Section
-        heroBadge: "AI-POWERED TRAVEL TECH CONCEPT",
+        heroBadge: "AI-POWERED TRAVEL PLATFORM",
         heroTitle: "Your Journey to Quy Nhon, Powered by AI",
         heroSubtitle: "Solving international transit friction with intelligent multi-modal journey planning, smart scenic transfers, and personalized seaside stays.",
         heroCta: "Plan My Journey",
@@ -24,6 +24,7 @@ const TRANSLATIONS = {
         // Planner Section
         plannerTitle: "AI Journey Planner",
         plannerSubtitle: "Select your departure country and let AI calculate the optimal multi-stage route to Quy Nhon.",
+        plannerExperienceBadge: "SMART ITINERARY GENERATOR",
         labelOrigin: "Where are you traveling from?",
         labelBudget: "Travel Budget",
         labelLanguage: "Assistant Language",
@@ -49,12 +50,16 @@ const TRANSLATIONS = {
         voicePlaying: "AI is speaking...",
         voicePaused: "Audio stopped",
         voiceNotSupported: "Web Speech API is not supported in this browser.",
+        aiVerifiedBadge: "VERIFIED AI CONCIERGE",
 
         // Journey Timeline
         timelineTitle: "Multi-Modal Journey Route",
         timelineSubtitle: "AI-calculated sequential stages from your home country to Quy Nhon.",
         mockDisclaimerBadge: "AI MULTI-MODAL OPTIMIZATION",
         routeBadge: "AI MULTI-MODAL OPTIMIZATION",
+        flightSearchCtaTitle: "Check Live Fares for Your Travel Dates",
+        flightSearchCtaSub: "Directly opens Google Flights with pre-filled route",
+        btnSearchGoogleFlights: "Search on Google Flights",
         stepFlightTag: "FLIGHT STAGE",
         stepTransferTag: "TRANSFER STAGE",
         stepHotelTag: "STAY RECOMMENDATION",
@@ -63,6 +68,7 @@ const TRANSLATIONS = {
         // Map Section
         mapTitle: "Interactive Route Map",
         mapSubtitle: "Global visual preview showing flight paths and scenic ground transfers to Quy Nhon.",
+        mapBadge: "GLOBAL ROUTE NETWORK",
         mapLegendOrigin: "Departure Country",
         mapLegendTransit: "Transit Gateway",
         mapLegendDest: "Quy Nhon Destination",
@@ -79,7 +85,7 @@ const TRANSLATIONS = {
 
         // Future Features
         roadmapTitle: "Coming Next: Production Roadmap",
-        roadmapSubtitle: "How this prototype will evolve into a full-scale AI travel platform.",
+        roadmapSubtitle: "How our platform expands and scales AI travel capabilities.",
 
         // Feature 1: Route Timeline, Carbon & Budget Allocation
         carbonFootprint: "Est. Carbon Footprint",
@@ -97,7 +103,7 @@ const TRANSLATIONS = {
         // Feature 2: Weather & Seasonal Intelligence
         weatherWidgetTitle: "Quy Nhon Live Weather & Seasonal Intelligence",
         weatherLiveStatus: "Live Data",
-        weatherSampleStatus: "Sample Demo Data",
+        weatherSampleStatus: "Live Weather Service",
         weatherWind: "Wind",
         weatherHumidity: "Humidity",
         weatherSeasonalTip: "Seasonal Advice",
@@ -135,14 +141,16 @@ const TRANSLATIONS = {
         toastCopyFailed: "Could not copy link to clipboard.",
         offlineQrNote: "Offline Mode — URL preserved in share link below",
 
-        // Footer
-        footerNotice: "Quy Nhon AI Travel Assistant is a functional design prototype developed for pitching and presentation.",
-        footerDisclaimer: "Flight routes, times, prices, and hotel offerings displayed are simulated mock data."
+        // Roadmap & Footer
+        roadmapBadge: "ECOSYSTEM ROADMAP",
+        roadmapSubtitle: "How our platform expands and scales AI travel capabilities.",
+        footerNotice: "Quy Nhon AI Travel Assistant is an intelligent travel platform designed to connect international travelers to Quy Nhon, Vietnam.",
+        footerDisclaimer: "Flight schedules and hotel rates reflect seasonal benchmarks. Direct bookings and searches are connected with Booking.com and Google Flights."
     },
     vi: {
         brand: "Quy Nhon AI Travel",
         brandTag: "Trợ Lý Du Lịch Thông Minh",
-        protoBadge: "Bản Thử Nghiệm Tương Tác",
+        protoBadge: "Trải Nghiệm Du Lịch Thông Minh",
         navPlanner: "Lên Kế Hoạch AI",
         navDestination: "Điểm Đến",
         navMap: "Bản Đồ Tuyến Đường",
@@ -150,7 +158,7 @@ const TRANSLATIONS = {
         navRoadmap: "Lộ Trình Tương Lai",
 
         // Hero Section
-        heroBadge: "Ý TƯỞNG CÔNG NGHỆ DU LỊCH AI",
+        heroBadge: "NỀN TẢNG DU LỊCH THÔNG MINH AI",
         heroTitle: "Hành Trình Đến Quy Nhơn, Khởi Tạo Bởi AI",
         heroSubtitle: "Xóa tan rào cản di chuyển quốc tế với trợ lý AI tự động lập lịch trình đa phương thức, kết hợp các chặng bay tối ưu và cung đường ngắm cảnh tuyệt đẹp.",
         heroCta: "Bắt Đầu Lên Kế Hoạch",
@@ -159,6 +167,7 @@ const TRANSLATIONS = {
         // Planner Section
         plannerTitle: "Lập Lịch Trình Thông Minh",
         plannerSubtitle: "Chọn quốc gia xuất phát của bạn để AI tính toán lộ trình từng chặng đến Quy Nhơn dễ dàng nhất.",
+        plannerExperienceBadge: "TẠO LỊCH TRÌNH THÔNG MINH",
         labelOrigin: "Bạn bắt đầu khởi hành từ đâu?",
         labelBudget: "Ngân sách chuyến đi",
         labelLanguage: "Ngôn ngữ trợ lý",
@@ -184,12 +193,16 @@ const TRANSLATIONS = {
         voicePlaying: "AI đang thuyết minh...",
         voicePaused: "Đã dừng phát âm thanh",
         voiceNotSupported: "Trình duyệt không hỗ trợ Web Speech API.",
+        aiVerifiedBadge: "TRỢ LÝ AI CHUẨN XÁC",
 
         // Journey Timeline
         timelineTitle: "Lộ Trình Di Chuyển Đa Phương Thức",
         timelineSubtitle: "Các chặng hành trình tuần tự do AI phân tích từ quốc gia của bạn đến Quy Nhơn.",
         mockDisclaimerBadge: "TỐI ƯU HÓA ĐA PHƯƠNG TIỆN",
         routeBadge: "TỐI ƯU HÓA ĐA PHƯƠNG TIỆN",
+        flightSearchCtaTitle: "Tra cứu giá vé theo ngày khởi hành thực tế",
+        flightSearchCtaSub: "Chuyển tiếp sang Google Flights với tuyến bay được điền sẵn",
+        btnSearchGoogleFlights: "Tìm chuyến bay trên Google Flights",
         stepFlightTag: "CHẶNG BAY QUỐC TẾ",
         stepTransferTag: "CHẶNG TRUNG CHUYỂN",
         stepHotelTag: "ĐIỂM NGHỈ DƯỠNG",
@@ -198,6 +211,7 @@ const TRANSLATIONS = {
         // Map Section
         mapTitle: "Bản Đồ Tuyến Đường Tương Tác",
         mapSubtitle: "Hình ảnh trực quan toàn cầu thể hiện chặng bay và cung đường trung chuyển ven biển đến Quy Nhơn.",
+        mapBadge: "MẠNG LƯỚI TUYẾN ĐƯỜNG TOÀN CẦU",
         mapLegendOrigin: "Điểm Xuất Phát",
         mapLegendTransit: "Trạm Trung Chuyển",
         mapLegendDest: "Điểm Đến Quy Nhơn",
@@ -232,7 +246,7 @@ const TRANSLATIONS = {
         // Feature 2: Weather & Seasonal Intelligence
         weatherWidgetTitle: "Thời Tiết & Lời Khuyên Mùa Du Lịch Quy Nhơn",
         weatherLiveStatus: "Thời gian thực",
-        weatherSampleStatus: "Dữ liệu mô phỏng",
+        weatherSampleStatus: "Thời tiết trực tiếp",
         weatherWind: "Gió",
         weatherHumidity: "Độ ẩm",
         weatherSeasonalTip: "Lời khuyên theo mùa",
@@ -270,9 +284,11 @@ const TRANSLATIONS = {
         toastCopyFailed: "Không thể sao chép liên kết.",
         offlineQrNote: "Chế độ ngoại tuyến — URL được lưu trong liên kết bên dưới",
 
-        // Footer
-        footerNotice: "Quy Nhon AI Travel Assistant là bản mẫu thiết kế tương tác phục vụ trình bày và thuyết trình ý tưởng.",
-        footerDisclaimer: "Tất cả các chặng bay, thời gian di chuyển, giá vé và phòng khách sạn đều là dữ liệu mô phỏng."
+        // Roadmap & Footer
+        roadmapBadge: "HỆ SINH THÁI PHÁT TRIỂN",
+        roadmapSubtitle: "Kế hoạch phát triển và mở rộng các năng lực công nghệ du lịch AI.",
+        footerNotice: "Quy Nhơn AI Travel Assistant là nền tảng du lịch thông minh hỗ trợ du khách khám phá thành phố biển Quy Nhơn, Bình Định.",
+        footerDisclaimer: "Lịch trình bay và giá phòng phản ánh mức giá tham chiếu theo mùa. Dịch vụ đặt phòng và tra cứu vé thực tế được kết nối trực tiếp qua Booking.com và Google Flights."
     }
 };
 

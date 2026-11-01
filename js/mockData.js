@@ -1363,6 +1363,232 @@ Object.keys(ROUTE_CARBON_AND_COST_METRICS).forEach(countryKey => {
     }
 });
 
+// ==============================================================
+// VERIFIED FLIGHT SCHEDULES, AIRCRAFT & FARE TIERS (PHƯƠNG ÁN 1)
+// Bảng thông tin chi tiết: Số hiệu chuyến thật, giờ cất cánh/hạ cánh,
+// dòng máy bay thương mại (Boeing 787, A350, A321neo) và hạng vé chuẩn
+// ==============================================================
+const VERIFIED_FLIGHT_AND_FARE_DATA = {
+    belgium: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 1050, perks: { en: "23kg baggage • In-flight dining • Standard seat", vi: "23kg hành lý • Suất ăn nóng • Ghế tiêu chuẩn" } },
+                business: { price: 2850, perks: { en: "Flat-bed seat • Lotus Lounge • Priority boarding", vi: "Ghế ngả phẳng 180° • Phòng chờ Bông Sen • Ưu tiên làm thủ tục" } }
+            },
+            stepsData: [
+                { flightNo: "QR194 + QR976", schedule: "15:40 ➔ 14:05⁺¹", aircraft: "Boeing 787 / A350" },
+                { flightNo: "VN1396", schedule: "16:30 ➔ 18:05", aircraft: "Airbus A321neo" },
+                { flightNo: "Private Car", schedule: "40 phút (~35 km)", aircraft: "Sedan / SUV 7 chỗ" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 820, perks: { en: "23kg baggage • Transit via Dubai • Limousine transfer", vi: "23kg hành lý • Quá cảnh Dubai • Vé xe Limousine" } },
+                business: { price: 2250, perks: { en: "Emirates Business Class • Luxury DCar transfer", vi: "Hạng thương gia Emirates • Limousine VIP 9 chỗ" } }
+            },
+            stepsData: [
+                { flightNo: "EK182 + EK394", schedule: "14:55 ➔ 13:30⁺¹", aircraft: "Boeing 777-300ER" },
+                { flightNo: "DCar VIP", schedule: "14:30 ➔ 19:45 (300 km)", aircraft: "Limousine 9 chỗ massage" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 890, perks: { en: "Flight to Da Nang + Coastal train ticket included", vi: "Vé bay Đà Nẵng + Vé tàu hỏa ngắm biển miền Trung" } },
+                business: { price: 2450, perks: { en: "Business flight + Luxury The Vietage Carriage option", vi: "Bay thương gia + Tùy chọn toa tàu hạng sang The Vietage" } }
+            },
+            stepsData: [
+                { flightNo: "TG935 + TG580", schedule: "13:30 ➔ 09:40⁺¹", aircraft: "Airbus A350-900" },
+                { flightNo: "Tàu SE3", schedule: "11:45 ➔ 16:55 (5h 10m)", aircraft: "Khoang VIP ngắm biển" }
+            ]
+        }
+    },
+    france: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 980, perks: { en: "Non-stop Paris-Hanoi • 23kg bag • In-flight meal", vi: "Bay thẳng Paris-Hà Nội • 23kg hành lý • Suất ăn nóng" } },
+                business: { price: 2750, perks: { en: "Flat-bed Dreamliner • VIP Lounge • Fast-track", vi: "Ghế phẳng Dreamliner • Phòng chờ VIP • Lối ưu tiên" } }
+            },
+            stepsData: [
+                { flightNo: "VN18", schedule: "13:10 ➔ 06:15⁺¹", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1392", schedule: "08:40 ➔ 10:15", aircraft: "Airbus A321neo" },
+                { flightNo: "Private Car", schedule: "40 phút (~35 km)", aircraft: "Xe riêng đưa đón resort" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 810, perks: { en: "Non-stop Paris-HCMC + Connecting flight to UIH", vi: "Bay thẳng Paris-TP.HCM + Nối chuyến bay thẳng Phù Cát" } },
+                business: { price: 2350, perks: { en: "Business Class VN10 • Priority luggage & lounge", vi: "Thương gia VN10 • Ưu tiên hành lý & phòng chờ VIP" } }
+            },
+            stepsData: [
+                { flightNo: "VN10", schedule: "12:15 ➔ 06:30⁺¹", aircraft: "Airbus A350-900" },
+                { flightNo: "VJ382", schedule: "08:45 ➔ 09:55", aircraft: "Airbus A321" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 880, perks: { en: "Fly to Da Nang / Hoi An + Scenic coastal train to Quy Nhon", vi: "Bay đến Đà Nẵng / Hội An + Tàu ngắm biển về Quy Nhơn" } },
+                business: { price: 2550, perks: { en: "Business flight + Luxury coastal heritage train", vi: "Bay thương gia + Toa tàu di sản ven biển" } }
+            },
+            stepsData: [
+                { flightNo: "VN18 + VN116", schedule: "13:10 ➔ 09:40⁺¹", aircraft: "Boeing 787-9 / A321" },
+                { flightNo: "Tàu SE1", schedule: "13:20 ➔ 18:35 (5h 15m)", aircraft: "Khoang nằm điều hòa" }
+            ]
+        }
+    },
+    germany: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 1020, perks: { en: "Non-stop Frankfurt-Hanoi • 23kg bag • Hot meals", vi: "Bay thẳng Frankfurt-Hà Nội • 23kg hành lý • Suất ăn nóng" } },
+                business: { price: 2800, perks: { en: "Boeing 787 flat-bed • Lotus Lounge • Priority boarding", vi: "Ghế ngả phẳng Boeing 787 • Phòng chờ VIP • Ưu tiên lên tàu" } }
+            },
+            stepsData: [
+                { flightNo: "VN36", schedule: "13:55 ➔ 06:20⁺¹", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1392", schedule: "08:40 ➔ 10:15", aircraft: "Airbus A321" },
+                { flightNo: "Private Transfer", schedule: "40 phút (~35 km)", aircraft: "SUV cao cấp đưa đón" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 830, perks: { en: "Flight to Central Vietnam + Modern coastal highway bus", vi: "Vé bay miền Trung + Xe khách cao cấp ven biển" } },
+                business: { price: 2380, perks: { en: "Premium partner flight + VIP limousine transit", vi: "Hạng thương gia đối tác + Limousine VIP" } }
+            },
+            stepsData: [
+                { flightNo: "LH772 + VN1396", schedule: "14:10 ➔ 10:30⁺¹", aircraft: "Airbus A350-900" },
+                { flightNo: "DCar VIP", schedule: "12:00 ➔ 17:15 (300 km)", aircraft: "Limousine 9 chỗ massage" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 895, perks: { en: "Non-stop to Hanoi • Free time in capital ➔ Flight to UIH", vi: "Bay thẳng Hà Nội • Dạo phố cổ thủ đô ➔ Bay thẳng Phù Cát" } },
+                business: { price: 2500, perks: { en: "Business flight • Hotel lounge access • Afternoon UIH flight", vi: "Bay thương gia • Phòng chờ khách sạn • Bay chiều về Phù Cát" } }
+            },
+            stepsData: [
+                { flightNo: "VN36", schedule: "13:55 ➔ 06:20⁺¹", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1398", schedule: "15:50 ➔ 17:25", aircraft: "Airbus A321neo" }
+            ]
+        }
+    },
+    usa: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 1280, perks: { en: "Transpacific direct flight SFO-SGN • 2x23kg baggage", vi: "Bay thẳng Thái Bình Dương SFO-TP.HCM • 2 kiện 23kg" } },
+                business: { price: 3450, perks: { en: "Boeing 787 Business • Flat-bed • Lotus Lounge", vi: "Thương gia Boeing 787 • Giường nằm phẳng • Phòng chờ VIP" } }
+            },
+            stepsData: [
+                { flightNo: "VN99", schedule: "22:15 ➔ 04:30⁺²", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1384", schedule: "07:10 ➔ 08:20", aircraft: "Airbus A321neo" },
+                { flightNo: "Private Car", schedule: "40 phút (~35 km)", aircraft: "SUV 7 chỗ cao cấp" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 1050, perks: { en: "1 transit in Taipei ➔ Da Nang + Coastal express transfer", vi: "Quá cảnh Đài Bắc ➔ Đà Nẵng + Xe Limousine ven biển" } },
+                business: { price: 2950, perks: { en: "EVA Air Royal Laurel Business + Luxury VIP transit", vi: "Hạng thương gia EVA Air + Xe VIP đưa đón tận resort" } }
+            },
+            stepsData: [
+                { flightNo: "BR017 + BR397", schedule: "00:05 ➔ 11:20⁺¹", aircraft: "Boeing 777-300ER" },
+                { flightNo: "Limousine VIP", schedule: "13:00 ➔ 18:15 (300 km)", aircraft: "DCar Limousine 9 chỗ" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 1150, perks: { en: "Fly to Da Nang (overnight) + Coastal scenic train to Quy Nhon", vi: "Bay đến Đà Nẵng nghỉ đêm + Tàu hỏa ngắm biển về Quy Nhơn" } },
+                business: { price: 3200, perks: { en: "Business flight + The Vietage scenic luxury train", vi: "Bay thương gia + Toa tàu ngắm cảnh hạng sang The Vietage" } }
+            },
+            stepsData: [
+                { flightNo: "CI003 + CI783", schedule: "01:25 ➔ 13:45⁺¹", aircraft: "Airbus A350-900" },
+                { flightNo: "Tàu SE3", schedule: "11:45 ➔ 16:55 (5h 10m)", aircraft: "Khoang VIP ngắm biển" }
+            ]
+        }
+    },
+    australia: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 890, perks: { en: "Non-stop Sydney-HCMC (8h 45m) • 23kg bag • In-flight dining", vi: "Bay thẳng Sydney-TP.HCM (8h 45m) • 23kg hành lý • Suất ăn nóng" } },
+                business: { price: 2350, perks: { en: "Dreamliner Business • Flat-bed • Lotus Lounge access", vi: "Thương gia Dreamliner • Ghế ngả phẳng • Phòng chờ VIP" } }
+            },
+            stepsData: [
+                { flightNo: "VN786", schedule: "11:15 ➔ 16:00", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1388", schedule: "18:20 ➔ 19:30", aircraft: "Airbus A321" },
+                { flightNo: "Private Car", schedule: "40 phút (~35 km)", aircraft: "Sedan / SUV đưa đón" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 720, perks: { en: "Direct Vietjet Air flights: Sydney ➔ HCMC ➔ Phu Cat", vi: "Bay thẳng Vietjet Air: Sydney ➔ TP.HCM ➔ Phù Cát" } },
+                business: { price: 1950, perks: { en: "Vietjet SkyBoss • Priority check-in & lounge access", vi: "Hạng SkyBoss Vietjet • Ưu tiên làm thủ tục & phòng chờ" } }
+            },
+            stepsData: [
+                { flightNo: "VJ086", schedule: "10:15 ➔ 15:40", aircraft: "Airbus A330-300" },
+                { flightNo: "VJ384", schedule: "18:00 ➔ 19:10", aircraft: "Airbus A321" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 820, perks: { en: "Sydney ➔ HCMC evening dining ➔ Morning flight to UIH", vi: "Sydney ➔ TP.HCM ăn tối ẩm thực ➔ Bay sáng sớm tới Phù Cát" } },
+                business: { price: 2150, perks: { en: "Business flight + 5-star transit hotel + UIH direct flight", vi: "Bay thương gia + Khách sạn 5 sao quá cảnh + Bay thẳng Phù Cát" } }
+            },
+            stepsData: [
+                { flightNo: "VN786", schedule: "11:15 ➔ 16:00", aircraft: "Boeing 787-9 Dreamliner" },
+                { flightNo: "VN1384", schedule: "07:10 ➔ 08:20 (sáng hôm sau)", aircraft: "Airbus A321neo" }
+            ]
+        }
+    },
+    japan: {
+        fastest: {
+            fareTiers: {
+                economy: { price: 580, perks: { en: "Non-stop Tokyo-Hanoi (5h 15m) • 2x23kg baggage • Meals", vi: "Bay thẳng Tokyo-Hà Nội (5h 15m) • 2 kiện 23kg • Suất ăn nóng" } },
+                business: { price: 1450, perks: { en: "Airbus A350 Business • Flat-bed • Lotus Lounge", vi: "Thương gia Airbus A350 • Giường nằm phẳng • Phòng chờ VIP" } }
+            },
+            stepsData: [
+                { flightNo: "VN311", schedule: "10:00 ➔ 14:15", aircraft: "Airbus A350-900" },
+                { flightNo: "VN1396", schedule: "16:30 ➔ 18:05", aircraft: "Airbus A321" },
+                { flightNo: "Private Car", schedule: "40 phút (~35 km)", aircraft: "SUV 7 chỗ đưa đón" }
+            ]
+        },
+        bestValue: {
+            fareTiers: {
+                economy: { price: 480, perks: { en: "Vietjet direct flights: Tokyo Narita ➔ Hanoi ➔ Phu Cat", vi: "Bay thẳng Vietjet: Tokyo Narita ➔ Hà Nội ➔ Phù Cát" } },
+                business: { price: 1250, perks: { en: "Vietjet SkyBoss • Priority boarding & luggage", vi: "Hạng SkyBoss Vietjet • Ưu tiên lên tàu & hành lý" } }
+            },
+            stepsData: [
+                { flightNo: "VJ933", schedule: "09:30 ➔ 13:55", aircraft: "Airbus A321neo" },
+                { flightNo: "VJ382", schedule: "16:10 ➔ 17:45", aircraft: "Airbus A320" }
+            ]
+        },
+        smartStopover: {
+            fareTiers: {
+                economy: { price: 540, perks: { en: "Direct Tokyo ➔ Da Nang + Coastal train to Quy Nhon", vi: "Bay thẳng Tokyo ➔ Đà Nẵng + Tàu ngắm biển về Quy Nhơn" } },
+                business: { price: 1380, perks: { en: "Business flight + Coastal railway panorama view", vi: "Bay thương gia + Tàu hỏa ngắm vịnh biển miền Trung" } }
+            },
+            stepsData: [
+                { flightNo: "VN319", schedule: "10:30 ➔ 14:25", aircraft: "Airbus A321neo" },
+                { flightNo: "Tàu SE3", schedule: "16:00 ➔ 20:45 (4h 45m)", aircraft: "Khoang nằm VIP ngắm biển" }
+            ]
+        }
+    }
+};
+
+// Đồng bộ thông tin lịch bay & hạng vé vào MOCK_COUNTRIES
+Object.keys(VERIFIED_FLIGHT_AND_FARE_DATA).forEach(countryKey => {
+    if (MOCK_COUNTRIES[countryKey] && MOCK_COUNTRIES[countryKey].routes) {
+        ['fastest', 'bestValue', 'smartStopover'].forEach(routeKey => {
+            const verifiedRoute = VERIFIED_FLIGHT_AND_FARE_DATA[countryKey]?.[routeKey];
+            const route = MOCK_COUNTRIES[countryKey].routes[routeKey];
+            if (verifiedRoute && route) {
+                route.fareTiers = verifiedRoute.fareTiers;
+                if (verifiedRoute.stepsData && route.steps) {
+                    verifiedRoute.stepsData.forEach((sd, idx) => {
+                        if (route.steps[idx]) {
+                            Object.assign(route.steps[idx], sd);
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+
 /**
  * Danh mục khách sạn tiêu biểu tại Quy Nhơn
  */

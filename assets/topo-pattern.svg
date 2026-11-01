@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="contourGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.09"/>
+      <stop offset="50%" stop-color="#10b981" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="contourGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.08"/>
+      <stop offset="50%" stop-color="#0d9488" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Topographic Elevation Contours (Coastal Island & Mountain Peninsulas) -->
+  <g fill="none" stroke="url(#contourGrad1)" stroke-width="1.2">
+    <!-- Outer Contour Ring 1 -->
+    <path d="M 0,220 C 120,240 220,180 340,200 C 460,220 540,300 660,280 C 740,265 770,230 800,240"/>
+    <path d="M 0,320 C 140,350 200,270 320,280 C 440,290 520,380 640,360 C 720,345 760,310 800,330"/>
+    <path d="M 0,440 C 130,470 240,390 360,410 C 480,430 560,510 680,490 C 740,480 770,450 800,460"/>
+    <path d="M 0,560 C 110,580 230,510 350,530 C 470,550 530,640 650,620 C 730,605 760,570 800,580"/>
+    <path d="M 0,680 C 150,710 220,630 340,650 C 460,670 550,750 670,730 C 730,715 770,690 800,700"/>
+    <path d="M 0,100 C 100,120 210,60 320,80 C 440,100 510,180 630,160 C 710,145 760,110 800,120"/>
+  </g>
+
+  <!-- Second Layer: Concentric Elevation Ridges -->
+  <g fill="none" stroke="url(#contourGrad2)" stroke-width="1.5" stroke-dasharray="6,4">
+    <ellipse cx="240" cy="380" rx="140" ry="90" transform="rotate(-15 240 380)"/>
+    <ellipse cx="240" cy="380" rx="95" ry="60" transform="rotate(-15 240 380)"/>
+    <ellipse cx="240" cy="380" rx="50" ry="32" transform="rotate(-15 240 380)"/>
+    
+    <ellipse cx="620" cy="220" rx="120" ry="75" transform="rotate(20 620 220)"/>
+    <ellipse cx="620" cy="220" rx="75" ry="48" transform="rotate(20 620 220)"/>
+    
+    <ellipse cx="580" cy="620" rx="130" ry="85" transform="rotate(-10 580 620)"/>
+    <ellipse cx="580" cy="620" rx="80" ry="52" transform="rotate(-10 580 620)"/>
+  </g>
+
+  <!-- Subtle Geographic Grid & Flight Vector Marks -->
+  <g stroke="rgba(255,255,255,0.025)" stroke-width="1">
+    <line x1="200" y1="0" x2="200" y2="800"/>
+    <line x1="400" y1="0" x2="400" y2="800"/>
+    <line x1="600" y1="0" x2="600" y2="800"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="0" y1="600" x2="800" y2="600"/>
+  </g>
+
+  <!-- Navigation Waypoint Crosshairs -->
+  <g stroke="rgba(56,189,248,0.12)" stroke-width="1.2">
+    <circle cx="200" cy="200" r="4" fill="none"/>
+    <path d="M 194,200 L 206,200 M 200,194 L 200,206"/>
+    
+    <circle cx="600" cy="400" r="4" fill="none"/>
+    <path d="M 594,400 L 606,400 M 600,394 L 600,406"/>
+
+    <circle cx="400" cy="600" r="4" fill="none"/>
+    <path d="M 394,600 L 406,600 M 400,594 L 400,606"/>
+  </g>
+</svg>

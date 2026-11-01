@@ -584,14 +584,15 @@ body {
 }
 
 /* ===================================================================
-   Footer
+   Footer (Founding Team & Ecosystem Conclusion)
    =================================================================== */
 .site-footer {
-    border-top: 1px solid var(--border-color);
-    background: #050a12;
-    padding: 3rem 0 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.95) 0%, #030712 100%);
+    padding: 4rem 0 5.5rem;
     color: var(--text-muted);
     font-size: 0.85rem;
+    position: relative;
 }
 
 .footer-content {

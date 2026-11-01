@@ -2033,39 +2033,39 @@ function generatePersonalizedItinerary(options = {}) {
 }
 
 /**
- * Lộ trình phát triển hệ thống trong tương lai
+ * Lộ trình phát triển hệ thống trong tương lai (Ecosystem Roadmap)
  */
 const MOCK_FUTURE_FEATURES = [
     {
         icon: "plane-circle-check",
-        title: { en: "Real-time Flight Engine", vi: "Dữ liệu chuyến bay thời gian thực" },
+        title: { en: "Live GDS Flight Booking Engine", vi: "Xuất vé máy bay thời gian thực (GDS)" },
         desc: {
-            en: "Live API integration with global airline distribution systems (GDS) for real-time fares and seat availability to HAN, DAD, and UIH.",
-            vi: "Tích hợp API trực tiếp với hệ thống hàng không toàn cầu để tra cứu giá vé và tình trạng chỗ theo thời gian thực tới HAN, DAD và UIH."
+            en: "Direct airline API integration with global distribution systems (Amadeus/Skyscanner) for instant ticket issuance to Quy Nhon (UIH).",
+            vi: "Kết nối trực tiếp hệ thống phân phối hàng không Amadeus/Skyscanner tra cứu và xuất vé máy bay tức thì về Sân bay Phù Cát (UIH)."
         }
     },
     {
-        icon: "route",
-        title: { en: "Autonomous Multi-modal Routing", vi: "Tối ưu hóa đa phương thức thông minh" },
+        icon: "leaf",
+        title: { en: "Green Carbon-Offset Ledger", vi: "Tín chỉ du lịch xanh & Bù đắp Carbon" },
         desc: {
-            en: "Deep reinforcement AI to balance cost, travel time, scenic value and carbon footprint for transfer legs from DAD and UIH.",
-            vi: "Thuật toán AI tự động cân đối chi phí, thời gian di chuyển, cảnh quan và lượng phát thải cho từng chặng từ DAD và UIH về Quy Nhơn."
+            en: "Empowering conscious travelers to offset transit emissions by funding local coastal mangrove and marine conservation projects in Binh Dinh.",
+            vi: "Tự động quy đổi và hỗ trợ du khách đóng góp bù đắp phát thải cho các dự án bảo tồn rừng ngập mặn và rạn san hô biển tại Bình Định."
         }
     },
     {
-        icon: "calendar-check",
-        title: { en: "1-Click Direct Booking", vi: "Đặt phòng & vé 1 chạm tích hợp" },
+        icon: "credit-card",
+        title: { en: "1-Click Multi-Modal Pass", vi: "Thẻ hành trình tích hợp 1-Chạm" },
         desc: {
-            en: "Direct hotel and ground transport booking API without third-party redirects.",
-            vi: "Kết nối trực tiếp hệ thống đặt phòng khách sạn và vé xe trung chuyển không qua trung gian."
+            en: "Seamless unified checkout covering airport shuttle, scenic coastal railway and 5-star resort reservations in a single digital pass.",
+            vi: "Thanh toán một chạm đồng bộ cả xe đón sân bay, vé tàu hỏa ngắm cảnh và đặt phòng resort trong một vé điện tử duy nhất."
         }
     },
     {
-        icon: "comments",
-        title: { en: "24/7 AI Concierge with Voice", vi: "Trợ lý AI đồng hành giọng nói 24/7" },
+        icon: "vr-cardboard",
+        title: { en: "AR Smart Seaside Navigation", vi: "Chỉ đường thực tế ảo AR ven biển" },
         desc: {
-            en: "Natural conversational voice assistant guiding travelers throughout their stay in Quy Nhon in any language.",
-            vi: "Trợ lý ảo giao tiếp tự nhiên bằng giọng nói, hướng dẫn du khách suốt chuyến đi bằng bất kỳ ngôn ngữ nào."
+            en: "Immersive augmented reality audio tours guiding visitors across Quy Nhon's pristine cliffs, hidden coves and cultural landmarks.",
+            vi: "Hướng dẫn viên thực tế ảo AR định vị cảnh quan, thuyết minh văn hóa Tháp Đôi, Ghềnh Ráng và các vịnh biển hoang sơ của Quy Nhơn."
         }
     }
 ];

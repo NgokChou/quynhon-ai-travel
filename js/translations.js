@@ -13,6 +13,7 @@ const TRANSLATIONS = {
         navMap: "World Route",
         navHotels: "Hotels",
         navRoadmap: "Roadmap",
+        navTeam: "Founders",
 
         // Hero Section
         heroBadge: "AI-POWERED TRAVEL PLATFORM",
@@ -141,9 +142,21 @@ const TRANSLATIONS = {
         toastCopyFailed: "Could not copy link to clipboard.",
         offlineQrNote: "Offline Mode — URL preserved in share link below",
 
-        // Roadmap & Footer
+        // Roadmap & Founding Team
         roadmapBadge: "ECOSYSTEM ROADMAP",
         roadmapSubtitle: "How our platform expands and scales AI travel capabilities.",
+        teamTitle: "Founding Team & Visionaries",
+        teamSubtitle: "The passionate interdisciplinary minds driving Quy Nhon AI Travel Assistant.",
+        teamBadge: "FOUNDING TEAM",
+        chauMajor: "Information Technology",
+        chauRole: "Chief Technology & AI Lead",
+        chauBio: "Architected end-to-end platform architecture, multi-modal routing algorithms, Gemini AI integration, and localized user experience.",
+        khangMajor: "Chemical Engineering",
+        khangRole: "R&D & Environmental Analyst",
+        khangBio: "Pioneered carbon footprint modeling (ICAO/DEFRA), eco-conscious travel metrics, and sustainable coastal conservation initiatives.",
+        nhungMajor: "Chinese Linguistics",
+        nhungRole: "Localization & Cultural Strategy",
+        nhungBio: "Led cross-cultural localization, international traveler experience research, and strategic tourism communication across Asian markets.",
         footerNotice: "Quy Nhon AI Travel Assistant is an intelligent travel platform designed to connect international travelers to Quy Nhon, Vietnam.",
         footerDisclaimer: "Flight schedules and hotel rates reflect seasonal benchmarks. Direct bookings and searches are connected with Booking.com and Google Flights."
     },
@@ -156,6 +169,7 @@ const TRANSLATIONS = {
         navMap: "Bản Đồ Tuyến Đường",
         navHotels: "Khách Sạn",
         navRoadmap: "Lộ Trình Tương Lai",
+        navTeam: "Đội Ngũ Sáng Lập",
 
         // Hero Section
         heroBadge: "NỀN TẢNG DU LỊCH THÔNG MINH AI",
@@ -284,9 +298,21 @@ const TRANSLATIONS = {
         toastCopyFailed: "Không thể sao chép liên kết.",
         offlineQrNote: "Chế độ ngoại tuyến — URL được lưu trong liên kết bên dưới",
 
-        // Roadmap & Footer
+        // Roadmap & Founding Team
         roadmapBadge: "HỆ SINH THÁI PHÁT TRIỂN",
         roadmapSubtitle: "Kế hoạch phát triển và mở rộng các năng lực công nghệ du lịch AI.",
+        teamTitle: "Đội Ngũ Sáng Lập & Phát Triển",
+        teamSubtitle: "Đội ngũ liên ngành đầy nhiệt huyết đứng sau nền tảng Trợ lý Du lịch Quy Nhơn AI.",
+        teamBadge: "ĐỘI NGŨ SÁNG LẬP",
+        chauMajor: "Ngành Công nghệ Thông tin",
+        chauRole: "Trưởng nhóm Công nghệ & Phát triển Hệ thống AI",
+        chauBio: "Chủ trì kiến trúc kỹ thuật toàn diện, xây dựng mô hình định tuyến đa phương thức, tích hợp trợ lý AI Gemini và phát triển giao diện người dùng tối ưu trải nghiệm quốc tế.",
+        khangMajor: "Ngành Công nghệ Hóa học",
+        khangRole: "Nghiên cứu & Đánh giá Tác động Môi trường",
+        khangBio: "Phụ trách nghiên cứu và mô hình hóa chỉ số phát thải carbon CO₂e (ICAO/DEFRA), đề xuất các giải pháp di chuyển bền vững và bảo vệ hệ sinh thái cảnh quan biển Quy Nhơn.",
+        nhungMajor: "Ngành Ngôn ngữ Trung",
+        nhungRole: "Bản địa hóa Đa ngôn ngữ & Truyền thông Quốc tế",
+        nhungBio: "Phụ trách bản địa hóa nội dung đa văn hóa, nghiên cứu hành vi du khách quốc tế và xây dựng cầu nối truyền thông đưa vẻ đẹp Quy Nhơn tiếp cận thị trường du lịch toàn cầu.",
         footerNotice: "Quy Nhơn AI Travel Assistant là nền tảng du lịch thông minh hỗ trợ du khách khám phá thành phố biển Quy Nhơn, Bình Định.",
         footerDisclaimer: "Lịch trình bay và giá phòng phản ánh mức giá tham chiếu theo mùa. Dịch vụ đặt phòng và tra cứu vé thực tế được kết nối trực tiếp qua Booking.com và Google Flights."
     }

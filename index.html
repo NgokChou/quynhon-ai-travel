@@ -43,6 +43,7 @@
                 <li><a href="#itinerary-section">My Journey</a></li>
                 <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
                 <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
+                <li><a href="#team-section" data-i18n="navTeam">Founders</a></li>
             </ul>
 
             <div class="nav-actions">
@@ -757,26 +758,93 @@
     <div id="app-toast-container" class="app-toast-container"></div>
 
     <!-- ===================================================================
-         6. Footer
+         6. Footer: Founding Team (Replaces old text footer)
          =================================================================== -->
-    <footer class="site-footer">
+    <footer id="team-section" class="site-footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="brand-logo-icon" style="width: 32px; height: 32px; font-size: 1rem;">
-                        <i class="fa-solid fa-compass"></i>
-                    </div>
-                    <div>
-                        <strong style="color: var(--text-main);">Quy Nhon AI Travel Assistant</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-dim);">Smart Multi-Modal Travel Edition</div>
-                    </div>
-                </div>
+            <div class="section-heading-row">
                 <div>
-                    <p data-i18n="footerNotice">Quy Nhon AI Travel Assistant is an intelligent travel platform designed to connect international travelers to Quy Nhon, Vietnam.</p>
+                    <h3 class="section-title" data-i18n="teamTitle">Founding Team & Visionaries</h3>
+                    <p class="section-subtitle" data-i18n="teamSubtitle">The passionate interdisciplinary minds driving Quy Nhon AI Travel Assistant.</p>
+                </div>
+                <div class="team-badge-pill">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span data-i18n="teamBadge">FOUNDING TEAM</span>
                 </div>
             </div>
-            <div class="footer-disclaimer-box">
-                <p data-i18n="footerDisclaimer">Flight schedules and hotel rates reflect seasonal benchmarks. Direct bookings and searches are connected with Booking.com and Google Flights.</p>
+
+            <div class="team-grid">
+                <!-- Founder 1: Đặng Ngọc Châu -->
+                <div class="founder-card tech-founder">
+                    <div class="founder-header">
+                        <div class="founder-avatar avatar-tech">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div class="founder-tag tag-tech">
+                            <i class="fa-solid fa-code"></i>
+                            <span data-i18n="chauMajor">Ngành Công nghệ Thông tin</span>
+                        </div>
+                    </div>
+                    <div class="founder-body">
+                        <h4 class="founder-name">Đặng Ngọc Châu</h4>
+                        <div class="founder-role" data-i18n="chauRole">Trưởng nhóm Công nghệ & Phát triển Hệ thống AI</div>
+                        <p class="founder-bio" data-i18n="chauBio">
+                            Chủ trì kiến trúc kỹ thuật toàn diện, xây dựng mô hình định tuyến đa phương thức, tích hợp trợ lý AI Gemini và phát triển giao diện người dùng tối ưu trải nghiệm quốc tế.
+                        </p>
+                    </div>
+                    <div class="founder-footer">
+                        <span class="founder-skill-chip"><i class="fa-solid fa-brain"></i> AI & Routing</span>
+                        <span class="founder-skill-chip"><i class="fa-solid fa-layer-group"></i> Full-Stack</span>
+                    </div>
+                </div>
+
+                <!-- Founder 2: Huỳnh An Khang -->
+                <div class="founder-card science-founder">
+                    <div class="founder-header">
+                        <div class="founder-avatar avatar-science">
+                            <i class="fa-solid fa-flask-vial"></i>
+                        </div>
+                        <div class="founder-tag tag-science">
+                            <i class="fa-solid fa-leaf"></i>
+                            <span data-i18n="khangMajor">Ngành Công nghệ Hóa học</span>
+                        </div>
+                    </div>
+                    <div class="founder-body">
+                        <h4 class="founder-name">Huỳnh An Khang</h4>
+                        <div class="founder-role" data-i18n="khangRole">Nghiên cứu & Đánh giá Tác động Môi trường</div>
+                        <p class="founder-bio" data-i18n="khangBio">
+                            Phụ trách nghiên cứu và mô hình hóa chỉ số phát thải carbon CO₂e (ICAO/DEFRA), đề xuất các giải pháp di chuyển bền vững và bảo vệ hệ sinh thái cảnh quan biển Quy Nhơn.
+                        </p>
+                    </div>
+                    <div class="founder-footer">
+                        <span class="founder-skill-chip"><i class="fa-solid fa-seedling"></i> Green Travel</span>
+                        <span class="founder-skill-chip"><i class="fa-solid fa-smog"></i> Carbon Modeling</span>
+                    </div>
+                </div>
+
+                <!-- Founder 3: Bùi Thùy Nhung -->
+                <div class="founder-card language-founder">
+                    <div class="founder-header">
+                        <div class="founder-avatar avatar-language">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                        <div class="founder-tag tag-language">
+                            <i class="fa-solid fa-earth-asia"></i>
+                            <span data-i18n="nhungMajor">Ngành Ngôn ngữ Trung</span>
+                        </div>
+                    </div>
+                    <div class="founder-body">
+                        <h4 class="founder-name">Bùi Thùy Nhung</h4>
+                        <div class="founder-role" data-i18n="nhungRole">Bản địa hóa Đa ngôn ngữ & Truyền thông Quốc tế</div>
+                        <p class="founder-bio" data-i18n="nhungBio">
+                            Phụ trách bản địa hóa nội dung đa văn hóa, nghiên cứu hành vi du khách quốc tế và xây dựng cầu nối truyền thông đưa vẻ đẹp Quy Nhơn tiếp cận thị trường du lịch toàn cầu.
+                        </p>
+                    </div>
+                    <div class="founder-footer">
+                        <span class="founder-skill-chip"><i class="fa-solid fa-globe"></i> Localization</span>
+                        <span class="founder-skill-chip"><i class="fa-solid fa-bullhorn"></i> Communications</span>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>

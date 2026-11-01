@@ -524,8 +524,10 @@ const App = (function() {
     }
 
     /**
-     * Render các thẻ phương án di chuyển (Fastest, Best-Value, Smart-Stopover)
-     * Cho phép click chọn phương án và cập nhật bản đồ + tóm tắt AI
+     * Render các phương án di chuyển đa phương thức (Multi-Modal Journey Route)
+     * Trình bày dạng:
+     * 1. Thanh chọn 3 lộ trình (Route Selector Cards) trực quan, gọn gàng, dễ so sánh giá và thời gian
+     * 2. Bảng sơ đồ chặng hành trình (Visual Transit Pipeline) sinh động, súc tích cho lộ trình đang chọn
      */
     function renderTimeline(countryData) {
         if (!elements.timelineList || !countryData || !countryData.routes) return;
@@ -536,142 +538,60 @@ const App = (function() {
         const isVi = lang === 'vi';
 
         const routeDefs = [
-            { key: 'fastest', data: countryData.routes.fastest, icon: 'bolt' },
-            { key: 'bestValue', data: countryData.routes.bestValue, icon: 'scale-balanced' },
-            { key: 'smartStopover', data: countryData.routes.smartStopover, icon: 'route' }
+            { key: 'fastest', data: countryData.routes.fastest, icon: 'bolt', tagClass: 'tag-fastest' },
+            { key: 'bestValue', data: countryData.routes.bestValue, icon: 'scale-balanced', tagClass: 'tag-best-value' },
+            { key: 'smartStopover', data: countryData.routes.smartStopover, icon: 'train-subway', tagClass: 'tag-smart-stopover' }
         ];
 
-        routeDefs.forEach(({ key, data, icon }) => {
+        // 1. Grid 3 thẻ chọn lộ trình để người dùng dễ dàng so sánh
+        const selectorGrid = document.createElement('div');
+        selectorGrid.className = 'route-selector-grid';
+
+        routeDefs.forEach(({ key, data, icon, tagClass }) => {
             if (!data) return;
 
             const isCurrentActive = (key === state.selectedRouteType);
             const routeFare = data.baseTransitCost || Math.round(budget * (data.priceRatio || 1.0) * 0.45);
-            const ecoPill = data.isEcoChoice
-                ? `<span class="eco-choice-pill"><i class="fa-solid fa-leaf"></i> ${data.carbonSavedPercent >= 30 ? t('ecoChoiceBadge', lang) : t('lowerEmissionBadge', lang)}</span>`
-                : '';
 
-            const carbonBarHtml = `
-                <div class="route-carbon-bar">
-                    <div class="route-carbon-stat">
-                        <i class="fa-solid fa-smog"></i>
-                        <span>${t('carbonFootprint', lang)}: <strong>${data.carbonKg || 550} kg CO₂e</strong></span>
-                    </div>
-                    ${ecoPill}
-                </div>
-                <small class="route-carbon-footnote">${(data.carbonNote && data.carbonNote[lang]) || t('carbonMethodology', lang)}</small>
-            `;
+            const card = document.createElement('div');
+            card.className = `route-card-select ${tagClass} ${isCurrentActive ? 'is-selected' : ''}`;
+            card.dataset.routeKey = key;
 
-            const routeCard = document.createElement('div');
-            routeCard.className = `route-option-card route-${key} ${isCurrentActive ? 'is-active' : ''}`;
-            routeCard.dataset.routeKey = key;
-
-            const activeBadgeHtml = isCurrentActive
-                ? `<div class="route-active-badge"><i class="fa-solid fa-circle-check"></i> ${isVi ? 'Lộ trình đang chọn' : 'Selected Active Route'}</div>`
-                : `<div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.35rem;"><i class="fa-regular fa-hand-pointer"></i> ${isVi ? 'Nhấp để chọn lộ trình này' : 'Click to select this route'}</div>`;
-
-            routeCard.innerHTML = `
-                <div class="route-option-header">
-                    <div class="route-option-title">
-                        <div class="route-option-icon">
-                            <i class="fa-solid fa-${icon}"></i>
-                        </div>
-                        <div>
-                            ${activeBadgeHtml}
-                            <span class="route-option-badge">
-                                ${data.badge[lang]}
-                            </span>
-                            <h3>
-                                ${data.title[lang]}
-                            </h3>
-                            <p>
-                                ${data.description[lang]}
-                            </p>
-                            <div class="route-duration-pill">
-                                <i class="fa-solid fa-clock"></i> ${isVi ? 'Tổng thời gian ước tính' : 'Est. Total Journey'}: <strong>${data.totalDuration}</strong>
-                            </div>
-                            ${carbonBarHtml}
-                        </div>
-                    </div>
-
-                    <div class="route-option-price">
-                        <span>
-                            ${isVi ? 'Giá vé & di chuyển ước tính' : 'Est. Transit & Fare'}
-                        </span>
-                        <strong>
-                            $${routeFare}
-                        </strong>
-                        <small style="display:block; font-size:0.68rem; color:var(--text-dim); margin-top:2px;">
-                            ${isVi ? 'Khứ hồi + trung chuyển' : 'Round-trip + transfers'}
-                        </small>
-                    </div>
-                </div>
-
-                <div class="route-option-timeline">
-                    <div class="route-timeline-title">
-                        <i class="fa-solid fa-route"></i>
-                        <span>
-                            ${isVi ? 'Chi tiết các chặng hành trình' : 'Journey breakdown & connections'}
-                        </span>
-                    </div>
-
-                    <div class="route-steps-list"></div>
-                </div>
-            `;
-
-            // Render các chặng cụ thể của gói hành trình
-            const stepsContainer = routeCard.querySelector('.route-steps-list');
-            if (data.steps && Array.isArray(data.steps)) {
-                data.steps.forEach((step, index) => {
-                    const stepItem = document.createElement('div');
-                    stepItem.className = `route-mini-step step-${step.type}`;
-
-                    let tagLabel = '';
-                    if (step.type === 'flight') tagLabel = t('stepFlightTag', lang);
-                    else if (step.type === 'domestic-flight') tagLabel = isVi ? 'BAY NỐI CHUYẾN' : 'DOMESTIC FLIGHT';
-                    else if (step.type === 'transfer') tagLabel = t('stepTransferTag', lang);
-                    else if (step.type === 'hotel') tagLabel = t('stepHotelTag', lang);
-                    else if (step.type === 'explore') tagLabel = t('stepExploreTag', lang);
-
-                    // Badge nguồn dữ liệu mô phỏng vs xác minh
-                    let dataBadgeHtml = '';
-                    if (step.dataSource === 'verified') {
-                        dataBadgeHtml = `<span class="data-source-tag verified"><i class="fa-solid fa-check"></i> ${step.dataSourceLabel ? step.dataSourceLabel[lang] : (isVi ? 'Lịch trình xác minh' : 'Verified Route')}</span>`;
-                    } else if (step.dataSource === 'simulated') {
-                        dataBadgeHtml = `<span class="data-source-tag simulated"><i class="fa-solid fa-circle-info"></i> ${step.dataSourceLabel ? step.dataSourceLabel[lang] : (isVi ? 'Dữ liệu mô phỏng' : 'Simulated Flight')}</span>`;
-                    }
-
-                    stepItem.innerHTML = `
-                        <div class="route-mini-number">
-                            ${index + 1}
-                        </div>
-                        <div class="route-mini-icon">
-                            <i class="fa-solid fa-${step.icon}"></i>
-                        </div>
-                        <div class="route-mini-content">
-                            <div class="route-mini-top">
-                                <span class="step-tag tag-${step.type}">
-                                    ${tagLabel}
-                                </span>
-                                <strong>
-                                    ${step.title[lang]}
-                                </strong>
-                                ${dataBadgeHtml}
-                            </div>
-                            <div class="route-mini-location">
-                                <span>${step.from}</span>
-                                <i class="fa-solid fa-arrow-right-long"></i>
-                                <span>${step.to}</span>
-                            </div>
-                            <p>${step.subInfo[lang]}</p>
-                            ${step.highlight ? `<small style="color: #38bdf8; display: block; margin-top: 0.25rem;"><i class="fa-solid fa-sparkles"></i> ${step.highlight[lang]}</small>` : ''}
-                        </div>
-                    `;
-                    stepsContainer.appendChild(stepItem);
-                });
+            // Rút gọn badge để hiển thị súc tích
+            let badgeText = data.badge ? data.badge[lang] : '';
+            if (badgeText.includes('•')) {
+                badgeText = badgeText.split('•')[0].trim();
             }
 
-            // Gắn sự kiện click để người dùng chọn hành trình này
-            routeCard.addEventListener('click', () => {
+            const stateIndicator = isCurrentActive
+                ? `<span class="route-select-status is-active"><i class="fa-solid fa-circle-check"></i> ${isVi ? 'Đang chọn' : 'Selected'}</span>`
+                : `<span class="route-select-status"><i class="fa-regular fa-circle"></i> ${isVi ? 'Chọn' : 'Select'}</span>`;
+
+            card.innerHTML = `
+                <div class="route-card-top">
+                    <div class="route-card-icon">
+                        <i class="fa-solid fa-${icon}"></i>
+                    </div>
+                    <div class="route-card-meta">
+                        <span class="route-card-badge">${badgeText}</span>
+                        ${stateIndicator}
+                    </div>
+                </div>
+                <h4 class="route-card-title">${data.title[lang]}</h4>
+                <div class="route-card-metrics">
+                    <div class="route-metric-pill">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>${data.totalDuration}</span>
+                    </div>
+                    <div class="route-card-fare">
+                        <small>${isVi ? 'Ước tính' : 'Est.'}</small>
+                        <strong>$${routeFare}</strong>
+                    </div>
+                </div>
+            `;
+
+            // Gắn sự kiện chuyển đổi lộ trình khi người dùng nhấn chọn
+            card.addEventListener('click', () => {
                 if (state.selectedRouteType === key) return;
 
                 state.selectedRouteType = key;
@@ -696,8 +616,160 @@ const App = (function() {
                 }
             });
 
-            elements.timelineList.appendChild(routeCard);
+            selectorGrid.appendChild(card);
         });
+
+        elements.timelineList.appendChild(selectorGrid);
+
+        // 2. Chi tiết trực quan các chặng của lộ trình đang chọn (Active Route Visual Transit Pipeline)
+        const activeRouteData = countryData.routes[state.selectedRouteType] || countryData.routes.fastest;
+        if (!activeRouteData) return;
+
+        const activeFare = activeRouteData.baseTransitCost || Math.round(budget * (activeRouteData.priceRatio || 1.0) * 0.45);
+
+        const board = document.createElement('div');
+        board.className = 'route-active-board';
+
+        const ecoBadge = activeRouteData.isEcoChoice
+            ? `<span class="board-stat-pill eco"><i class="fa-solid fa-leaf"></i> ${activeRouteData.carbonSavedPercent >= 30 ? (isVi ? 'Tiết kiệm 38% CO₂e' : 'Save 38% CO₂e') : (isVi ? 'Phát thải thấp hơn' : 'Lower Emission')}</span>`
+            : '';
+
+        board.innerHTML = `
+            <div class="route-board-header">
+                <div class="board-header-left">
+                    <span class="board-eyebrow">
+                        <i class="fa-solid fa-route"></i> ${isVi ? 'CHI TIẾT CHẶNG HÀNH TRÌNH' : 'TRANSIT STAGES BREAKDOWN'}
+                    </span>
+                    <h3 class="board-title">${activeRouteData.title[lang]}</h3>
+                    <p class="board-desc">${activeRouteData.description[lang]}</p>
+                </div>
+                <div class="board-header-right">
+                    <div class="board-stat-pill">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>${isVi ? 'Thời gian' : 'Duration'}: <strong>${activeRouteData.totalDuration}</strong></span>
+                    </div>
+                    <div class="board-stat-pill price">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>${isVi ? 'Vé & chuyển tiếp' : 'Fare & transfer'}: <strong>$${activeFare}</strong></span>
+                    </div>
+                    ${activeRouteData.carbonKg ? `
+                        <div class="board-stat-pill">
+                            <i class="fa-solid fa-smog"></i>
+                            <span>CO₂e: <strong>${activeRouteData.carbonKg} kg</strong></span>
+                        </div>
+                    ` : ''}
+                    ${ecoBadge}
+                </div>
+            </div>
+        `;
+
+        const pipeline = document.createElement('div');
+        pipeline.className = 'transit-pipeline';
+        board.appendChild(pipeline);
+
+        if (activeRouteData.steps && Array.isArray(activeRouteData.steps)) {
+            activeRouteData.steps.forEach((step, idx) => {
+                let stageName = '';
+                if (step.type === 'flight') stageName = isVi ? 'Chặng 1: Bay quốc tế' : 'Leg 1: International Flight';
+                else if (step.type === 'domestic-flight') stageName = isVi ? 'Chặng 2: Nối chuyến' : 'Leg 2: Domestic Flight';
+                else if (step.type === 'transfer') stageName = isVi ? `Chặng ${idx + 1}: Chuyển tiếp` : `Leg ${idx + 1}: Transfer`;
+                else stageName = isVi ? `Chặng ${idx + 1}` : `Leg ${idx + 1}`;
+
+                let subDetails = step.subInfo ? step.subInfo[lang] : '';
+                let highlightText = step.highlight ? step.highlight[lang] : '';
+
+                const node = document.createElement('div');
+                node.className = `transit-node transit-type-${step.type}`;
+
+                node.innerHTML = `
+                    <div class="node-icon-wrap">
+                        <div class="node-icon">
+                            <i class="fa-solid fa-${step.icon}"></i>
+                        </div>
+                        <span class="node-index">${idx + 1}</span>
+                    </div>
+                    <div class="node-body">
+                        <div class="node-top-row">
+                            <span class="node-leg-tag">${stageName}</span>
+                            ${step.duration ? `<span class="node-duration-chip"><i class="fa-regular fa-clock"></i> ${step.duration}</span>` : ''}
+                        </div>
+                        <div class="node-route-codes">
+                            <span class="code-origin">${step.from}</span>
+                            <i class="fa-solid fa-arrow-right-long node-arrow"></i>
+                            <span class="code-dest">${step.to}</span>
+                        </div>
+                        <div class="node-sub-info">
+                            <i class="fa-solid fa-circle-dot node-bullet"></i>
+                            <span>${subDetails}</span>
+                        </div>
+                        ${highlightText ? `
+                            <div class="node-highlight-chip">
+                                <i class="fa-solid fa-sparkles"></i>
+                                <span>${highlightText}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                pipeline.appendChild(node);
+
+                // Thêm icon nối chặng giữa các điểm di chuyển
+                if (idx < activeRouteData.steps.length - 1) {
+                    const nextStep = activeRouteData.steps[idx + 1];
+                    let connIcon = 'plane';
+                    if (nextStep.type === 'transfer') {
+                        connIcon = nextStep.icon || 'car';
+                    } else if (nextStep.type === 'domestic-flight') {
+                        connIcon = 'plane';
+                    }
+
+                    const connector = document.createElement('div');
+                    connector.className = 'transit-connector';
+                    connector.innerHTML = `
+                        <div class="connector-line"></div>
+                        <div class="connector-icon"><i class="fa-solid fa-${connIcon}"></i></div>
+                        <div class="connector-line"></div>
+                    `;
+                    pipeline.appendChild(connector);
+                }
+            });
+
+            // Thêm chặng đích đến cuối cùng tại Quy Nhơn
+            const arrivalConnector = document.createElement('div');
+            arrivalConnector.className = 'transit-connector';
+            arrivalConnector.innerHTML = `
+                <div class="connector-line"></div>
+                <div class="connector-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="connector-line"></div>
+            `;
+            pipeline.appendChild(arrivalConnector);
+
+            const arrivalNode = document.createElement('div');
+            arrivalNode.className = 'transit-node transit-arrival-node';
+            arrivalNode.innerHTML = `
+                <div class="node-icon-wrap arrival">
+                    <div class="node-icon">
+                        <i class="fa-solid fa-umbrella-beach"></i>
+                    </div>
+                    <span class="node-index"><i class="fa-solid fa-check"></i></span>
+                </div>
+                <div class="node-body">
+                    <div class="node-top-row">
+                        <span class="node-leg-tag arrival-tag">${isVi ? 'ĐÍCH ĐẾN' : 'DESTINATION'}</span>
+                    </div>
+                    <div class="node-route-codes">
+                        <span class="code-dest font-gold">Quy Nhơn, Bình Định</span>
+                    </div>
+                    <div class="node-sub-info">
+                        <i class="fa-solid fa-circle-dot node-bullet"></i>
+                        <span>${isVi ? 'Nhận phòng resort & bắt đầu kỳ nghỉ biển' : 'Check-in accommodation & begin coastal stay'}</span>
+                    </div>
+                </div>
+            `;
+            pipeline.appendChild(arrivalNode);
+        }
+
+        elements.timelineList.appendChild(board);
     }
 
     /**

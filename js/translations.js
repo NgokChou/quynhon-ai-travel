@@ -53,7 +53,8 @@ const TRANSLATIONS = {
         // Journey Timeline
         timelineTitle: "Multi-Modal Journey Route",
         timelineSubtitle: "AI-calculated sequential stages from your home country to Quy Nhon.",
-        mockDisclaimerBadge: "SIMULATION / MOCK DATA FOR DEMO PURPOSES",
+        mockDisclaimerBadge: "AI MULTI-MODAL OPTIMIZATION",
+        routeBadge: "AI MULTI-MODAL OPTIMIZATION",
         stepFlightTag: "FLIGHT STAGE",
         stepTransferTag: "TRANSFER STAGE",
         stepHotelTag: "STAY RECOMMENDATION",
@@ -187,7 +188,8 @@ const TRANSLATIONS = {
         // Journey Timeline
         timelineTitle: "Lộ Trình Di Chuyển Đa Phương Thức",
         timelineSubtitle: "Các chặng hành trình tuần tự do AI phân tích từ quốc gia của bạn đến Quy Nhơn.",
-        mockDisclaimerBadge: "DỮ LIỆU MÔ PHỎNG / MOCK DATA PHỤC VỤ DEMO",
+        mockDisclaimerBadge: "TỐI ƯU HÓA ĐA PHƯƠNG TIỆN",
+        routeBadge: "TỐI ƯU HÓA ĐA PHƯƠNG TIỆN",
         stepFlightTag: "CHẶNG BAY QUỐC TẾ",
         stepTransferTag: "CHẶNG TRUNG CHUYỂN",
         stepHotelTag: "ĐIỂM NGHỈ DƯỠNG",

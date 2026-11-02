@@ -1,17 +1,16 @@
 {
-    "name": "Quy Nhon Travel",
-    "short_name": "Quy Nhon",
-    "start_url": "/airport.html",
+    "name": "Quy Nhon AI Travel Assistant",
+    "short_name": "Quy Nhon AI",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#07111f",
     "theme_color": "#07111f",
-    "orientation": "portrait",
-
+    "orientation": "any",
     "icons": [
         {
-            "src": "/assets/airport-icon.png",
+            "src": "/assets/airport-icon.jpg",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/jpeg"
         }
     ]
 }

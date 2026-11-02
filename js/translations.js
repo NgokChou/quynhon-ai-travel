@@ -40,6 +40,7 @@ const TRANSLATIONS = {
 
         // AI Assistant Card
         aiCardTitle: "AI Travel Assistant",
+        aiModelTag: "Smart Engine",
         aiOnlineStatus: "AI Agent Active",
         aiThinkingStep1: "Analyzing origin coordinates & international connectivity...",
         aiThinkingStep2: "Evaluating transit gateways (Da Nang / Hanoi / Saigon)...",
@@ -196,6 +197,7 @@ const TRANSLATIONS = {
 
         // AI Assistant Card
         aiCardTitle: "Trợ Lý Du Lịch AI",
+        aiModelTag: "Trợ Lý Thông Minh",
         aiOnlineStatus: "AI Đang Hoạt Động",
         aiThinkingStep1: "Đang định vị toạ độ và phân tích mạng lưới hàng không...",
         aiThinkingStep2: "Đánh giá các trạm trung chuyển tối ưu (Đà Nẵng / Hà Nội / TP.HCM)...",

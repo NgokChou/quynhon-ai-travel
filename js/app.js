@@ -358,7 +358,8 @@ const App = (function() {
             budget: state.currentBudget,
             routeType: state.selectedRouteType,
             preferences: state.selectedInterests,
-            lang: state.currentLang
+            lang: state.currentLang,
+            destinationId: state.currentDestination || 'quynhon'
         });
 
         if (elements.aiOutputContent) {
@@ -419,7 +420,8 @@ const App = (function() {
                 budget: state.currentBudget,
                 routeType: state.selectedRouteType,
                 preferences: state.selectedInterests,
-                lang: newLang
+                lang: newLang,
+                destinationId: state.currentDestination || 'quynhon'
             });
 
             if (!state.isAnalyzing && elements.aiOutputContent) {
@@ -453,6 +455,8 @@ const App = (function() {
         // Dừng giọng nói cũ nếu đang phát để tránh lệch ngôn ngữ
         VoiceController.stop();
         resetVoiceUI();
+
+        window.dispatchEvent(new CustomEvent('appLanguageChanged', { detail: { lang: newLang } }));
     }
 
     /**
@@ -500,7 +504,8 @@ const App = (function() {
                     budget: state.currentBudget,
                     routeType: state.selectedRouteType,
                     preferences: state.selectedInterests,
-                    lang: lang
+                    lang: lang,
+                    destinationId: state.currentDestination || 'quynhon'
                 });
 
                 // Hiệu ứng gõ chữ Typewriter
@@ -608,7 +613,8 @@ const App = (function() {
                     budget: state.currentBudget,
                     routeType: state.selectedRouteType,
                     preferences: state.selectedInterests,
-                    lang: lang
+                    lang: lang,
+                    destinationId: state.currentDestination || 'quynhon'
                 });
 
                 if (elements.aiOutputContent) {
@@ -1637,8 +1643,8 @@ const App = (function() {
             typingDiv.remove();
             console.warn('[Concierge Chat Error]', err.message);
             const localFallback = (state.currentLang === 'vi')
-                ? '🌧️ **Gợi ý nhanh từ Trợ Lý Quy Nhơn:** Bạn có thể tham quan Tháp Chăm Bánh Ít, thưởng thức Bánh xèo tôm nhảy tại Gia Vỹ (14 Diên Hồng), hoặc ngắm biển tại Surf Bar. Để tới Quy Nhơn nhanh nhất, hãy đón taxi từ Sân bay Phù Cát (khoảng 40 phút).'
-                : '🌧️ **Quick Quy Nhon Travel Tip:** Visit the 10th-century Banh It Cham towers, savor jumping shrimp pancakes at Gia Vy, or relax at Surf Bar. For direct transit, grab an airport shuttle or taxi from Phu Cat Airport (UIH, ~40 mins).';
+                ? '🌧️ Gợi ý nhanh từ Trợ Lý Quy Nhơn: Bạn có thể tham quan Tháp Chăm Bánh Ít, thưởng thức Bánh xèo tôm nhảy tại Gia Vỹ (14 Diên Hồng), hoặc ngắm biển tại Surf Bar. Để tới Quy Nhơn nhanh nhất, hãy đón taxi từ Sân bay Phù Cát (khoảng 40 phút).'
+                : '🌧️ Quick Quy Nhon Travel Tip: Visit the 10th-century Banh It Cham towers, savor jumping shrimp pancakes at Gia Vy, or relax at Surf Bar. For direct transit, grab an airport shuttle or taxi from Phu Cat Airport (UIH, ~40 mins).';
             appendChatMessage('bot', localFallback, 'local');
         } finally {
             if (elements.conciergeSubmitBtn) elements.conciergeSubmitBtn.disabled = false;
@@ -1889,6 +1895,23 @@ const App = (function() {
         copyShareLink: copyShareLink,
         renderBudgetAllocation: renderBudgetAllocation,
         fetchQuyNhonWeather: fetchQuyNhonWeather,
+        generateJourneyPlan: generateJourneyPlan,
+        setPlannerData: function(countryKey, budget, destKey, airportCode) {
+            if (countryKey) {
+                state.currentCountryKey = countryKey;
+                if (elements.countrySelect) elements.countrySelect.value = countryKey;
+            }
+            if (budget) {
+                state.currentBudget = budget;
+                if (elements.budgetSelect) elements.budgetSelect.value = 'custom';
+                if (elements.customBudgetContainer) elements.customBudgetContainer.style.display = 'block';
+                if (elements.customBudgetInput) elements.customBudgetInput.value = budget;
+            }
+            if (destKey) {
+                state.currentDestination = destKey;
+                if (elements.destinationSelect) elements.destinationSelect.value = destKey;
+            }
+        },
         getState: function() { return state; }
     };
 })();

@@ -6,26 +6,26 @@
 :root {
     --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
-    /* Color Palette */
-    --bg-dark: #070d18;
-    --bg-surface: #0e1726;
-    --bg-card: rgba(18, 28, 45, 0.75);
-    --bg-card-hover: rgba(26, 40, 64, 0.85);
-    --border-color: rgba(56, 189, 248, 0.15);
-    --border-highlight: rgba(56, 189, 248, 0.4);
+    /* Color Palette - Bright, clean & user-friendly */
+    --bg-dark: #edf4fa;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+    --border-color: #e2e8f0;
+    --border-highlight: #38bdf8;
     
     /* Brand Accents */
     --primary: #0284c7;
-    --primary-light: #38bdf8;
-    --primary-glow: rgba(56, 189, 248, 0.35);
+    --primary-light: #0369a1;
+    --primary-glow: rgba(2, 132, 199, 0.2);
     --ocean-teal: #0d9488;
-    --ocean-emerald: #10b981;
-    --accent-gold: #f59e0b;
-    --accent-purple: #8b5cf6;
+    --ocean-emerald: #059669;
+    --accent-gold: #d97706;
+    --accent-purple: #7c3aed;
     
-    /* Text Colors */
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    /* Text Colors - High contrast on white */
+    --text-main: #0f172a;
+    --text-muted: #475569;
     --text-dim: #64748b;
     
     /* Layout */
@@ -53,25 +53,25 @@ html {
 
 body {
     font-family: var(--font-main);
-    background-color: #050a14;
+    background-color: #e2eef8;
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
     background-image: 
-        /* 1. Deep protective dark vignette & tint gradient */
+        /* 1. Subtle luminous tint so the scenic coastal landscape remains vivid and clear */
         linear-gradient(180deg, 
-            rgba(5, 10, 20, 0.82) 0%, 
-            rgba(6, 18, 28, 0.86) 20%, 
-            rgba(7, 16, 28, 0.90) 50%, 
-            rgba(5, 12, 22, 0.93) 80%, 
-            rgba(3, 7, 16, 0.97) 100%
+            rgba(255, 255, 255, 0.12) 0%, 
+            rgba(240, 248, 255, 0.20) 20%, 
+            rgba(235, 245, 253, 0.30) 50%, 
+            rgba(240, 248, 255, 0.42) 80%, 
+            rgba(235, 245, 253, 0.52) 100%
         ),
-        /* 2. Ambient Eco-Tourism & Marine Glows (Emerald & Ocean Blue) */
-        radial-gradient(circle at 10% 12%, rgba(16, 185, 129, 0.18) 0%, transparent 42%),
-        radial-gradient(circle at 90% 25%, rgba(2, 132, 199, 0.20) 0%, transparent 45%),
-        radial-gradient(circle at 18% 65%, rgba(13, 148, 136, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 82%, rgba(56, 189, 248, 0.14) 0%, transparent 45%),
+        /* 2. Soft ambient eco glows */
+        radial-gradient(circle at 10% 12%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 90% 25%, rgba(2, 132, 199, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 18% 65%, rgba(13, 148, 136, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 85% 82%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
         /* 3. Geographic Topographic Elevation Contours & Trail Mapping */
         url("../assets/topo-pattern.svg"),
         /* 4. Real Pristine Coastal Travel Landscape (Quy Nhon Emerald Sea & Cliffs) */
@@ -123,10 +123,11 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(7, 13, 24, 0.85);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
     padding: 0.85rem 0;
 }
 
@@ -175,8 +176,8 @@ body {
 
 .brand-tagline {
     font-size: 0.75rem;
-    color: var(--primary-light);
-    font-weight: 500;
+    color: var(--primary);
+    font-weight: 600;
     display: block;
     white-space: nowrap;
 }
@@ -200,7 +201,7 @@ body {
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.92rem;
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
     transition: var(--transition);
     padding: 0.35rem 0.2rem;
@@ -208,7 +209,7 @@ body {
 }
 
 .nav-center-menu a:hover {
-    color: var(--primary-light);
+    color: var(--primary);
 }
 
 .nav-actions {
@@ -227,9 +228,9 @@ body {
     border-radius: var(--radius-full);
     font-size: 0.75rem;
     font-weight: 600;
-    background: rgba(56, 189, 248, 0.1);
-    color: var(--primary-light);
-    border: 1px solid var(--border-color);
+    background: rgba(2, 132, 199, 0.08);
+    color: #0369a1;
+    border: 1px solid #bae6fd;
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -252,11 +253,12 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     padding: 0.35rem 0.65rem;
     border-radius: var(--radius-sm);
     color: var(--text-muted);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
 }
 
 .lang-selector-box select {
@@ -271,8 +273,8 @@ body {
 }
 
 .lang-selector-box select option {
-    background: var(--bg-surface);
-    color: var(--text-main);
+    background: #ffffff;
+    color: #0f172a;
 }
 
 /* ===================================================================
@@ -315,10 +317,12 @@ body {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    background: linear-gradient(90deg, rgba(2, 132, 199, 0.15), rgba(13, 148, 136, 0.15));
-    border: 1px solid var(--border-color);
-    color: var(--primary-light);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #bae6fd;
+    color: #0369a1;
     margin-bottom: 1.25rem;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(8px);
 }
 
 .hero-title {
@@ -327,19 +331,22 @@ body {
     line-height: 1.15;
     letter-spacing: -0.03em;
     margin-bottom: 1.25rem;
-    background: linear-gradient(135deg, #ffffff 40%, #7dd3fc 75%, #38bdf8 100%);
+    background: linear-gradient(135deg, #0f172a 35%, #0369a1 70%, #0284c7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.6));
 }
 
 .hero-subtitle {
     font-size: 1.15rem;
-    color: var(--text-muted);
+    color: #334155;
+    font-weight: 500;
     line-height: 1.6;
     margin-bottom: 2rem;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.5);
 }
 
 .hero-cta-group {
@@ -377,19 +384,20 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.9rem 1.6rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: #ffffff;
     color: var(--text-main);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
     border-radius: var(--radius-full);
-    border: 1px solid var(--border-color);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
     transition: var(--transition);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--border-highlight);
+    background: #f8fafc;
+    border-color: #94a3b8;
 }
 
 /* Feature Highlights Bar */
@@ -399,7 +407,7 @@ body {
     gap: 2rem;
     flex-wrap: wrap;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid #cbd5e1;
 }
 
 .highlight-item {
@@ -424,12 +432,12 @@ body {
 }
 
 .glass-card {
-    background: var(--bg-card);
+    background: #ffffff;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
     transition: var(--transition);
 }
 
@@ -445,6 +453,7 @@ body {
 .section-title {
     font-size: 1.85rem;
     font-weight: 700;
+    color: var(--text-main);
     letter-spacing: -0.02em;
     margin-bottom: 0.4rem;
 }
@@ -470,7 +479,7 @@ body {
 .form-group label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-muted);
+    color: #334155;
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -485,7 +494,7 @@ body {
 .input-icon-box i {
     position: absolute;
     left: 1rem;
-    color: var(--primary-light);
+    color: var(--primary);
     pointer-events: none;
     font-size: 0.95rem;
 }
@@ -494,8 +503,8 @@ body {
 .custom-input {
     width: 100%;
     padding: 0.85rem 1rem 0.85rem 2.6rem;
-    background: rgba(14, 23, 38, 0.85);
-    border: 1px solid var(--border-color);
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
     border-radius: var(--radius-md);
     color: var(--text-main);
     font-family: var(--font-main);
@@ -507,13 +516,14 @@ body {
 
 .custom-select:focus,
 .custom-input:focus {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    background: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
 }
 
 .custom-select option {
-    background: #0f172a;
-    color: #f8fafc;
+    background: #ffffff;
+    color: #0f172a;
 }
 
 .btn-generate-plan {
@@ -658,12 +668,14 @@ body {
    Footer (Founding Team & Ecosystem Conclusion)
    =================================================================== */
 .site-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(8, 14, 26, 0.95) 0%, #030712 100%);
+    border-top: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
     padding: 4rem 0 5.5rem;
     color: var(--text-muted);
     font-size: 0.85rem;
     position: relative;
+    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.03);
 }
 
 .footer-content {
@@ -682,7 +694,7 @@ body {
 }
 
 .footer-disclaimer-box {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid #e2e8f0;
     padding-top: 1.5rem;
     text-align: center;
     font-size: 0.8rem;

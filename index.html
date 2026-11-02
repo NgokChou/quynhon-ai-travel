@@ -19,6 +19,7 @@
     <!-- Application Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/game-wizard.css">
 </head>
 <body>
 
@@ -161,13 +162,16 @@
                     </div>
                 </div>
 
-                <div class="planner-header-group">
+                <!-- Feature 0: Kurzgesagt Interactive 2D Game Booking Wizard -->
+                <div id="game-booking-wizard-container"></div>
+
+                <div class="planner-header-group" style="display: none;">
                     <h3 class="section-title" data-i18n="plannerTitle">AI Journey Planner</h3>
                     <p class="section-subtitle" data-i18n="plannerSubtitle">Select your departure country and let AI calculate the optimal multi-stage route to Quy Nhon.</p>
                 </div>
 
                 <form id="journey-planner-form">
-                    <div class="planner-form-grid">
+                    <div class="planner-form-grid" style="display: none;">
                         <!-- Origin Country -->
                         <div class="form-group">
                             <label for="country-select">
@@ -249,6 +253,8 @@
                                 <i class="fa-solid fa-umbrella-beach"></i>
                                 <select id="destination-select" class="custom-select">
                                     <option value="quynhon" selected>Quy Nhon, Binh Dinh (Vietnam)</option>
+                                    <option value="gialai">Gia Lai, Pleiku (Vietnam)</option>
+                                    <option value="hanoi">Hanoi (Capital Gateway)</option>
                                 </select>
                             </div>
                         </div>
@@ -514,7 +520,7 @@
                         <div class="ai-title-wrap">
                             <h3>
                                 <span data-i18n="aiCardTitle">AI Travel Assistant</span>
-                                <span class="ai-model-tag">v1.0 Simulation</span>
+                                <span class="ai-model-tag" data-i18n="aiModelTag">Smart Engine</span>
                             </h3>
                         </div>
                     </div>
@@ -862,5 +868,6 @@
     <script src="js/map.js"></script>
     <script src="js/aiSimulator.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/gameWizard.js"></script>
 </body>
 </html>

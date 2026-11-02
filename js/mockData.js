@@ -1857,104 +1857,138 @@ const MOCK_ACTIVITIES_POOL = {
  * - Các sở thích đã tích chọn (beaches, food, culture, adventure, nightlife)
  * - Ngôn ngữ (en / vi)
  */
+/**
+ * HÀM SINH CÂU TÓM TẮT CỦA AI TRAVEL ASSISTANT (TINH GỌN, CHUẨN XÁC, USER-FRIENDLY)
+ * Sinh lời khuyên ngắn gọn, súc tích (3-4 câu), đầy đủ hub, sân bay và điểm đến
+ * Không sử dụng ký tự markdown ** để đảm bảo thân thiện người dùng và giọng đọc TTS mượt mà.
+ */
 function generateAISummary(options = {}) {
     const {
         countryId = 'belgium',
         budget = 2000,
         routeType = 'fastest',
         preferences = ['beaches', 'food', 'culture'],
-        lang = 'en'
+        lang = 'en',
+        destinationId = 'quynhon'
     } = options;
 
     const country = MOCK_COUNTRIES[countryId] || MOCK_COUNTRIES.belgium;
     const isVi = lang === 'vi';
 
-    // 1. Lời chào cá nhân hóa theo từng quốc gia
+    // 1. Lời chào cá nhân hóa theo từng quốc gia (ngắn gọn, thân thiện)
     const greetings = {
-        belgium: { en: "Hello traveler from Belgium!", vi: "Xin chào du khách từ Vương quốc Bỉ!" },
-        france: { en: "Bonjour traveler from France!", vi: "Bonjour! Chào mừng quý khách từ nước Pháp lãng mạn!" },
-        germany: { en: "Guten Tag from Frankfurt!", vi: "Guten Tag! Lời chào nồng nhiệt đến quý khách từ nước Đức!" },
-        usa: { en: "Welcome traveler from the United States!", vi: "Chào mừng quý khách đến từ Hoa Kỳ!" },
-        australia: { en: "G'day mate from Australia!", vi: "G'day! Xin chào quý khách đến từ nước Úc xinh đẹp!" },
-        japan: { en: "Konnichiwa! Welcome from Tokyo, Japan!", vi: "Konnichiwa! Rất hân hạnh được đồng hành cùng quý khách từ Nhật Bản!" }
+        belgium: { en: "Welcome from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
+        france: { en: "Bonjour from France!", vi: "Bonjour từ nước Pháp!" },
+        germany: { en: "Guten Tag from Germany!", vi: "Guten Tag từ nước Đức!" },
+        usa: { en: "Welcome from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
+        australia: { en: "G'day from Australia!", vi: "G'day từ nước Úc!" },
+        japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" }
     };
-    const greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Xin chào quý du khách quốc tế!" : "Welcome international traveler!");
+    const greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách quốc tế!" : "Welcome international traveler!");
 
-    // 2. Phân tích tuyến đường & sân bay theo phương án lựa chọn
+    // 2. Phân tích tuyến đường súc tích cho từng quốc gia & phương án di chuyển (Không có dấu **)
     let routeAnalysis = "";
     if (routeType === 'fastest') {
-        if (countryId === 'france' || countryId === 'germany') {
+        if (countryId === 'france') {
             routeAnalysis = isVi
-                ? `Với ưu tiên **nhanh nhất**, AI đã định vị đường bay thẳng không dừng từ ${country.city} đến Sân bay Quốc tế Nội Bài (HAN), sau đó nối chuyến 1 tiếng 35 phút thẳng đến Sân bay Phù Cát (UIH). Tổng hành trình chỉ khoảng 14 giờ bay và 40 phút taxi về trung tâm Quy Nhơn.`
-                : `Prioritizing the **fastest travel time**, our AI routes you on a direct flight from ${country.city} to Hanoi Noi Bai (HAN), followed by a 1h 35m connection straight into Phu Cat Airport (UIH). Total travel is around 14 hours plus a 40-minute scenic taxi to downtown Quy Nhon.`;
-        } else if (countryId === 'usa' || countryId === 'australia') {
+                ? `Lộ trình nhanh nhất: Bay từ Paris đến Hà Nội (HAN) nối chuyến nhanh đến Sân bay Phù Cát (UIH).`
+                : `Fastest route: Direct flight from Paris to Hanoi (HAN) with a quick connection to Phu Cat Airport (UIH).`;
+        } else if (countryId === 'germany') {
             routeAnalysis = isVi
-                ? `Với mục tiêu **tối ưu thời gian**, AI đề xuất chặng bay xuyên biển đến Tân Sơn Nhất (SGN), nối chuyến tức thì 1 giờ đến Sân bay Phù Cát (UIH), giúp bạn đặt chân đến vịnh biển Quy Nhơn sớm nhất có thể.`
-                : `For the **fastest journey**, AI routes you across to Ho Chi Minh City (SGN), then a swift 1-hour connection directly into Phu Cat Airport (UIH), getting you to Quy Nhon's serene bays on optimal time.`;
+                ? `Lộ trình nhanh nhất: Bay từ Frankfurt đến Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
+                : `Fastest route: Fly from Frankfurt to Hanoi (HAN) with a direct connection to Phu Cat Airport (UIH).`;
+        } else if (countryId === 'usa') {
+            routeAnalysis = isVi
+                ? `Lộ trình nhanh nhất: Bay qua TP. Hồ Chí Minh (SGN) rồi nối chuyến thẳng 1 giờ đến Sân bay Phù Cát (UIH).`
+                : `Fastest route: Fly via Ho Chi Minh City (SGN) with a direct 1-hour connection to Phu Cat Airport (UIH).`;
+        } else if (countryId === 'australia') {
+            routeAnalysis = isVi
+                ? `Lộ trình nhanh nhất: Bay từ Sydney qua TP. Hồ Chí Minh (SGN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
+                : `Fastest route: Fly from Sydney via Ho Chi Minh City (SGN) with a direct connection to Phu Cat Airport (UIH).`;
         } else if (countryId === 'japan') {
             routeAnalysis = isVi
-                ? `Với ưu tiên **tốc độ**, đường bay thẳng thương mại 5.5 giờ từ Tokyo đến Sân bay Đà Nẵng (DAD) kết hợp xe Limousine cao cấp là hành trình quốc tế ngắn nhất để đến Quy Nhơn trong chưa đầy 11 giờ.`
-                : `For maximum **speed**, a direct 5.5-hour flight from Tokyo to Da Nang (DAD) combined with an express coastal limousine is the fastest international gateway to Quy Nhon under 11 hours.`;
-        } else {
+                ? `Lộ trình nhanh nhất: Bay thẳng 5.5 giờ đến Đà Nẵng (DAD) kết hợp xe limousine cao cấp về Quy Nhơn.`
+                : `Fastest route: Direct 5.5h flight to Da Nang (DAD) plus an express coastal limousine to Quy Nhon.`;
+        } else { // Belgium & default
             routeAnalysis = isVi
-                ? `Với tùy chọn **nhanh nhất**, bạn sẽ bay qua Sân bay Quốc tế Nội Bài (HAN) rồi nối chuyến thẳng tới Sân bay Phù Cát (UIH). Đây là phương án tiết kiệm tối đa thời gian di chuyển trên đường.`
-                : `Selecting the **fastest route**, you fly via Hanoi Noi Bai (HAN) and catch a direct connection to Phu Cat Airport (UIH), minimizing overall transit downtime.`;
+                ? `Lộ trình nhanh nhất: Bay qua Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
+                : `Fastest route: Fly via Hanoi (HAN) with a direct connection to Phu Cat Airport (UIH).`;
         }
     } else if (routeType === 'best-value') {
         routeAnalysis = isVi
-            ? `Với lựa chọn **tiết kiệm & cân bằng**, hệ thống kết hợp chuyến bay quốc tế giá tốt đến Sân bay Quốc tế Đà Nẵng (DAD) cùng xe Limousine ven biển cao cấp qua Quốc lộ 1A. Phương án này giúp bạn tiết kiệm tới 25% ngân sách vé máy bay mà vẫn ngắm trọn cảnh biển miền Trung.`
-            : `Opting for the **best-value route**, our engine pairs competitive flights into Da Nang (DAD) with a comfortable coastal limousine along National Route 1A. This saves up to 25% on travel fares while offering scenic coastal views.`;
+            ? `Lộ trình tiết kiệm: Bay vé tốt đến Đà Nẵng (DAD) kết hợp xe limousine ngắm cảnh ven biển về Quy Nhơn.`
+            : `Best-value route: Fly into Da Nang (DAD) paired with a scenic coastal limousine to Quy Nhon.`;
     } else { // smart-stopover
         routeAnalysis = isVi
-            ? `Với hành trình **dừng chân ngắm cảnh**, AI thiết kế điểm nghỉ ngơi chiến lược tại Đà Nẵng hoặc Hà Nội, sau đó bạn sẽ trải nghiệm đoàn tàu ven biển ngắm cảnh (với tùy chọn toa tàu di sản The Vietage) đưa bạn xuyên qua các làng chài và biển xanh vào thẳng Quy Nhơn.`
-            : `Choosing the **scenic stopover**, AI designs a strategic pause in Da Nang or Hanoi, allowing you to recharge before boarding the scenic coastal train (including The Vietage luxury rail carriage) sweeping through rolling hills and emerald coastlines.`;
+            ? `Dừng chân ngắm cảnh: Nghỉ ngơi tại Đà Nẵng hoặc Hà Nội rồi trải nghiệm tàu hỏa ven biển về Quy Nhơn.`
+            : `Scenic stopover: Recharge in Da Nang or Hanoi, then take the coastal train into Quy Nhon.`;
     }
 
-    // 3. Phân tích gợi ý theo mức ngân sách (Budget)
+    // 3. Gợi ý nơi ở theo mức ngân sách (ngắn gọn, thực tế)
     let budgetAdvice = "";
     if (budget >= 3500) {
         budgetAdvice = isVi
-            ? `Với ngân sách cao cấp ($${budget.toLocaleString()}), AI đề xuất bạn tận hưởng các khu nghỉ dưỡng biệt lập hàng đầu như Anantara Quy Nhon Villas hoặc Maia Resort với hồ bơi riêng hướng biển và dịch vụ đưa đón tài xế riêng.`
-            : `With your luxury budget of $${budget.toLocaleString()}, we have curated oceanfront sanctuaries such as Anantara Quy Nhon Villas or Maia Resort featuring private cliffside pools and chauffeured airport transfers.`;
+            ? `Nghỉ dưỡng gợi ý: Biệt thự hướng biển sang trọng tại Anantara hoặc Maia Resort (ngân sách $${budget.toLocaleString()}).`
+            : `Curated stay: Luxury oceanfront villa at Anantara or Maia Resort ($${budget.toLocaleString()} budget).`;
     } else if (budget >= 1800) {
         budgetAdvice = isVi
-            ? `Ngân sách $${budget.toLocaleString()} rất lý tưởng để kết hợp nghỉ dưỡng tại resort 4-5 sao ven biển, thưởng thức hải sản tươi sống và tham gia trọn vẹn các tour cano lặn ngắm san hô Kỳ Co.`
-            : `Your budget of $${budget.toLocaleString()} perfectly covers premium beachfront resorts, authentic local seafood feasts, and speedboat snorkeling excursions around Ky Co island.`;
+            ? `Nghỉ dưỡng gợi ý: Resort 4-5 sao ven biển với bãi tắm riêng (ngân sách $${budget.toLocaleString()}).`
+            : `Curated stay: 4-5 star beachfront resort with ocean access ($${budget.toLocaleString()} budget).`;
     } else {
         budgetAdvice = isVi
-            ? `Với ngân sách tiết kiệm $${budget.toLocaleString()}, AI tối ưu hóa các khách sạn phố biển tiện nghi (như FLC City Hotel), giúp bạn dành phần lớn kinh phí trải nghiệm ẩm thực đường phố và các danh thắng thiên nhiên.`
-            : `With your smart budget of $${budget.toLocaleString()}, AI pairs you with modern city-beach hotels (such as FLC City Hotel), leaving ample budget for local culinary discovery and coastal excursions.`;
+            ? `Nghỉ dưỡng gợi ý: Khách sạn tiện nghi trung tâm phố biển (ngân sách $${budget.toLocaleString()}).`
+            : `Curated stay: Modern city-beach hotel close to local cuisine ($${budget.toLocaleString()} budget).`;
     }
 
-    // 4. Cá nhân hóa theo các sở thích (Preferences)
+    // 4. Trải nghiệm nổi bật theo sở thích (tinh gọn, 2-3 điểm tiêu biểu)
     const validPrefs = Array.isArray(preferences) && preferences.length > 0 ? preferences : ['beaches', 'food'];
     const interestHighlights = [];
 
     if (validPrefs.includes('beaches')) {
-        interestHighlights.push(isVi ? "thư giãn trên bãi biển Kỳ Co nước xanh màu ngọc bích và đón hoàng hôn Eo Gió" : "unwinding on emerald Ky Co waters and sunset walks along Eo Gio cliffs");
+        interestHighlights.push(isVi ? "biển Kỳ Co & hoàng hôn Eo Gió" : "Ky Co Beach & Eo Gio cliffs");
     }
     if (validPrefs.includes('food')) {
-        interestHighlights.push(isVi ? "thưởng thức bánh xèo tôm nhảy giòn rụm và đại tiệc hải sản tươi sống Nhơn Lý" : "feasting on crispy jumping shrimp pancakes and freshly caught Nhon Ly seafood");
+        interestHighlights.push(isVi ? "bánh xèo tôm nhảy & hải sản Nhơn Lý" : "jumping shrimp pancakes & Nhon Ly seafood");
     }
     if (validPrefs.includes('culture')) {
-        interestHighlights.push(isVi ? "chiêm ngưỡng tháp Chăm Bánh Ít ngàn năm và lắng nghe hào khí nhạc võ Tây Sơn" : "discovering 10th-century Banh It Cham towers and legendary Tay Son martial arts");
+        interestHighlights.push(isVi ? "tháp Chăm cổ kính & võ Tây Sơn" : "ancient Cham towers & Tay Son martial arts");
     }
     if (validPrefs.includes('adventure')) {
-        interestHighlights.push(isVi ? "trượt cát đồi Phương Mai và vượt sóng cano khám phá đảo ngọc Cù Lao Xanh" : "sandboarding giant Phuong Mai dunes and trekking to Cu Lao Xanh lighthouse");
+        interestHighlights.push(isVi ? "trượt cát Phương Mai & đảo Cù Lao Xanh" : "Phuong Mai sand dunes & Cu Lao Xanh island");
     }
     if (validPrefs.includes('nightlife')) {
-        interestHighlights.push(isVi ? "chill bên bờ cát tại Surf Bar và ngắm toàn cảnh thành phố từ Sky Bar tầng 27" : "lounging barefoot at beachside Surf Bar and panoramic cocktails at FLC Sky Bar");
+        interestHighlights.push(isVi ? "Surf Bar ven biển & ngắm cảnh đêm" : "beachside Surf Bar & rooftop night views");
     }
 
+    // Giới hạn tối đa 3 điểm nổi bật để tránh đoạn văn bị dài
+    const topHighlights = interestHighlights.slice(0, 3);
     let interestText = "";
-    if (interestHighlights.length > 0) {
-        const joined = isVi ? interestHighlights.join(', ') : interestHighlights.join(', and ');
-        interestText = isVi
-            ? `Theo sở thích bạn đã chọn, lịch trình được cá nhân hóa đặc biệt dành cho: ${joined}.`
-            : `Tailored specifically to your interests, your itinerary is curated for: ${joined}.`;
+    if (topHighlights.length > 0) {
+        let joined = "";
+        if (isVi) {
+            if (topHighlights.length === 1) joined = topHighlights[0];
+            else if (topHighlights.length === 2) joined = `${topHighlights[0]} và ${topHighlights[1]}`;
+            else joined = `${topHighlights[0]}, ${topHighlights[1]} và ${topHighlights[2]}`;
+            interestText = `Trải nghiệm nổi bật: ${joined}.`;
+        } else {
+            if (topHighlights.length === 1) joined = topHighlights[0];
+            else if (topHighlights.length === 2) joined = `${topHighlights[0]} and ${topHighlights[1]}`;
+            else joined = `${topHighlights[0]}, ${topHighlights[1]}, and ${topHighlights[2]}`;
+            interestText = `Highlights: ${joined}.`;
+        }
     }
 
-    // Kết hợp thành đoạn văn mượt mà, đầy đủ thông tin
+    if (destinationId === 'gialai') {
+        interestText = isVi 
+            ? "Trải nghiệm nổi bật: Biển Hồ T'nưng thơ mộng, núi lửa Chư Đăng Ya và hương vị cà phê đại ngàn Pleiku."
+            : "Highlights: Sea Lake T'Nung, Chu Dang Ya volcano, and fragrant Central Highlands coffee culture.";
+    } else if (destinationId === 'hanoi') {
+        interestText = isVi 
+            ? "Trải nghiệm nổi bật: Dạo bước Hồ Gươm, thưởng thức cà phê trứng phố cổ và ngắm cầu Long Biên lịch sử."
+            : "Highlights: Strolling Hoan Kiem Lake, egg coffee across the 36 Old Quarter streets, and historic Long Bien Bridge.";
+    }
+
+    // Kết hợp thành đoạn văn súc tích, mạch lạc, dễ đọc
     return `${greetingText} ${routeAnalysis} ${budgetAdvice} ${interestText}`;
 }
 

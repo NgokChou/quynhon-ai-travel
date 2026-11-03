@@ -53,16 +53,61 @@ html {
 
 body {
     font-family: var(--font-main);
-    background-color: var(--bg-dark);
+    background-color: #050a14;
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
     background-image: 
-        radial-gradient(circle at 15% 10%, rgba(2, 132, 199, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 60%, rgba(13, 148, 136, 0.1) 0%, transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
-    background-attachment: fixed;
+        /* 1. Deep protective dark vignette & tint gradient */
+        linear-gradient(180deg, 
+            rgba(5, 10, 20, 0.82) 0%, 
+            rgba(6, 18, 28, 0.86) 20%, 
+            rgba(7, 16, 28, 0.90) 50%, 
+            rgba(5, 12, 22, 0.93) 80%, 
+            rgba(3, 7, 16, 0.97) 100%
+        ),
+        /* 2. Ambient Eco-Tourism & Marine Glows (Emerald & Ocean Blue) */
+        radial-gradient(circle at 10% 12%, rgba(16, 185, 129, 0.18) 0%, transparent 42%),
+        radial-gradient(circle at 90% 25%, rgba(2, 132, 199, 0.20) 0%, transparent 45%),
+        radial-gradient(circle at 18% 65%, rgba(13, 148, 136, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 82%, rgba(56, 189, 248, 0.14) 0%, transparent 45%),
+        /* 3. Geographic Topographic Elevation Contours & Trail Mapping */
+        url("../assets/topo-pattern.svg"),
+        /* 4. Real Pristine Coastal Travel Landscape (Quy Nhon Emerald Sea & Cliffs) */
+        url("../assets/coastal-bg.jpg");
+    background-size: 
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        800px 800px,
+        cover;
+    background-position: 
+        center,
+        center,
+        center,
+        center,
+        center,
+        center center,
+        center top;
+    background-repeat: 
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        repeat,
+        no-repeat;
+    background-attachment: 
+        fixed,
+        fixed,
+        fixed,
+        fixed,
+        fixed,
+        fixed,
+        fixed;
 }
 
 .container {
@@ -89,6 +134,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    gap: 1.25rem;
 }
 
 .brand-wrapper {
@@ -96,6 +146,8 @@ body {
     align-items: center;
     gap: 0.85rem;
     text-decoration: none;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .brand-logo-icon {
@@ -109,6 +161,7 @@ body {
     color: white;
     font-size: 1.25rem;
     box-shadow: 0 4px 16px var(--primary-glow);
+    flex-shrink: 0;
 }
 
 .brand-text-group h1 {
@@ -117,6 +170,7 @@ body {
     color: var(--text-main);
     letter-spacing: -0.02em;
     line-height: 1.2;
+    white-space: nowrap;
 }
 
 .brand-tagline {
@@ -124,20 +178,33 @@ body {
     color: var(--primary-light);
     font-weight: 500;
     display: block;
+    white-space: nowrap;
 }
 
 .nav-center-menu {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    gap: clamp(1rem, 1.8vw, 2rem);
     list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.nav-center-menu li {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav-center-menu a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 500;
+    white-space: nowrap;
     transition: var(--transition);
+    padding: 0.35rem 0.2rem;
+    display: inline-block;
 }
 
 .nav-center-menu a:hover {
@@ -147,7 +214,9 @@ body {
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: clamp(0.6rem, 1vw, 1rem);
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .proto-pill {
@@ -161,6 +230,8 @@ body {
     background: rgba(56, 189, 248, 0.1);
     color: var(--primary-light);
     border: 1px solid var(--border-color);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .proto-pill .pulse-dot {
@@ -215,13 +286,13 @@ body {
 
 .hero-backdrop-glow {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    height: 350px;
-    background: radial-gradient(ellipse, rgba(2, 132, 199, 0.25) 0%, rgba(13, 148, 136, 0.15) 40%, transparent 70%);
-    filter: blur(50px);
+    width: 750px;
+    height: 420px;
+    background: radial-gradient(ellipse, rgba(16, 185, 129, 0.22) 0%, rgba(2, 132, 199, 0.24) 35%, rgba(13, 148, 136, 0.15) 60%, transparent 75%);
+    filter: blur(60px);
     z-index: 0;
     pointer-events: none;
 }
@@ -513,15 +584,86 @@ body {
     letter-spacing: 0.04em;
 }
 
+.verified-resort-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+}
+
+.planner-experience-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+}
+
+.ai-verified-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+}
+
+.map-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+}
+
+.roadmap-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+}
+
 /* ===================================================================
-   Footer
+   Footer (Founding Team & Ecosystem Conclusion)
    =================================================================== */
 .site-footer {
-    border-top: 1px solid var(--border-color);
-    background: #050a12;
-    padding: 3rem 0 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.95) 0%, #030712 100%);
+    padding: 4rem 0 5.5rem;
     color: var(--text-muted);
     font-size: 0.85rem;
+    position: relative;
 }
 
 .footer-content {
@@ -550,6 +692,12 @@ body {
 /* ===================================================================
    Responsive Breakpoints
    =================================================================== */
+@media (max-width: 1220px) {
+    .proto-pill {
+        display: none;
+    }
+}
+
 @media (max-width: 992px) {
     .planner-form-grid {
         grid-template-columns: 1fr 1fr;

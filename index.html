@@ -211,12 +211,11 @@
                                 <div class="input-icon-box">
                                     <i class="fa-solid fa-pen"></i>
                                     <input
-                                        type="number"
+                                        type="text"
+                                        inputmode="numeric"
                                         id="custom-budget-input"
                                         class="custom-input"
-                                        placeholder="Enter your budget"
-                                        min="1"
-                                        step="1"
+                                        placeholder="e.g. 5,000"
                                     />
                                     <span class="currency-label" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.8rem;">USD</span>
                                 </div>
@@ -868,6 +867,8 @@
     <script src="js/map.js"></script>
     <script src="js/aiSimulator.js"></script>
     <script src="js/app.js"></script>
+    <!-- Three.js 3D Engine (Local, Offline) -->
+    <script src="js/lib/three.min.js"></script>
     <script src="js/gameWizard.js"></script>
 </body>
 </html>

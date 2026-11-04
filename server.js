@@ -156,18 +156,26 @@ async function callGeminiApi(apiKey, userMessage, lang, context) {
         'gemini-flash-latest'
     ])).filter(m => m && m !== 'gemini-1.5-flash' && m !== 'gemini-2.5-flash-lite');
 
+    const numBudget = Number(context.budget) || 2000;
     const systemInstruction = `You are the Quy Nhon AI Travel Concierge, a helpful and knowledgeable bilingual travel assistant for Quy Nhon, Binh Dinh, Vietnam.
 Current Trip Configuration:
 - Departure: ${context.country || 'International traveler'}
-- Budget: $${context.budget || 2000} USD
+- Budget: $${numBudget.toLocaleString('en-US')} USD
 - Selected Route: ${context.route || 'fastest'}
 - Interests: ${(context.interests || []).join(', ') || 'beaches, food, culture'}
 - Language: ${lang === 'vi' ? 'Vietnamese (Tiếng Việt)' : 'English'}
 
+Key Verified Local Facts:
+1. Phu Cat Airport (UIH) to Quy Nhon: Distance is ~35 km, travel time is ~40-45 minutes via coastal Highway 19B by airport shuttle bus (~50,000 VND / $2) or taxi (~300,000 - 380,000 VND / $12-15).
+2. Explorascience Quy Nhon (Tổ hợp Không gian Khoa học): Located at 10 Science Boulevard, Ghenh Rang. Vietnam's first public science discovery center with an 80-seat full-dome Planetarium, Astronomical Observatory, and 7 interactive galleries.
+3. Binh Dinh Traditional Arts Theater (Nhà hát Nghệ thuật Truyền thống tỉnh): Located at 590 Nguyen Thai Hoc. Performs authentic Tuong martial opera and UNESCO-recognized Bai Choi folk singing every Friday evening at 19:30 with FREE ADMISSION for all visitors.
+4. Local Delicacies: Bánh xèo tôm nhảy (Gia Vy / Rau Muc), Bún chả cá (Ngoc Lien 379 Nguyen Hue), fresh seafood in Nhon Ly fishing village.
+5. Sights: Ky Co Beach, Eo Gio cliffside walkway, 10th-century Banh It & Twin Cham towers, Phuong Mai giant sand dunes, Queen's Beach (Ghenh Rang).
+
 Instructions:
 1. Respond strictly in ${lang === 'vi' ? 'Vietnamese' : 'English'}.
-2. Focus on practical Quy Nhon travel, transit, food (Bánh xèo tôm nhảy, Bún chả cá), attractions (Ky Co, Eo Gio, Cham towers), and trip advice.
-3. Distinguish confirmed facts from estimates. Avoid fabricating exact flight schedules or fares.
+2. Always acknowledge and respect the user's selected budget of $${numBudget.toLocaleString('en-US')} USD.
+3. Focus on practical Quy Nhon travel, transit, food, attractions, and trip advice.
 4. Provide well-structured answers with clear bullet points, practical details, and complete explanations without cutting off mid-sentence.`;
 
     for (const model of candidateModels) {
@@ -268,12 +276,30 @@ function generateLocalKnowledgeReply(message, lang, context) {
         };
     }
 
+    if (q.includes('explorascience') || q.includes('khoa học') || q.includes('vũ trụ') || q.includes('planetarium') || q.includes('đài thiên văn')) {
+        return {
+            source: 'local-knowledge',
+            reply: isVi
+                ? `🪐 **Tổ hợp Không gian Khoa học - Explorascience Quy Nhơn:**\n• **Vị trí:** Số 10 Đại lộ Khoa học, khu vực Ghềnh Ráng, Quy Nhơn.\n• **Điểm nổi bật:** Trung tâm khám phá khoa học đại chúng đầu tiên tại Việt Nam với **Nhà chiếu hình vũ trụ (Planetarium)** 80 chỗ màn hình vòm 12m công nghệ 4K, **Đài thiên văn** trang bị kính thiên văn quang học khúc xạ hiện đại, và **7 phòng trưng bày tương tác** (Hệ Mặt Trời, Khám phá không gian, Sao Hỏa, Vật chất, Trái Đất...).`
+                : `🪐 **Explorascience Quy Nhon (Space & Science Discovery Center):**\n• **Location:** 10 Science Boulevard, Ghenh Rang, Quy Nhon.\n• **Highlights:** Vietnam's first public science discovery center featuring an 80-seat **full-dome Planetarium** (12m dome, 4K projection), an **Astronomical Observatory** with professional optical telescopes, and **7 interactive science theme galleries** (Solar System, Deep Space Exploration, Physics, Mars...).`
+        };
+    }
+
+    if (q.includes('nhà hát') || q.includes('truyền thống') || q.includes('tuồng') || q.includes('bài chòi') || q.includes('thứ 6') || q.includes('miễn phí') || q.includes('theater')) {
+        return {
+            source: 'local-knowledge',
+            reply: isVi
+                ? `🎭 **Nhà hát Nghệ thuật Truyền thống tỉnh Bình Định:**\n• **Địa chỉ:** 590 Nguyễn Thái Học, TP. Quy Nhơn.\n• **Lịch diễn:** **Tối thứ 6 hàng tuần lúc 19h30**.\n• **Giá vé:** **MIỄN PHÍ** vé vào cửa cho du khách và người dân địa phương.\n• **Chương trình:** Biểu diễn nghệ thuật **Tuồng cổ Bình Định** (hát bội) hào hùng và **Dân ca Bài Chòi** (Di sản văn hóa phi vật thể đại diện của nhân loại được UNESCO vinh danh), mang đến trải nghiệm văn hóa truyền thống sâu sắc.`
+                : `🎭 **Binh Dinh Traditional Arts Theater:**\n• **Address:** 590 Nguyen Thai Hoc, Quy Nhon City.\n• **Schedule:** **Every Friday evening at 19:30**.\n• **Admission:** **FREE ADMISSION** for all visitors and locals.\n• **Highlights:** Live authentic performances of historic **Tuong martial opera** and UNESCO-recognized **Bai Choi folk singing**, celebrating Binh Dinh's legendary cultural heritage.`
+        };
+    }
+
     if (q.includes('budget') || q.includes('ngân sách') || q.includes('tiết kiệm') || q.includes('cost') || q.includes('optimize') || q.includes('tối ưu')) {
         return {
             source: 'local-knowledge',
             reply: isVi
-                ? `💰 **Tối ưu ngân sách cho chuyến đi $${budget.toLocaleString()}:**\n• **Vé di chuyển:** Lựa chọn tuyến **Tiết Kiệm** hoặc **Dừng Chân Ngắm Cảnh** giúp bạn tiết kiệm 15-25% chi phí chặng bay, dành thêm tiền cho trải nghiệm tour biển.\n• **Lưu trú:** Khách sạn ven biển ngay trung tâm thành phố có mức giá hợp lý hơn 30-40% so với khu nghỉ dưỡng biệt lập.\n• **Ẩm thực:** Trải nghiệm hải sản tại các quán bình dân làng chài Nhơn Lý vừa tươi rói vừa có giá chỉ bằng một nửa nhà hàng resort.`
-                : `💰 **Budget Optimization for your $${budget.toLocaleString()} trip:**\n• **Transit:** Choosing **Best-Value** or **Smart Stopover** saves 15-25% on long-distance travel fares, leaving more funds for activities.\n• **Stay:** Downtown beachfront hotels offer luxury comfort at 30-40% lower cost than isolated cliffside resorts.\n• **Dining:** Enjoy fresh seafood feasts in Nhon Ly fishing village at authentic local prices.`
+                ? `💰 **Tối ưu ngân sách cho chuyến đi $${numBudget.toLocaleString('en-US')}:**\n• **Vé di chuyển:** Lựa chọn tuyến **Tiết Kiệm** hoặc **Dừng Chân Ngắm Cảnh** giúp bạn tiết kiệm 15-25% chi phí chặng bay, dành thêm tiền cho trải nghiệm tour biển.\n• **Lưu trú:** Khách sạn ven biển ngay trung tâm thành phố có mức giá hợp lý hơn 30-40% so với khu nghỉ dưỡng biệt lập.\n• **Ẩm thực:** Trải nghiệm hải sản tại các quán bình dân làng chài Nhơn Lý vừa tươi rói vừa có giá chỉ bằng một nửa nhà hàng resort.`
+                : `💰 **Budget Optimization for your $${numBudget.toLocaleString('en-US')} trip:**\n• **Transit:** Choosing **Best-Value** or **Smart Stopover** saves 15-25% on long-distance travel fares, leaving more funds for activities.\n• **Stay:** Downtown beachfront hotels offer luxury comfort at 30-40% lower cost than isolated cliffside resorts.\n• **Dining:** Enjoy fresh seafood feasts in Nhon Ly fishing village at authentic local prices.`
         };
     }
 

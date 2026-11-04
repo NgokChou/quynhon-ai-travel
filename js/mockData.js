@@ -1719,14 +1719,28 @@ const MOCK_HOTELS = [
  * Kho dữ liệu hoạt động thực tế tại Quy Nhơn / Bình Định phân theo danh mục sở thích
  */
 const MOCK_ACTIVITIES_POOL = {
-    beaches: [
+    transit: [
         {
             time: "08:30",
+            category: "TRANSIT",
+            title: {
+                en: "Phu Cat Airport (UIH) Arrival & Transfer to Quy Nhon",
+                vi: "Hạ cánh Sân bay Phù Cát (UIH) & Di chuyển về trung tâm Quy Nhơn"
+            },
+            desc: {
+                en: "Arrive at Phu Cat Airport (UIH) with a scenic ~40-45 minute coastal transfer (~35 km via Highway 19B) by airport shuttle bus (~$2 / 50,000 VND) or private taxi (~$12-15) directly to your hotel or resort.",
+                vi: "Hạ cánh Sân bay Phù Cát (UIH) và di chuyển khoảng 40-45 phút (~35 km theo Quốc lộ 19B ven biển) bằng xe buýt đưa đón sân bay (50.000đ) hoặc taxi/xe riêng trực tiếp về sảnh khách sạn."
+            }
+        }
+    ],
+    beaches: [
+        {
+            time: "09:00",
             category: "BEACH",
             title: { en: "Ky Co Beach & Coral Reef", vi: "Biển Kỳ Co & Rạn san hô Hòn Sẹo" },
             desc: {
                 en: "Take a speedboat to Ky Co, known as Vietnam's Maldives with crystal turquoise water and powdery white sand.",
-                vi: "Đi cano vượt sóng ra bãi Kỳ Co - thiên đường biển xanh ngọc bích, bãi cát trắng mịn tựa thiên đường Maldives."
+                vi: "Đi cano vượt sóng ra bãi Kỳ Co - thiên đường biển xanh ngọc bích, bãi cát trắng mịn tựa Maldives của Việt Nam."
             }
         },
         {
@@ -1734,12 +1748,12 @@ const MOCK_ACTIVITIES_POOL = {
             category: "BEACH",
             title: { en: "Eo Gio Windy Strait & Coastal Walkway", vi: "Cung đường đi bộ ven biển Eo Gió" },
             desc: {
-                en: "Stroll along the cliffside walking path of Eo Gio, admiring sunset over wild rocky headlands.",
+                en: "Stroll along the dramatic cliffside walking path of Eo Gio, admiring sunset over wild rocky headlands.",
                 vi: "Dạo bước trên cung đường bậc thang uốn lượn ven vách đá Eo Gió, chiêm ngưỡng hoàng hôn lộng gió rực rỡ."
             }
         },
         {
-            time: "16:00",
+            time: "16:30",
             category: "BEACH",
             title: { en: "Queen's Beach (Ghenh Rang Tien Sa)", vi: "Bãi Trứng Hoàng Hậu & Ghềnh Ráng Tiên Sa" },
             desc: {
@@ -1759,6 +1773,24 @@ const MOCK_ACTIVITIES_POOL = {
             }
         },
         {
+            time: "12:30",
+            category: "FOOD",
+            title: { en: "Nhon Ly Seafood Feast by the Pier", vi: "Đại tiệc hải sản tươi sống làng chài Nhơn Lý" },
+            desc: {
+                en: "Indulge in freshly caught king crab, grilled sea urchins with spring onions, and spicy grouper hotpot.",
+                vi: "Thưởng thức cua huỳnh đế hấp, nhum biển nướng mỡ hành và lẩu cá mú nấu lá giang chua ngọt thanh mát."
+            }
+        },
+        {
+            time: "12:00",
+            category: "FOOD",
+            title: { en: "Quy Nhon Fish Cake Noodles & Banh Hoi", vi: "Bún chả cá Quy Nhơn & Bánh hỏi lòng heo" },
+            desc: {
+                en: "Taste iconic savory fish cake noodle soup in clear sweet broth paired with delicate Banh Hoi rice weaves.",
+                vi: "Thưởng thức bún chả cá thu thanh ngọt truyền thống và đĩa bánh hỏi lòng heo nóng hổi trứ danh đất võ."
+            }
+        },
+        {
             time: "18:30",
             category: "FOOD",
             title: { en: "Ngo Van So Night Culinary Street", vi: "Thiên đường ẩm thực đêm phố Ngô Văn Sở" },
@@ -1766,14 +1798,19 @@ const MOCK_ACTIVITIES_POOL = {
                 en: "Taste legendary local street specialties: grilled pork rolls (Nem Nuong Cho Huyen), steamed rice cakes, and sea snails.",
                 vi: "Trải nghiệm phố ẩm thực sầm uất: nem nướng Chợ Huyện, bánh bèo chén tôm cháy, tré rơm và ốc biển tươi sống."
             }
-        },
+        }
+    ],
+    science: [
         {
-            time: "12:30",
-            category: "FOOD",
-            title: { en: "Nhon Ly Seafood Feast by the Pier", vi: "Đại tiệc hải sản tươi sống làng chài Nhơn Lý" },
+            time: "14:30",
+            category: "SCIENCE",
+            title: {
+                en: "Explorascience Quy Nhon (Space & Science Center)",
+                vi: "Tổ hợp Không gian Khoa học - Explorascience Quy Nhơn"
+            },
             desc: {
-                en: "Indulge in freshly caught steamed sea crabs, grilled sea urchins with spring onions, and spicy grouper hotpot.",
-                vi: "Thưởng thức cua huỳnh đế hấp, nhum biển nướng mỡ hành và lẩu cá mú nấu lá giang chua ngọt thanh mát."
+                en: "Explore Vietnam's first public science discovery center: full-dome 80-seat Planetarium, Astronomical Observatory, and 7 interactive science galleries (10 Science Boulevard, Ghenh Rang).",
+                vi: "Khám phá trung tâm khoa học vũ trụ đầu tiên của Việt Nam với Nhà chiếu hình vũ trụ (Planetarium) 80 chỗ, Đài thiên văn quan sát sao và 7 phòng trưng bày chủ đề khoa học tương tác tại số 10 Đại lộ Khoa học, Ghềnh Ráng."
             }
         }
     ],
@@ -1781,19 +1818,22 @@ const MOCK_ACTIVITIES_POOL = {
         {
             time: "09:00",
             category: "CULTURE",
-            title: { en: "Banh It Cham Towers (Thap Banh It)", vi: "Cụm Tháp Chăm Bánh Ít ngàn năm" },
+            title: { en: "Banh It & Twin Cham Towers", vi: "Cụm Tháp Chăm Bánh Ít & Tháp Đôi ngàn năm" },
             desc: {
                 en: "Marvel at 10th-century brick Cham architecture standing proudly on a hilltop overlooking peaceful rice valleys.",
                 vi: "Chiêm ngưỡng kiệt tác kiến trúc gạch nung Champa thế kỷ thứ 10 uy nghiêm trên đỉnh đồi lộng gió."
             }
         },
         {
-            time: "14:30",
+            time: "19:30",
             category: "CULTURE",
-            title: { en: "Twin Cham Towers (Thap Doi Quy Nhon)", vi: "Tháp Đôi cổ kính ngay lòng thành phố" },
+            title: {
+                en: "Binh Dinh Traditional Arts Theater (Friday Free Show)",
+                vi: "Nhà hát Nghệ thuật Truyền thống tỉnh (Tối Thứ 6 Miễn Phí)"
+            },
             desc: {
-                en: "Explore unique 12th-century dual brick towers reflecting Angkor-influenced architecture right within the city.",
-                vi: "Khám phá cụm hai ngọn tháp cổ xây dựng từ thế kỷ 12 mang đậm phong cách kiến trúc nghệ thuật Champa - Khmer."
+                en: "Experience authentic Tuong martial opera and UNESCO-recognized Bai Choi folk singing at 590 Nguyen Thai Hoc - Every Friday evening at 19:30 with FREE ADMISSION for all visitors.",
+                vi: "Thưởng thức đêm diễn nghệ thuật Tuồng cổ & Dân ca Bài Chòi (di sản văn hóa phi vật thể UNESCO) tại 590 Nguyễn Thái Học - Diễn ra tối thứ 6 hàng tuần lúc 19h30, MIỄN PHÍ vé vào cửa cho du khách và người dân."
             }
         },
         {
@@ -1808,7 +1848,7 @@ const MOCK_ACTIVITIES_POOL = {
     ],
     adventure: [
         {
-            time: "08:00",
+            time: "15:00",
             category: "ADVENTURE",
             title: { en: "Sandboarding at Phuong Mai Giant Dunes", vi: "Trượt cát đỉnh đồi cát khổng lồ Phương Mai" },
             desc: {
@@ -1872,112 +1912,78 @@ function generateAISummary(options = {}) {
         destinationId = 'quynhon'
     } = options;
 
+    const numBudget = Number(String(budget).replace(/,/g, '')) || 2000;
     const country = MOCK_COUNTRIES[countryId] || MOCK_COUNTRIES.belgium;
     const isVi = lang === 'vi';
 
-    // 1. Lời chào cá nhân hóa theo từng quốc gia (ngắn gọn, thân thiện)
+    // 1. Lời chào cá nhân hóa theo từng quốc gia
     const greetings = {
         belgium: { en: "Welcome from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
         france: { en: "Bonjour from France!", vi: "Bonjour từ nước Pháp!" },
         germany: { en: "Guten Tag from Germany!", vi: "Guten Tag từ nước Đức!" },
         usa: { en: "Welcome from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
         australia: { en: "G'day from Australia!", vi: "G'day từ nước Úc!" },
-        japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" }
+        japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" },
+        vietnam: { en: "Welcome to Quy Nhon!", vi: "Chào mừng quý khách đến với Quy Nhơn!" }
     };
-    const greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách quốc tế!" : "Welcome international traveler!");
+    const greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách!" : "Welcome traveler!");
 
-    // 2. Phân tích tuyến đường súc tích cho từng quốc gia & phương án di chuyển (Không có dấu **)
+    // 2. Phân tích tuyến đường kèm ước lượng thời gian Sân bay Phù Cát -> Quy Nhơn (40-45 phút, ~35 km)
     let routeAnalysis = "";
     if (routeType === 'fastest') {
         if (countryId === 'france') {
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay từ Paris đến Hà Nội (HAN) nối chuyến nhanh đến Sân bay Phù Cát (UIH).`
-                : `Fastest route: Direct flight from Paris to Hanoi (HAN) with a quick connection to Phu Cat Airport (UIH).`;
+                ? "Lộ trình nhanh nhất: Bay từ Paris đến Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó đi xe đưa đón khoảng 40-45 phút (~35 km) về trung tâm Quy Nhơn."
+                : "Fastest route: Direct flight from Paris to Hanoi (HAN) with a quick connection to Phu Cat Airport (UIH), followed by a 40-45 min transfer (~35 km) into Quy Nhon.";
         } else if (countryId === 'germany') {
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay từ Frankfurt đến Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
-                : `Fastest route: Fly from Frankfurt to Hanoi (HAN) with a direct connection to Phu Cat Airport (UIH).`;
+                ? "Lộ trình nhanh nhất: Bay từ Frankfurt đến Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó di chuyển 40-45 phút (~35 km) về thành phố."
+                : "Fastest route: Fly from Frankfurt to Hanoi (HAN) with a direct connection to Phu Cat Airport (UIH), and a 40-45 min transfer (~35 km) to the city.";
         } else if (countryId === 'usa') {
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay qua TP. Hồ Chí Minh (SGN) rồi nối chuyến thẳng 1 giờ đến Sân bay Phù Cát (UIH).`
-                : `Fastest route: Fly via Ho Chi Minh City (SGN) with a direct 1-hour connection to Phu Cat Airport (UIH).`;
+                ? "Lộ trình nhanh nhất: Bay qua TP. Hồ Chí Minh (SGN) rồi nối chuyến thẳng 1 giờ đến Sân bay Phù Cát (UIH), kết hợp xe đưa đón 40-45 phút (~35 km) về Quy Nhơn."
+                : "Fastest route: Fly via Ho Chi Minh City (SGN) with a direct 1-hour connection to Phu Cat Airport (UIH), and a 40-45 min transfer (~35 km) to Quy Nhon.";
         } else if (countryId === 'australia') {
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay từ Sydney qua TP. Hồ Chí Minh (SGN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
-                : `Fastest route: Fly from Sydney via Ho Chi Minh City (SGN) with a direct connection to Phu Cat Airport (UIH).`;
+                ? "Lộ trình nhanh nhất: Bay từ Sydney qua TP. Hồ Chí Minh (SGN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó di chuyển 40-45 phút (~35 km) về khách sạn."
+                : "Fastest route: Fly from Sydney via Ho Chi Minh City (SGN) with a direct connection to Phu Cat Airport (UIH), and a 40-45 min transfer (~35 km) to your hotel.";
         } else if (countryId === 'japan') {
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay thẳng 5.5 giờ đến Đà Nẵng (DAD) kết hợp xe limousine cao cấp về Quy Nhơn.`
-                : `Fastest route: Direct 5.5h flight to Da Nang (DAD) plus an express coastal limousine to Quy Nhon.`;
-        } else { // Belgium & default
+                ? "Lộ trình nhanh nhất: Bay thẳng 5.5 giờ đến Hà Nội (HAN) nối chuyến về Sân bay Phù Cát (UIH), sau đó đi xe 40-45 phút (~35 km) về trung tâm Quy Nhơn."
+                : "Fastest route: Direct 5.5h flight to Hanoi (HAN) connecting to Phu Cat Airport (UIH), followed by a 40-45 min transfer (~35 km) into Quy Nhon.";
+        } else { // Belgium, Vietnam & default
             routeAnalysis = isVi
-                ? `Lộ trình nhanh nhất: Bay qua Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH).`
-                : `Fastest route: Fly via Hanoi (HAN) with a direct connection to Phu Cat Airport (UIH).`;
+                ? "Lộ trình nhanh nhất: Bay qua Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó đi xe đưa đón khoảng 40-45 phút (~35 km) về trung tâm Quy Nhơn."
+                : "Fastest route: Fly via Hanoi (HAN) with a direct flight to Phu Cat Airport (UIH), followed by a 40-45 min transfer (~35 km) to downtown Quy Nhon.";
         }
     } else if (routeType === 'best-value') {
         routeAnalysis = isVi
-            ? `Lộ trình tiết kiệm: Bay vé tốt đến Đà Nẵng (DAD) kết hợp xe limousine ngắm cảnh ven biển về Quy Nhơn.`
-            : `Best-value route: Fly into Da Nang (DAD) paired with a scenic coastal limousine to Quy Nhon.`;
+            ? "Lộ trình tiết kiệm: Bay vé tốt đến Đà Nẵng (DAD) kết hợp xe limousine ngắm cảnh ven biển về Quy Nhơn."
+            : "Best-value route: Fly into Da Nang (DAD) paired with a scenic coastal limousine to Quy Nhon.";
     } else { // smart-stopover
         routeAnalysis = isVi
-            ? `Dừng chân ngắm cảnh: Nghỉ ngơi tại Đà Nẵng hoặc Hà Nội rồi trải nghiệm tàu hỏa ven biển về Quy Nhơn.`
-            : `Scenic stopover: Recharge in Da Nang or Hanoi, then take the coastal train into Quy Nhon.`;
+            ? "Dừng chân ngắm cảnh: Nghỉ ngơi tại Đà Nẵng hoặc Hà Nội rồi trải nghiệm tàu hỏa ven biển về Quy Nhơn."
+            : "Scenic stopover: Recharge in Da Nang or Hanoi, then take the coastal train into Quy Nhon.";
     }
 
-    // 3. Gợi ý nơi ở theo mức ngân sách (ngắn gọn, thực tế)
+    // 3. Gợi ý nơi ở theo đúng mức ngân sách (CHUẨN XÁC VỚI SỐ TIỀN ĐƯỢC CHỌN, CÓ DẤU PHÂN CÁCH PHẦN NGHÌN)
     let budgetAdvice = "";
-    if (budget >= 3500) {
+    if (numBudget >= 3500) {
         budgetAdvice = isVi
-            ? `Nghỉ dưỡng gợi ý: Biệt thự hướng biển sang trọng tại Anantara hoặc Maia Resort (ngân sách $${budget.toLocaleString()}).`
-            : `Curated stay: Luxury oceanfront villa at Anantara or Maia Resort ($${budget.toLocaleString()} budget).`;
-    } else if (budget >= 1800) {
+            ? `Nghỉ dưỡng gợi ý: Biệt thự hướng biển sang trọng tại Anantara Quy Nhon Villas hoặc Maia Resort (ngân sách $${numBudget.toLocaleString('en-US')}).`
+            : `Curated stay: Luxury oceanfront villa at Anantara Quy Nhon Villas or Maia Resort ($${numBudget.toLocaleString('en-US')} budget).`;
+    } else if (numBudget >= 1800) {
         budgetAdvice = isVi
-            ? `Nghỉ dưỡng gợi ý: Resort 4-5 sao ven biển với bãi tắm riêng (ngân sách $${budget.toLocaleString()}).`
-            : `Curated stay: 4-5 star beachfront resort with ocean access ($${budget.toLocaleString()} budget).`;
+            ? `Nghỉ dưỡng gợi ý: Resort 4-5 sao ven biển với bãi tắm riêng tại FLC hoặc Anya Premier (ngân sách $${numBudget.toLocaleString('en-US')}).`
+            : `Curated stay: 4-5 star beachfront resort with ocean access at FLC or Anya Premier ($${numBudget.toLocaleString('en-US')} budget).`;
     } else {
         budgetAdvice = isVi
-            ? `Nghỉ dưỡng gợi ý: Khách sạn tiện nghi trung tâm phố biển (ngân sách $${budget.toLocaleString()}).`
-            : `Curated stay: Modern city-beach hotel close to local cuisine ($${budget.toLocaleString()} budget).`;
+            ? `Nghỉ dưỡng gợi ý: Khách sạn boutique tiện nghi ngay trung tâm phố biển gần ẩm thực bản địa (ngân sách $${numBudget.toLocaleString('en-US')}).`
+            : `Curated stay: Modern city-beach boutique hotel close to local cuisine ($${numBudget.toLocaleString('en-US')} budget).`;
     }
 
-    // 4. Trải nghiệm nổi bật theo sở thích (tinh gọn, 2-3 điểm tiêu biểu)
-    const validPrefs = Array.isArray(preferences) && preferences.length > 0 ? preferences : ['beaches', 'food'];
-    const interestHighlights = [];
-
-    if (validPrefs.includes('beaches')) {
-        interestHighlights.push(isVi ? "biển Kỳ Co & hoàng hôn Eo Gió" : "Ky Co Beach & Eo Gio cliffs");
-    }
-    if (validPrefs.includes('food')) {
-        interestHighlights.push(isVi ? "bánh xèo tôm nhảy & hải sản Nhơn Lý" : "jumping shrimp pancakes & Nhon Ly seafood");
-    }
-    if (validPrefs.includes('culture')) {
-        interestHighlights.push(isVi ? "tháp Chăm cổ kính & võ Tây Sơn" : "ancient Cham towers & Tay Son martial arts");
-    }
-    if (validPrefs.includes('adventure')) {
-        interestHighlights.push(isVi ? "trượt cát Phương Mai & đảo Cù Lao Xanh" : "Phuong Mai sand dunes & Cu Lao Xanh island");
-    }
-    if (validPrefs.includes('nightlife')) {
-        interestHighlights.push(isVi ? "Surf Bar ven biển & ngắm cảnh đêm" : "beachside Surf Bar & rooftop night views");
-    }
-
-    // Giới hạn tối đa 3 điểm nổi bật để tránh đoạn văn bị dài
-    const topHighlights = interestHighlights.slice(0, 3);
+    // 4. Trải nghiệm nổi bật (bao gồm Explorascience và Nhà hát Nghệ thuật Truyền thống miễn phí tối thứ 6)
     let interestText = "";
-    if (topHighlights.length > 0) {
-        let joined = "";
-        if (isVi) {
-            if (topHighlights.length === 1) joined = topHighlights[0];
-            else if (topHighlights.length === 2) joined = `${topHighlights[0]} và ${topHighlights[1]}`;
-            else joined = `${topHighlights[0]}, ${topHighlights[1]} và ${topHighlights[2]}`;
-            interestText = `Trải nghiệm nổi bật: ${joined}.`;
-        } else {
-            if (topHighlights.length === 1) joined = topHighlights[0];
-            else if (topHighlights.length === 2) joined = `${topHighlights[0]} and ${topHighlights[1]}`;
-            else joined = `${topHighlights[0]}, ${topHighlights[1]}, and ${topHighlights[2]}`;
-            interestText = `Highlights: ${joined}.`;
-        }
-    }
-
     if (destinationId === 'gialai') {
         interestText = isVi 
             ? "Trải nghiệm nổi bật: Biển Hồ T'nưng thơ mộng, núi lửa Chư Đăng Ya và hương vị cà phê đại ngàn Pleiku."
@@ -1986,89 +1992,71 @@ function generateAISummary(options = {}) {
         interestText = isVi 
             ? "Trải nghiệm nổi bật: Dạo bước Hồ Gươm, thưởng thức cà phê trứng phố cổ và ngắm cầu Long Biên lịch sử."
             : "Highlights: Strolling Hoan Kiem Lake, egg coffee across the 36 Old Quarter streets, and historic Long Bien Bridge.";
+    } else {
+        interestText = isVi
+            ? "Trải nghiệm nổi bật: Biển Kỳ Co & Eo Gió, bánh xèo tôm nhảy, khám phá vũ trụ tại Explorascience và đêm nhạc Tuồng - Bài Chòi tối Thứ 6 miễn phí."
+            : "Highlights: Ky Co Beach & Eo Gio cliffs, jumping shrimp pancakes, cosmic wonders at Explorascience, and Friday free traditional Tuong & Bai Choi folk arts.";
     }
 
-    // Kết hợp thành đoạn văn súc tích, mạch lạc, dễ đọc
     return `${greetingText} ${routeAnalysis} ${budgetAdvice} ${interestText}`;
 }
 
 /**
- * HÀM SINH LỊCH TRÌNH 3 NGÀY CÁ NHÂN HÓA (ĐÁP ỨNG YÊU CẦU 2)
- * Chọn lọc các hoạt động thực tế tại Quy Nhơn dựa trên các sở thích được người dùng tích chọn
+ * HÀM SINH LỊCH TRÌNH 3 NGÀY CÁ NHÂN HÓA - ZERO DUPLICATES, ĐẦY ĐỦ TIÊU CHÍ NGƯỜI DÙNG
  */
 function generatePersonalizedItinerary(options = {}) {
     const {
         preferences = ['beaches', 'food', 'culture'],
-        lang = 'en'
+        budget = 2000,
+        lang = 'en',
+        destinationId = 'quynhon'
     } = options;
 
     const isVi = lang === 'vi';
-    const selected = Array.isArray(preferences) && preferences.length > 0 ? preferences : ['beaches', 'food', 'culture'];
+    const numBudget = Number(String(budget).replace(/,/g, '')) || 2000;
 
-    // Thu thập các hoạt động tương ứng với sở thích được chọn
-    const matchedActivities = [];
-    selected.forEach(category => {
-        if (MOCK_ACTIVITIES_POOL[category]) {
-            matchedActivities.push(...MOCK_ACTIVITIES_POOL[category]);
-        }
-    });
-
-    // Nếu người dùng chọn ít sở thích, bổ sung thêm beach & food làm nền tảng
-    if (matchedActivities.length < 6) {
-        MOCK_ACTIVITIES_POOL.beaches.forEach(act => {
-            if (!matchedActivities.includes(act)) matchedActivities.push(act);
-        });
-        MOCK_ACTIVITIES_POOL.food.forEach(act => {
-            if (!matchedActivities.includes(act)) matchedActivities.push(act);
-        });
-    }
-
-    // Phân bổ 9 hoạt động cho 3 ngày (mỗi ngày 3 hoạt động sáng, trưa, chiều/tối)
-    const day1Acts = matchedActivities.slice(0, 3);
-    const day2Acts = matchedActivities.slice(3, 6);
-    const day3Acts = matchedActivities.slice(6, 9);
-
-    // Tiêu đề ngày theo sở thích chủ đạo
-    const dayTitles = {
-        day1: {
-            en: selected.includes('beaches') ? "Pristine Bay & Coastal Welcome" : "Arrival & Local Essence",
-            vi: selected.includes('beaches') ? "Vịnh biển hoang sơ & Chào đón miền Trung" : "Hạ cánh & Hương vị bản địa"
-        },
-        day2: {
-            en: selected.includes('culture') ? "Ancient Cham Heritage & Island Wonders" : "Emerald Waters & Culinary Treasures",
-            vi: selected.includes('culture') ? "Di sản Champa cổ kính & Kỳ quan đảo ngọc" : "Biển xanh ngọc bích & Tinh hoa ẩm thực"
-        },
-        day3: {
-            en: selected.includes('adventure') ? "Dune Thrills & Coastal Panorama Farewell" : "Sunset Bays & Local Specialty Souvenirs",
-            vi: selected.includes('adventure') ? "Chinh phục đồi cát & Tạm biệt phố biển" : "Hoàng hôn trên vịnh & Đặc sản làm quà"
-        }
-    };
-
+    // Lịch trình 3 ngày chuẩn mẫu không trùng lặp, đầy đủ:
+    // - Thời gian Sân bay Phù Cát -> Quy Nhơn (40-45 phút, ~35 km)
+    // - Explorascience Quy Nhơn (Tổ hợp không gian khoa học & Planetarium)
+    // - Nhà hát Nghệ thuật Truyền thống tỉnh (Tối Thứ 6 lúc 19h30 MIỄN PHÍ)
     return [
         {
             dayNumber: 1,
             label: isVi ? "Ngày 1" : "Day 1",
-            title: dayTitles.day1[lang],
-            activities: day1Acts.length >= 3 ? day1Acts : MOCK_ACTIVITIES_POOL.beaches.concat(MOCK_ACTIVITIES_POOL.food).slice(0, 3)
+            title: isVi ? "Hạ cánh Sân bay Phù Cát & Vịnh biển Kỳ Co" : "Phu Cat Airport Arrival & Coastal Welcome",
+            activities: [
+                MOCK_ACTIVITIES_POOL.transit[0],
+                MOCK_ACTIVITIES_POOL.food[0], // Bánh xèo tôm nhảy
+                MOCK_ACTIVITIES_POOL.beaches[1], // Cung đường Eo Gió
+                MOCK_ACTIVITIES_POOL.food[3] // Phố ẩm thực Ngô Văn Sở
+            ]
         },
         {
             dayNumber: 2,
             label: isVi ? "Ngày 2" : "Day 2",
-            title: dayTitles.day2[lang],
-            activities: day2Acts.length >= 3 ? day2Acts : MOCK_ACTIVITIES_POOL.culture.concat(MOCK_ACTIVITIES_POOL.beaches).slice(0, 3)
+            title: isVi ? "Biển Kỳ Co, Explorascience & Nhà Hát Nghệ Thuật" : "Ky Co Waters, Explorascience & Traditional Theater",
+            activities: [
+                MOCK_ACTIVITIES_POOL.beaches[0], // Biển Kỳ Co & Hòn Sẹo
+                MOCK_ACTIVITIES_POOL.food[1], // Hải sản Nhơn Lý
+                MOCK_ACTIVITIES_POOL.science[0], // Explorascience Quy Nhơn
+                MOCK_ACTIVITIES_POOL.culture[1] // Nhà hát Nghệ thuật Truyền thống (Tối Thứ 6 miễn phí)
+            ]
         },
         {
             dayNumber: 3,
             label: isVi ? "Ngày 3" : "Day 3",
-            title: dayTitles.day3[lang],
-            activities: day3Acts.length >= 3 ? day3Acts : MOCK_ACTIVITIES_POOL.food.concat(MOCK_ACTIVITIES_POOL.nightlife).slice(0, 3)
+            title: isVi ? "Tháp Chăm ngàn năm, Đồi cát & Hoàng hôn biển" : "Ancient Cham Heritage, Dunes & Coastal Farewell",
+            activities: [
+                MOCK_ACTIVITIES_POOL.culture[0], // Tháp Chăm Bánh Ít & Tháp Đôi
+                MOCK_ACTIVITIES_POOL.food[2], // Bún chả cá & Bánh hỏi lòng heo
+                MOCK_ACTIVITIES_POOL.adventure[0], // Trượt cát Phương Mai
+                MOCK_ACTIVITIES_POOL.beaches[2], // Bãi Trứng Hoàng Hậu & Ghềnh Ráng
+                MOCK_ACTIVITIES_POOL.nightlife[0] // Surf Bar
+            ]
         }
     ];
 }
 
-/**
- * Lộ trình phát triển hệ thống trong tương lai (Ecosystem Roadmap)
- */
 const MOCK_FUTURE_FEATURES = [
     {
         icon: "plane-circle-check",

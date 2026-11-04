@@ -242,10 +242,18 @@ const App = (function() {
         // Nhập ngân sách tùy chỉnh
         if (elements.customBudgetInput) {
             elements.customBudgetInput.addEventListener('input', (e) => {
-                const value = Number(e.target.value);
+                const cleanStr = e.target.value.replace(/[^0-9]/g, '');
+                const value = Number(cleanStr);
                 if (value > 0) {
                     state.currentBudget = value;
                     onParametersChanged();
+                }
+            });
+            elements.customBudgetInput.addEventListener('blur', (e) => {
+                const cleanStr = e.target.value.replace(/[^0-9]/g, '');
+                const value = Number(cleanStr);
+                if (value > 0) {
+                    e.target.value = value.toLocaleString('en-US');
                 }
             });
         }
@@ -468,6 +476,18 @@ const App = (function() {
 
         const countryKey = elements.countrySelect.value || state.currentCountryKey;
         state.currentCountryKey = countryKey;
+
+        // Ensure state.currentBudget is strictly synced from form inputs
+        if (elements.budgetSelect) {
+            if (elements.budgetSelect.value === 'custom' && elements.customBudgetInput) {
+                const cleanStr = String(elements.customBudgetInput.value).replace(/[^0-9]/g, '');
+                const customVal = Number(cleanStr);
+                if (customVal > 0) state.currentBudget = customVal;
+            } else if (elements.budgetSelect.value && elements.budgetSelect.value !== 'custom') {
+                const selectVal = Number(elements.budgetSelect.value);
+                if (selectVal > 0) state.currentBudget = selectVal;
+            }
+        }
         const countryData = MOCK_COUNTRIES[countryKey] || MOCK_COUNTRIES.belgium;
         const lang = state.currentLang;
 
@@ -523,6 +543,12 @@ const App = (function() {
                 // Hiển thị container kết quả
                 if (elements.resultsContainer) {
                     elements.resultsContainer.classList.remove('hidden');
+                }
+
+                // Auto-refresh 3-day itinerary if active
+                const itinerarySection = document.getElementById('generated-itinerary-section');
+                if (itinerarySection && itinerarySection.style.display !== 'none') {
+                    renderItineraryContent();
                 }
             }
         );
@@ -590,7 +616,7 @@ const App = (function() {
                     </div>
                     <div class="route-card-fare">
                         <small>${isVi ? 'Ước tính' : 'Est.'}</small>
-                        <strong>$${routeFare}</strong>
+                        <strong>${Number(routeFare).toLocaleString('en-US')}</strong>
                     </div>
                 </div>
             `;
@@ -666,7 +692,7 @@ const App = (function() {
                     </div>
                     <div class="board-stat-pill price">
                         <i class="fa-solid fa-receipt"></i>
-                        <span>${isVi ? 'Vé & chuyển tiếp' : 'Fare & transfer'}: <strong>$${activeFare}</strong></span>
+                        <span>${isVi ? 'Vé & chuyển tiếp' : 'Fare & transfer'}: <strong>${Number(activeFare).toLocaleString('en-US')}</strong></span>
                     </div>
                     ${activeRouteData.carbonKg ? `
                         <div class="board-stat-pill">
@@ -684,7 +710,7 @@ const App = (function() {
                     <div class="fare-tier-icon"><i class="fa-solid fa-chair"></i></div>
                     <div class="fare-tier-info">
                         <span class="fare-tier-name">${isVi ? 'Hạng Phổ Thông (Economy)' : 'Standard Economy'}</span>
-                        <div class="fare-tier-price">~$${fareTiers.economy.price} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
+                        <div class="fare-tier-price">~${Number(fareTiers.economy.price).toLocaleString('en-US')} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
                         <span class="fare-tier-perk"><i class="fa-solid fa-check"></i> ${fareTiers.economy.perks[lang]}</span>
                     </div>
                 </div>
@@ -692,7 +718,7 @@ const App = (function() {
                     <div class="fare-tier-icon"><i class="fa-solid fa-crown"></i></div>
                     <div class="fare-tier-info">
                         <span class="fare-tier-name">${isVi ? 'Hạng Thương Gia (Business)' : 'Business Class'}</span>
-                        <div class="fare-tier-price">~$${fareTiers.business.price} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
+                        <div class="fare-tier-price">~${Number(fareTiers.business.price).toLocaleString('en-US')} <small>/ ${isVi ? 'khứ hồi' : 'round-trip'}</small></div>
                         <span class="fare-tier-perk"><i class="fa-solid fa-star"></i> ${fareTiers.business.perks[lang]}</span>
                     </div>
                 </div>
@@ -1902,10 +1928,19 @@ const App = (function() {
                 if (elements.countrySelect) elements.countrySelect.value = countryKey;
             }
             if (budget) {
-                state.currentBudget = budget;
-                if (elements.budgetSelect) elements.budgetSelect.value = 'custom';
-                if (elements.customBudgetContainer) elements.customBudgetContainer.style.display = 'block';
-                if (elements.customBudgetInput) elements.customBudgetInput.value = budget;
+                const cleanBudget = Number(String(budget).replace(/[^0-9]/g, '')) || 2000;
+                state.currentBudget = cleanBudget;
+                if (elements.budgetSelect) {
+                    const hasOption = Array.from(elements.budgetSelect.options).some(o => o.value === String(cleanBudget));
+                    if (hasOption) {
+                        elements.budgetSelect.value = String(cleanBudget);
+                        if (elements.customBudgetContainer) elements.customBudgetContainer.style.display = 'none';
+                    } else {
+                        elements.budgetSelect.value = 'custom';
+                        if (elements.customBudgetContainer) elements.customBudgetContainer.style.display = 'block';
+                        if (elements.customBudgetInput) elements.customBudgetInput.value = cleanBudget.toLocaleString('en-US');
+                    }
+                }
             }
             if (destKey) {
                 state.currentDestination = destKey;

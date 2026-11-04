@@ -1,52 +1,101 @@
 /* ===================================================================
-   Quy Nhon AI Travel Assistant - Game-Style Booking Wizard (Kurzgesagt Edition v2.0)
-   1. Full 2D World Map (Uniform Inactive Tone & Glowing Active Countries + Labels)
-   2. Theme Transition: Step 1 (Warm Rose/Coral) vs Step 2 (Fresh Emerald Green)
-   3. Split-Screen Budget (up to $50,000 USD) & Modular Airplane Physical Parts Evolution
+   Quy Nhon AI Travel Assistant - 2.5D Isometric Adventure Experience
+   ISOMETRIC 3D ADVENTURE WORLD – MINIATURE VIETNAM – MODULAR AIRCRAFT HANGAR
+   
+   Color System:
+   - Ocean: Deep Marine (#07182e, #0b2545, #0f3460)
+   - Land: Earth Slate & Eco Emerald (#1e293b, #10b981, #059669)
+   - Highlights: Warm Sunlight (#ffb703, #fbbf24) & Cyber Cyan (#00b4d8, #38bdf8)
+   - Hangar: Steel Blue & Mechanical Slate (#0f172a, #1e293b, #334155)
+   - Quest Beacons: Gold (#f59e0b), Emerald (#10b981), Cyan (#00b4d8)
    =================================================================== */
 
-.game-wizard-wrapper {
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 24px;
-    box-shadow: 0 16px 45px -8px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(2, 132, 199, 0.08);
-    overflow: hidden;
-    margin-bottom: 2rem;
-    position: relative;
-    font-family: var(--font-main);
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+:root {
+    --iso-ocean-deep: #07182e;
+    --iso-ocean-surface: #0b2545;
+    --iso-ocean-light: #0077b6;
+    
+    --iso-land-inactive: #1e293b;
+    --iso-land-inactive-edge: #0f172a;
+    --iso-land-active: #0284c7;
+    --iso-land-active-edge: #0369a1;
+    
+    --iso-quynhon: #00b4d8;
+    --iso-quynhon-glow: rgba(0, 180, 216, 0.5);
+    --iso-gialai: #10b981;
+    --iso-gialai-glow: rgba(16, 185, 129, 0.5);
+    --iso-hanoi: #f59e0b;
+    --iso-hanoi-glow: rgba(245, 158, 11, 0.5);
+    
+    --iso-gold: #ffb703;
+    --iso-gold-dark: #d97706;
+    --iso-coral: #ff6b6b;
+    
+    --iso-hangar-floor: #0f172a;
+    --iso-hangar-grid: rgba(56, 189, 248, 0.12);
+    --iso-hangar-rail: #334155;
+    --iso-hangar-door: #1e293b;
+    --iso-hazard-yellow: #f59e0b;
+    --iso-hazard-dark: #0f172a;
+    
+    --iso-radius-sm: 8px;
+    --iso-radius-md: 14px;
+    --iso-radius-lg: 22px;
+    --iso-radius-full: 9999px;
+    
+    --iso-shadow-box: 0 16px 45px -8px rgba(7, 24, 46, 0.25), 0 0 0 1px rgba(0, 180, 216, 0.12);
+    --iso-shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.45);
+    --iso-spring-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* -------------------------------------------------------------
-   1. Game Top HUD Bar
-   ------------------------------------------------------------- */
+/* =============================================================
+   1. MAIN WRAPPER & 3D DIORAMA STAGE CONTAINER
+   ============================================================= */
+.game-wizard-wrapper {
+    background: #091a30;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
+    box-shadow: var(--iso-shadow-box);
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    position: relative;
+    font-family: var(--font-main, system-ui, -apple-system, sans-serif);
+    color: #ffffff;
+    user-select: none;
+}
+
+/* =============================================================
+   2. TOP NAVIGATION HUD BAR
+   ============================================================= */
 .game-hud-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.75rem;
-    background: #0f172a;
-    color: #ffffff;
-    border-bottom: 2px solid #1e293b;
+    padding: 0.95rem 1.75rem;
+    background: linear-gradient(180deg, #07182e 0%, #0b2545 100%);
+    border-bottom: 2px solid rgba(56, 189, 248, 0.15);
     gap: 1rem;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 30;
 }
 
 .game-hud-brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
 .game-brand-icon {
     font-size: 1.6rem;
-    filter: drop-shadow(0 0 8px #38bdf8);
-    animation: gameIconBounce 2.5s infinite ease-in-out;
+    filter: drop-shadow(0 0 10px #00b4d8);
+    animation: isoCompassSpin 8s infinite linear;
 }
 
-@keyframes gameIconBounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-3px) rotate(-6deg); }
+@keyframes isoCompassSpin {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(180deg); }
+    100% { transform: rotateY(360deg); }
 }
 
 .game-brand-text strong {
@@ -60,63 +109,69 @@
 
 .game-brand-text small {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: #94a3b8;
-    font-weight: 500;
+    font-weight: 600;
 }
 
-/* Stage Progress Pills */
+/* Stage Progress Navigation */
 .game-stages-nav {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(7, 24, 46, 0.8);
     padding: 0.35rem 0.65rem;
-    border-radius: var(--radius-full);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--iso-radius-full);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .stage-nav-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.5rem;
     background: transparent;
     border: none;
-    padding: 0.35rem 0.85rem;
-    border-radius: var(--radius-full);
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--iso-radius-full);
     color: #94a3b8;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.25s var(--iso-spring-ease);
+}
+
+.stage-nav-pill:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .stage-pill-num {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 800;
 }
 
 .stage-nav-pill.active {
-    background: linear-gradient(135deg, #0284c7, #0d9488);
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.45);
 }
 
 .stage-nav-pill.active .stage-pill-num {
     background: #ffffff;
-    color: #0284c7;
+    color: #0077b6;
 }
 
 .stage-nav-pill.completed {
-    color: #34d399;
+    color: #10b981;
 }
 
 .stage-nav-pill.completed .stage-pill-num {
@@ -130,327 +185,262 @@
     font-weight: 800;
 }
 
-/* SFX Button */
+/* Audio SFX Toggle Button */
 .btn-game-sfx {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    background: rgba(56, 189, 248, 0.12);
-    border: 1px solid rgba(56, 189, 248, 0.35);
+    gap: 0.45rem;
+    background: rgba(0, 180, 216, 0.12);
+    border: 1px solid rgba(0, 180, 216, 0.35);
     color: #38bdf8;
     padding: 0.4rem 0.85rem;
-    border-radius: var(--radius-full);
+    border-radius: var(--iso-radius-full);
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .btn-game-sfx:hover {
-    background: rgba(56, 189, 248, 0.25);
+    background: rgba(0, 180, 216, 0.25);
     color: #ffffff;
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 .btn-game-sfx.muted {
-    background: rgba(148, 163, 184, 0.12);
-    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(148, 163, 184, 0.1);
+    border-color: rgba(148, 163, 184, 0.25);
     color: #94a3b8;
 }
 
-/* -------------------------------------------------------------
-   2. Stage Screens & Instructions
-   ------------------------------------------------------------- */
+/* =============================================================
+   3. INSTRUCTION BANNERS
+   ============================================================= */
+.stage-instruction-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1.35rem;
+    border-radius: var(--iso-radius-md);
+    margin-bottom: 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.45;
+    background: rgba(11, 37, 69, 0.75);
+    border: 1.5px solid rgba(56, 189, 248, 0.25);
+    color: #e2e8f0;
+}
+
+.instruction-badge {
+    background: #00b4d8;
+    color: #07182e;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--iso-radius-full);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.stage-instruction-banner.banner-hangar .instruction-badge {
+    background: #f59e0b;
+    color: #07182e;
+}
+
+/* =============================================================
+   4. STAGE SCREENS
+   ============================================================= */
 .game-stage-screen {
     display: none;
     padding: 1.5rem 1.75rem 2rem;
-    animation: screenFadeIn 0.35s ease;
+    animation: isoScreenFade 0.4s var(--iso-spring-ease);
 }
 
 .game-stage-screen.active {
     display: block;
 }
 
-@keyframes screenFadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+@keyframes isoScreenFade {
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.stage-instruction-banner {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: 12px;
-    margin-bottom: 1.25rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    line-height: 1.4;
-    transition: all 0.3s ease;
-}
+/* =============================================================
+   5. STEP 1: ISOMETRIC 3D ADVENTURE WORLD MAP
+   ============================================================= */
 
-/* Step 1 Warm Rose Banner */
-.stage-instruction-banner.banner-origin {
-    background: #fff1f2;
-    border: 1.5px solid #fecdd3;
-    color: #9f1239;
-}
-
-.stage-instruction-banner.banner-origin .instruction-badge {
-    background: #e11d48;
-}
-
-/* Step 2 Fresh Emerald Green Banner */
-.stage-instruction-banner.banner-dest {
-    background: #ecfdf5;
-    border: 1.5px solid #a7f3d0;
-    color: #065f46;
-}
-
-.stage-instruction-banner.banner-dest .instruction-badge {
-    background: #059669;
-}
-
-/* Step 3 Budget Banner */
-.stage-instruction-banner.banner-budget {
-    background: #f0fdf4;
-    border: 1.5px solid #bbf7d0;
-    color: #166534;
-}
-
-.instruction-badge {
-    color: white;
-    padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-full);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    flex-shrink: 0;
-}
-
-.instruction-badge.badge-budget {
-    background: #16a34a;
-}
-
-/* Quick Select Country Carousel Strip */
+/* Quick Select Dock */
 .game-quick-country-strip {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.55rem;
     overflow-x: auto;
     padding: 0.25rem 0 1rem;
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-color: #334155 transparent;
 }
 
 .country-quick-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: var(--radius-full);
-    padding: 0.45rem 0.95rem;
-    font-size: 0.8rem;
+    gap: 0.5rem;
+    background: #0b2545;
+    border: 1.5px solid #1e3a5f;
+    border-radius: var(--iso-radius-full);
+    padding: 0.45rem 1rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    color: #334155;
+    color: #e2e8f0;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.25s var(--iso-spring-ease);
 }
 
 .country-quick-chip:hover {
-    background: #f0f9ff;
+    background: #133b68;
     border-color: #38bdf8;
-    color: #0284c7;
+    color: #ffffff;
     transform: translateY(-2px);
 }
 
 .country-quick-chip.active {
-    background: #0284c7;
-    border-color: #0284c7;
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
+    border-color: #38bdf8;
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 180, 216, 0.4);
     transform: translateY(-2px) scale(1.02);
 }
 
-.chip-flag {
-    font-size: 1.1rem;
-}
+.chip-flag { font-size: 1.15rem; }
+.chip-city-sub { font-size: 0.7rem; opacity: 0.8; font-weight: 500; }
 
-/* -------------------------------------------------------------
-   3. 2D Map & Side RPG Panel Layout Grid
-   ------------------------------------------------------------- */
+/* 2-Column Layout */
 .game-map-layout-grid {
     display: grid;
     grid-template-columns: 1.45fr 1fr;
     gap: 1.5rem;
 }
 
-/* 2D Map Card Container */
+/* Isometric 2.5D World Map Canvas Card */
 .game-map-canvas-card {
-    border-radius: 18px;
+    background: linear-gradient(180deg, #07182e 0%, #0a2240 100%);
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 30px rgba(10, 17, 40, 0.35);
-    border: 2px solid #334155;
-    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: var(--iso-shadow-3d);
+    min-height: 420px;
+    perspective: 1200px;
 }
 
-/* Map Mode Tag */
+/* Mode Tag */
 .map-mode-indicator-tag {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    z-index: 10;
+    z-index: 15;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.35rem 0.85rem;
-    border-radius: var(--radius-full);
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--iso-radius-full);
     font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.05em;
-    backdrop-filter: blur(8px);
-    transition: all 0.4s ease;
-}
-
-.map-mode-indicator-tag.tag-origin {
-    background: rgba(225, 29, 72, 0.9);
-    color: #ffffff;
-    box-shadow: 0 0 16px rgba(244, 63, 94, 0.55);
-}
-
-.map-mode-indicator-tag.tag-destination {
-    background: rgba(5, 150, 105, 0.9);
-    color: #ffffff;
-    box-shadow: 0 0 16px rgba(16, 185, 129, 0.55);
+    letter-spacing: 0.06em;
+    backdrop-filter: blur(10px);
+    background: rgba(7, 24, 46, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+    box-shadow: 0 0 15px rgba(0, 180, 216, 0.3);
 }
 
 .pulse-beacon-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 0 8px #ffffff;
-    animation: blink 1.2s infinite ease-in-out;
+    background: #00b4d8;
+    box-shadow: 0 0 10px #00b4d8;
+    animation: isoBeaconPulse 1.4s infinite ease-in-out;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.75); }
+@keyframes isoBeaconPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.7); opacity: 0.4; }
 }
 
-/* SVG Map Viewport */
+/* Isometric 3D World Map SVG */
 .svg-map-viewport {
     width: 100%;
     height: 100%;
-    min-height: 380px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    flex: 1;
 }
 
 .kurzgesagt-world-svg {
     width: 100%;
     height: 100%;
     display: block;
+    transform-origin: center center;
+    transition: transform 0.6s var(--iso-spring-ease);
 }
 
-/* =============================================================
-   MAP BACKGROUND COLORS (STEP 1: WARM RED/ROSE vs STEP 2: FRESH GREEN)
-   ============================================================= */
-
-/* Stage 1: Origin Map Theme (Soft Warm Red / Rose Ocean) */
-.game-map-canvas-card.mode-origin {
-    border-color: #881337;
+/* Extruded Slabs (3D Depth Edge) */
+.slab-edge {
+    fill: #0c1c30;
+    transition: fill 0.25s ease;
 }
 
-.game-map-canvas-card.mode-origin .svg-ocean-bg {
-    fill: #2d121c; /* Soft deep wine/rose ocean */
-    transition: fill 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+.slab-edge-active {
+    fill: #034870;
 }
 
-.game-map-canvas-card.mode-origin .svg-curved-grid line,
-.game-map-canvas-card.mode-origin .svg-curved-grid ellipse {
-    stroke: rgba(244, 63, 94, 0.16);
-}
-
-.game-map-canvas-card.mode-origin .svg-ocean-grid {
-    color: rgba(244, 63, 94, 0.08);
-}
-
-/* Stage 2: Destination Map Theme (Fresh Emerald Green Ocean) */
-.game-map-canvas-card.mode-destination {
-    border-color: #065f46;
-}
-
-.game-map-canvas-card.mode-destination .svg-ocean-bg {
-    fill: #062b20; /* Fresh deep emerald green ocean */
-    transition: fill 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.game-map-canvas-card.mode-destination .svg-curved-grid line,
-.game-map-canvas-card.mode-destination .svg-curved-grid ellipse {
-    stroke: rgba(16, 185, 129, 0.18);
-}
-
-.game-map-canvas-card.mode-destination .svg-ocean-grid {
-    color: rgba(16, 185, 129, 0.08);
-}
-
-/* =============================================================
-   COUNTRIES STYLING:
-   - Inactive: Single uniform muted color with clean borders (NO rainbow!)
-   - Active: Illuminated glowing cyan/blue with country names
-   ============================================================= */
-
-/* Inactive Landmasses: Single uniform slate tone with clear border */
+/* Inactive Landmasses */
 .map-land-inactive {
     fill: #1e293b;
     stroke: #334155;
-    stroke-width: 1px;
-    opacity: 0.95;
-    transition: all 0.3s ease;
+    stroke-width: 1.2px;
+    opacity: 0.92;
+    cursor: not-allowed;
+    transition: all 0.2s ease;
 }
 
-/* Active Supported Countries */
+/* Supported Active Countries */
 .interactive-country-group {
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.25s var(--iso-spring-ease);
+}
+
+.interactive-country-group:hover {
+    transform: translateY(-5px);
 }
 
 .interactive-country {
-    fill: #0369a1;
+    fill: #0284c7;
     stroke: #38bdf8;
-    stroke-width: 1.6px;
-    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4));
-    transition: all 0.25s ease;
+    stroke-width: 1.8px;
+    filter: drop-shadow(0 4px 10px rgba(56, 189, 248, 0.4));
+    transition: all 0.2s ease;
 }
 
 .interactive-country-group:hover .interactive-country {
-    fill: #0284c7 !important;
+    fill: #00b4d8 !important;
     stroke: #ffffff !important;
-    stroke-width: 2.4px !important;
-    filter: drop-shadow(0 0 14px #38bdf8) !important;
+    stroke-width: 2.5px !important;
+    filter: drop-shadow(0 8px 18px rgba(0, 180, 216, 0.7)) !important;
 }
 
 .interactive-country-group.active-origin .interactive-country {
-    fill: #0d9488 !important;
-    stroke: #34d399 !important;
+    fill: #10b981 !important;
+    stroke: #6ee7b7 !important;
     stroke-width: 2.8px !important;
-    filter: drop-shadow(0 0 16px #34d399) !important;
-    animation: activeOriginPulse 2s infinite ease-in-out;
+    filter: drop-shadow(0 8px 22px rgba(16, 185, 129, 0.8)) !important;
 }
 
-@keyframes activeOriginPulse {
-    0%, 100% { filter: drop-shadow(0 0 10px #34d399); }
-    50% { filter: drop-shadow(0 0 22px #6ee7b7); }
-}
-
-/* Country Names on the Map */
 .map-country-label {
     font-size: 10px;
     font-weight: 800;
@@ -458,248 +448,56 @@
     text-anchor: middle;
     pointer-events: none;
     letter-spacing: 0.06em;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 3px rgba(0, 0, 0, 1);
-    transition: all 0.2s ease;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
     user-select: none;
 }
 
-.interactive-country-group:hover .map-country-label {
-    fill: #38bdf8;
-    font-size: 11px;
-}
-
-.interactive-country-group.active-origin .map-country-label {
-    fill: #6ee7b7;
-    font-size: 11px;
-}
-
-/* Vietnam Landmark Highlight */
-.landmark-vietnam {
-    fill: #0284c7;
-    stroke: #38bdf8;
-    stroke-width: 2px;
-}
-
-.label-vietnam {
-    fill: #fde047 !important;
-    font-weight: 900;
-}
-
-/* Step 2 Destination Focus for Vietnam */
-.game-map-canvas-card.mode-destination .landmark-vietnam {
-    fill: #10b981 !important;
-    stroke: #fef08a !important;
-    stroke-width: 3px !important;
-    filter: drop-shadow(0 0 16px #10b981);
-    animation: destBeaconGlow 1.6s infinite alternate ease-in-out;
-}
-
-@keyframes destBeaconGlow {
-    from { filter: drop-shadow(0 0 10px #10b981); }
-    to { filter: drop-shadow(0 0 24px #34d399); }
-}
-
-/* Step 2 Destination Markers inside Vietnam (Hà Nội, Gia Lai, Quy Nhơn) */
-.destination-markers-group {
-    display: none;
-}
-
-.game-map-canvas-card.mode-destination .destination-markers-group {
-    display: block;
-    animation: markersFadeIn 0.5s ease;
-}
-
-@keyframes markersFadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.map-dest-pin {
-    cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.map-dest-pin:hover {
-    transform: scale(1.25);
-}
-
-.pin-dest-core {
-    fill: #10b981;
-    stroke: #ffffff;
-    stroke-width: 1.5;
-    filter: drop-shadow(0 0 6px #10b981);
-}
-
-.pin-dest-text {
-    font-size: 10px;
-    font-weight: 800;
-    fill: #ffffff;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
-    pointer-events: none;
-}
-
-.map-dest-pin.selected .pin-dest-core {
-    fill: #f59e0b;
-    stroke: #fef08a;
-    stroke-width: 2.2;
-    filter: drop-shadow(0 0 10px #f59e0b);
-}
-
-.map-dest-pin.selected .pin-dest-text {
-    fill: #fbbf24;
-    font-weight: 900;
-}
-
-.gold-text {
-    fill: #fbbf24;
-    font-weight: 900;
-}
-
-.pin-gold-star {
-    fill: #f59e0b;
-    stroke: #ffffff;
-    stroke-width: 1.2;
-    filter: drop-shadow(0 0 8px #f59e0b);
-}
-
-/* Flight Path Arc */
-.svg-flight-arc {
-    stroke: #38bdf8;
-    stroke-width: 2.5;
+/* 3D Parabolic Flight Arc with Shadow & Tiny Plane */
+.svg-flight-shadow {
+    stroke: rgba(0, 0, 0, 0.4);
+    stroke-width: 3;
     stroke-linecap: round;
     stroke-dasharray: 6, 6;
+    fill: none;
+}
+
+.svg-flight-arc-3d {
+    stroke: #38bdf8;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    stroke-dasharray: 8, 8;
+    fill: none;
     animation: flightDashAnim 1.2s infinite linear;
     filter: drop-shadow(0 0 8px #38bdf8);
 }
 
-.game-map-canvas-card.mode-destination .svg-flight-arc {
-    stroke: #34d399;
-    filter: drop-shadow(0 0 10px #34d399);
-}
-
 @keyframes flightDashAnim {
-    from { stroke-dashoffset: 24; }
+    from { stroke-dashoffset: 32; }
     to { stroke-dashoffset: 0; }
 }
 
-/* Map Pins */
-.game-svg-pin {
-    pointer-events: none;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Tiny Flight Indicator Plane Traversing the Arc */
+.tiny-arc-plane {
+    fill: #f59e0b;
+    filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.8));
 }
 
-.pin-origin .pin-halo {
-    fill: rgba(16, 185, 129, 0.35);
-    animation: pinHaloPulse 2s infinite ease-out;
-}
-
-@keyframes pinHaloPulse {
-    0% { r: 6px; opacity: 1; }
-    100% { r: 24px; opacity: 0; }
-}
-
-.pin-origin .pin-core {
-    fill: #10b981;
-    stroke: #ffffff;
-    stroke-width: 2;
-}
-
-.pin-tag-text {
-    font-size: 11px;
-    font-weight: 800;
-    fill: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
-    letter-spacing: 0.05em;
-}
-
-.pin-radar-ring {
-    fill: none;
-    stroke: #f59e0b;
-    stroke-width: 1.5;
-    opacity: 0.8;
-}
-
-.ring-1 {
-    animation: radarExpand1 2s infinite ease-out;
-}
-
-.ring-2 {
-    animation: radarExpand2 2s infinite ease-out;
-}
-
-@keyframes radarExpand1 {
-    0% { r: 6px; opacity: 1; }
-    100% { r: 28px; opacity: 0; }
-}
-
-@keyframes radarExpand2 {
-    0% { r: 10px; opacity: 0.8; }
-    100% { r: 40px; opacity: 0; }
-}
-
-/* Map Card Footer */
-.map-card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1.25rem;
-    background: #0f172a;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 0.75rem;
-    color: #94a3b8;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.map-legend-pills {
-    display: flex;
-    gap: 0.85rem;
-}
-
-.legend-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.origin-dot { background: #10b981; }
-.dest-dot { background: #f59e0b; }
-.route-dot { background: #38bdf8; }
-
-/* -------------------------------------------------------------
-   4. Right RPG Selection Panel
-   ------------------------------------------------------------- */
+/* Right RPG Panel (Airport Selection) */
 .game-rpg-panel {
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 18px;
+    background: #0b2545;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--iso-shadow-3d);
 }
 
 .rpg-stage-content {
-    display: none;
+    display: flex;
     flex-direction: column;
     height: 100%;
-}
-
-.rpg-stage-content.active {
-    display: flex;
-    animation: panelSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes panelSlideIn {
-    from { opacity: 0; transform: translateX(12px); }
-    to { opacity: 1; transform: translateX(0); }
 }
 
 .rpg-panel-header {
@@ -707,39 +505,20 @@
     align-items: center;
     gap: 0.85rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f1f5f9;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 1rem;
 }
 
-.rpg-panel-header.header-dest-theme {
-    border-bottom-color: #d1fae5;
-}
-
-.rpg-country-flag {
-    font-size: 2.2rem;
-    line-height: 1;
-}
-
-.rpg-country-meta h3 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 0.2rem;
-}
-
+.rpg-country-flag { font-size: 2.2rem; line-height: 1; }
+.rpg-country-meta h3 { font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 0 0 0.2rem; }
 .rpg-continent-badge {
     display: inline-block;
     font-size: 0.72rem;
     font-weight: 700;
-    color: #0284c7;
-    background: #f0f9ff;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
     padding: 0.2rem 0.55rem;
-    border-radius: var(--radius-full);
-}
-
-.rpg-continent-badge.badge-dest {
-    color: #059669;
-    background: #ecfdf5;
+    border-radius: var(--iso-radius-full);
 }
 
 .rpg-sub-header {
@@ -749,12 +528,11 @@
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.05em;
-    color: #64748b;
+    color: #94a3b8;
     text-transform: uppercase;
     margin-bottom: 0.85rem;
 }
 
-/* Airport List */
 .rpg-airports-list {
     display: flex;
     flex-direction: column;
@@ -769,72 +547,59 @@
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    padding: 0.75rem 1rem;
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    background: #0f172a;
+    border: 1.5px solid #1e3a5f;
+    border-radius: var(--iso-radius-md);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.2s var(--iso-spring-ease);
 }
 
 .rpg-airport-card:hover {
-    background: #f0f9ff;
-    border-color: #bae6fd;
+    background: #133b68;
+    border-color: #38bdf8;
     transform: translateY(-2px);
 }
 
 .rpg-airport-card.selected {
-    background: #f0f9ff;
-    border-color: #0284c7;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+    background: #133b68;
+    border-color: #00b4d8;
+    box-shadow: 0 4px 14px rgba(0, 180, 216, 0.35);
 }
 
 .airport-code-badge {
     background: #0284c7;
     color: white;
     font-weight: 800;
-    font-size: 0.85rem;
-    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.65rem;
     border-radius: 8px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     font-family: monospace;
 }
 
 .rpg-airport-card.selected .airport-code-badge {
-    background: linear-gradient(135deg, #0284c7, #0d9488);
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
 }
 
-.airport-info-body {
-    flex: 1;
-}
-
-.airport-info-body strong {
-    display: block;
-    font-size: 0.85rem;
-    color: #0f172a;
-}
-
-.airport-info-body small {
-    display: block;
-    font-size: 0.72rem;
-    color: #64748b;
-    margin-top: 0.15rem;
-}
+.airport-info-body { flex: 1; }
+.airport-info-body strong { display: block; font-size: 0.88rem; color: #ffffff; }
+.airport-info-body small { display: block; font-size: 0.74rem; color: #94a3b8; margin-top: 0.15rem; }
 
 .airport-check-radio {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    border: 2px solid #cbd5e1;
+    border: 2px solid #475569;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .rpg-airport-card.selected .airport-check-radio {
-    border-color: #0284c7;
-    background: #0284c7;
+    border-color: #00b4d8;
+    background: #00b4d8;
 }
 
 .rpg-airport-card.selected .airport-check-radio::after {
@@ -842,704 +607,599 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: white;
+    background: #07182e;
 }
 
-/* Destination Expandable Accordion */
-.rpg-dest-accordion {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    flex: 1;
-    overflow-y: auto;
-    max-height: 290px;
-    padding-right: 0.25rem;
-}
-
-.dest-accordion-item {
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.dest-accordion-item:hover {
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-}
-
-.dest-accordion-item.selected {
-    background: #ffffff;
-    border-color: #059669;
-    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.15);
-}
-
-.dest-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.85rem 1rem;
-}
-
-.dest-item-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.dest-icon-box {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-}
-
-.dest-accordion-item.selected .dest-icon-box {
-    background: #ecfdf5;
-}
-
-.dest-item-brand h4 {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #0f172a;
-}
-
-.dest-item-brand small {
-    font-size: 0.72rem;
-    color: #64748b;
-}
-
-.dest-select-radio {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #cbd5e1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-}
-
-.dest-accordion-item.selected .dest-select-radio {
-    border-color: #059669;
-    background: #059669;
-}
-
-.dest-accordion-item.selected .dest-select-radio::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: white;
-}
-
-/* Expandable Detail Body */
-.dest-item-body {
-    max-height: 0;
-    overflow: hidden;
-    padding: 0 1rem;
-    transition: max-height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.35s ease;
-    background: #f8fafc;
-    border-top: 1px solid #f1f5f9;
-}
-
-.dest-accordion-item.selected .dest-item-body {
-    max-height: 180px;
-    padding: 0.75rem 1rem 1rem;
-}
-
-.dest-badge-pill {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 800;
-    color: #059669;
-    background: #d1fae5;
-    padding: 0.2rem 0.55rem;
-    border-radius: var(--radius-full);
-    margin-bottom: 0.45rem;
-    letter-spacing: 0.04em;
-}
-
-.dest-desc-text {
-    font-size: 0.78rem;
-    color: #475569;
-    margin: 0 0 0.5rem;
-    line-height: 1.45;
-}
-
-.dest-tags-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-}
-
-.dest-tag-chip {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #64748b;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    padding: 0.15rem 0.45rem;
-    border-radius: 6px;
-}
-
-/* Action Footer & Buttons */
-.rpg-action-footer {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1.5px solid #f1f5f9;
-}
-
-.rpg-action-footer.split-buttons {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.btn-game-next {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.65rem;
-    background: linear-gradient(135deg, #0284c7, #0d9488);
-    color: #ffffff;
-    border: none;
-    padding: 0.85rem 1.5rem;
-    border-radius: var(--radius-full);
-    font-size: 0.92rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-game-next:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
-}
-
-.btn-go-budget {
-    background: linear-gradient(135deg, #059669, #0284c7);
-    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
-}
-
-.btn-game-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #cbd5e1;
-    padding: 0.85rem 1.25rem;
-    border-radius: var(--radius-full);
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-game-back:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-}
-
-/* -------------------------------------------------------------
-   5. Stage 3: Split Screen (Modular Airplane Canvas & Budget Studio)
-   ------------------------------------------------------------- */
-.budget-split-grid {
+/* =============================================================
+   6. STEP 2: MINIATURE 3D VIETNAM DIORAMA + QUEST BEACONS
+   ============================================================= */
+.eco-triangle-grid {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
+    grid-template-columns: 1.2fr 1.3fr;
     gap: 1.75rem;
+    align-items: stretch;
 }
 
-/* LEFT HALF (50%): THE KURZGESAGT AIRCRAFT STAGE */
-.aircraft-stage-card {
-    background: #0f172a;
-    border: 2px solid #1e293b;
-    border-radius: 20px;
+/* Miniature 3D Vietnam Diorama Card */
+.vietnam-map-card {
+    background: linear-gradient(180deg, #07182e 0%, #0a2240 100%);
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
     overflow: hidden;
     position: relative;
-    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.4);
     display: flex;
     flex-direction: column;
+    box-shadow: var(--iso-shadow-3d);
+    min-height: 520px;
+    perspective: 1200px;
 }
 
-.aircraft-sky-canvas {
-    position: relative;
+.vietnam-svg-viewport {
     width: 100%;
     height: 100%;
-    min-height: 440px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.5rem;
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
-    overflow: hidden;
-    transition: background 0.6s ease;
-}
-
-/* Dynamic Sky Gradients by Tier */
-.stage-tier-economy .aircraft-sky-canvas {
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #334155 100%);
-}
-
-.stage-tier-standard .aircraft-sky-canvas {
-    background: linear-gradient(180deg, #0a192f 0%, #0284c7 65%, #0d9488 100%);
-}
-
-.stage-tier-business .aircraft-sky-canvas {
-    background: linear-gradient(180deg, #1e1b4b 0%, #4338ca 50%, #d97706 100%);
-}
-
-.stage-tier-royal .aircraft-sky-canvas {
-    background: linear-gradient(180deg, #09090b 0%, #581c87 40%, #db2777 75%, #f59e0b 100%);
-}
-
-/* Clouds */
-.cloud {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 50px;
-    filter: blur(1px);
-    pointer-events: none;
-}
-
-.cloud::before, .cloud::after {
-    content: '';
-    position: absolute;
-    background: inherit;
-    border-radius: 50%;
-}
-
-.cloud-1 {
-    width: 140px;
-    height: 40px;
-    top: 25%;
-    left: -150px;
-    animation: cloudDrift 14s infinite linear;
-}
-.cloud-1::before { width: 50px; height: 50px; top: -20px; left: 25px; }
-.cloud-1::after { width: 65px; height: 65px; top: -30px; left: 55px; }
-
-.cloud-2 {
-    width: 180px;
-    height: 48px;
-    bottom: 22%;
-    left: -200px;
-    animation: cloudDrift 18s infinite linear 4s;
-}
-.cloud-2::before { width: 60px; height: 60px; top: -25px; left: 35px; }
-.cloud-2::after { width: 80px; height: 80px; top: -40px; left: 75px; }
-
-.cloud-3 {
-    width: 110px;
-    height: 32px;
-    top: 65%;
-    left: -120px;
-    animation: cloudDrift 22s infinite linear 8s;
-}
-
-@keyframes cloudDrift {
-    0% { transform: translateX(0); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateX(700px); opacity: 0; }
-}
-
-/* Tier Badge Pill */
-.aircraft-tier-badge {
-    position: relative;
-    z-index: 10;
-    align-self: flex-start;
     display: flex;
     align-items: center;
-    gap: 0.65rem;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(12px);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-full);
+    justify-content: center;
+    position: relative;
+    flex: 1;
 }
 
-.tier-crown-icon {
-    font-size: 1.35rem;
-}
-
-.tier-lvl-tag {
+.vietnam-vector-svg {
+    width: 100%;
+    height: 100%;
+    max-height: 480px;
     display: block;
-    font-size: 0.65rem;
+}
+
+/* Diorama 3D Base Slab (Plinth) */
+.diorama-plinth-bottom {
+    fill: #061525;
+}
+
+.diorama-plinth-side {
+    fill: #0a213a;
+    stroke: #1e3a5f;
+    stroke-width: 1.5;
+}
+
+.diorama-ocean-top {
+    fill: #0f3460;
+    stroke: #38bdf8;
+    stroke-width: 1;
+    stroke-opacity: 0.3;
+}
+
+/* Vietnam S-Curve Terrain with Extruded Thickness */
+.vn-terrain-extrusion {
+    fill: #064e3b;
+}
+
+.vn-terrain-top {
+    fill: #10b981;
+    stroke: #34d399;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* Low-Poly Mountain Polygons */
+.poly-mountain-dark { fill: #047857; }
+.poly-mountain-light { fill: #34d399; }
+.poly-highland-forest { fill: #065f46; }
+
+/* 3D Quest Beacons */
+.quest-beacon-group {
+    cursor: pointer;
+    transition: transform 0.25s var(--iso-spring-ease);
+}
+
+.quest-beacon-group:hover {
+    transform: scale(1.15) translateY(-6px);
+}
+
+/* Vertical Light Beams Shooting into Sky */
+.beacon-light-pillar {
+    opacity: 0.85;
+    animation: beaconBeamFlicker 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes beaconBeamFlicker {
+    0% { opacity: 0.6; }
+    100% { opacity: 0.95; }
+}
+
+/* A. QUY NHON MAIN QUEST HERO BEACON */
+.beacon-quynhon .beacon-light-pillar {
+    fill: url(#goldSunlightBeam);
+}
+
+.beacon-quynhon .quest-diamond {
+    fill: #ffb703;
+    stroke: #ffffff;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 12px #ffb703);
+    animation: diamondFloat 2.8s infinite ease-in-out;
+}
+
+@keyframes diamondFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+.beacon-quynhon .hero-pulse-ring {
+    fill: none;
+    stroke: #ffb703;
+    stroke-width: 2;
+    opacity: 0.8;
+}
+
+.beacon-quynhon .ring-1 { animation: heroRadarExpand1 2.2s infinite ease-out; }
+.beacon-quynhon .ring-2 { animation: heroRadarExpand2 2.2s infinite ease-out; }
+
+@keyframes heroRadarExpand1 {
+    0% { r: 8px; opacity: 1; }
+    100% { r: 35px; opacity: 0; }
+}
+
+@keyframes heroRadarExpand2 {
+    0% { r: 14px; opacity: 0.8; }
+    100% { r: 55px; opacity: 0; }
+}
+
+.quest-floating-banner {
+    font-size: 11px;
+    font-weight: 900;
+    fill: #fef08a;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+    letter-spacing: 0.05em;
+}
+
+/* B. GIA LAI EXPLORATION BEACON */
+.beacon-gialai .beacon-light-pillar { fill: url(#emeraldHighlandBeam); }
+.beacon-gialai .gialai-core {
+    fill: #10b981;
+    stroke: #ffffff;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px #10b981);
+}
+
+/* C. HANOI CAPITAL BEACON */
+.beacon-hanoi .beacon-light-pillar { fill: url(#cyanCapitalBeam); }
+.beacon-hanoi .hanoi-core {
+    fill: #f59e0b;
+    stroke: #ffffff;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px #f59e0b);
+}
+
+/* Right Side: 3 Quest Cards */
+.destination-cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.dest-interactive-card {
+    background: #0b2545;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
+    padding: 1.25rem 1.4rem;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.25s var(--iso-spring-ease);
+    box-shadow: var(--iso-shadow-3d);
+}
+
+.dest-interactive-card:hover {
+    transform: translateY(-4px);
+    border-color: #38bdf8;
+    background: #0f3460;
+}
+
+.dest-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dest-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.dest-icon-frame {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--iso-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.dest-card-title-group h4 {
+    margin: 0;
+    font-size: 1.05rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
-    color: #38bdf8;
+    color: #ffffff;
+}
+
+.dest-card-title-group small {
+    display: block;
+    font-size: 0.74rem;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-top: 0.15rem;
+}
+
+.dest-tag-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--iso-radius-full);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
-.stage-tier-royal .tier-lvl-tag {
-    color: #fbbf24;
+.dest-quote-phrase {
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin: 0.65rem 0 0.5rem;
+    color: #cbd5e1;
 }
 
-.tier-badge-text h4 {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #ffffff;
+.dest-highlights-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
-/* THE AIRPLANE MODEL CONTAINER */
-.aircraft-model-container {
+.highlight-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #07182e;
+    color: #94a3b8;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    border: 1px solid #1e3a5f;
+}
+
+/* QUY NHON MAIN QUEST HERO CARD */
+.card-hero-quynhon {
+    border-color: #00b4d8;
+    background: linear-gradient(135deg, #0b2545 0%, #0d3868 100%);
+    box-shadow: 0 12px 30px rgba(0, 180, 216, 0.25);
+}
+
+.card-hero-quynhon .dest-icon-frame {
+    background: linear-gradient(135deg, #ffb703, #d97706);
+    color: #07182e;
+    box-shadow: 0 4px 14px rgba(255, 183, 3, 0.4);
+}
+
+.card-hero-quynhon .dest-tag-badge {
+    background: rgba(255, 183, 3, 0.2);
+    color: #fde047;
+    border: 1px solid #f59e0b;
+}
+
+.card-hero-quynhon.selected {
+    border-color: #ffb703;
+    border-width: 2.5px;
+    box-shadow: 0 0 0 4px rgba(255, 183, 3, 0.3), 0 16px 40px rgba(0, 180, 216, 0.4);
+}
+
+/* GIA LAI CARD */
+.card-gialai .dest-icon-frame { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.card-gialai .dest-tag-badge { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; }
+.card-gialai.selected { border-color: #10b981; border-width: 2.5px; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3); }
+
+/* HANOI CARD */
+.card-hanoi .dest-icon-frame { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.card-hanoi .dest-tag-badge { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid #f59e0b; }
+.card-hanoi.selected { border-color: #f59e0b; border-width: 2.5px; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.3); }
+
+/* =============================================================
+   7. STEP 3: ISOMETRIC AIRCRAFT HANGAR MODULAR ASSEMBLY (50/50)
+   ============================================================= */
+.budget-split-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.75rem;
+    align-items: stretch;
+}
+
+/* Left: Isometric Aircraft Hangar Assembly Bay */
+.hangar-assembly-card {
+    background: #07182e;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
+    overflow: hidden;
     position: relative;
-    z-index: 5;
-    margin: auto 0;
+    box-shadow: var(--iso-shadow-3d);
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+}
+
+/* Hangar 2.5D Isometric Scene */
+.hangar-iso-viewport {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: planeFloat 3s infinite ease-in-out;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    flex: 1;
+    overflow: hidden;
 }
 
-@keyframes planeFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-8px) rotate(-1.5deg); }
-}
-
-.kurzgesagt-plane-svg {
+.hangar-assembly-svg {
     width: 100%;
-    max-width: 440px;
-    height: auto;
-    overflow: visible;
+    height: 100%;
+    display: block;
 }
 
-/* Fuselage Scalable Morphing */
-.fuselage-scalable {
-    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+/* Hangar Floor & Caution Hazard Grid */
+.hangar-floor-plate {
+    fill: #0c1a2e;
 }
 
-.plane-fuselage {
-    fill: url(#planeFuselageGrad);
-    stroke: #0f172a;
-    stroke-width: 3.5;
-    transition: fill 0.3s ease;
-}
-
-.plane-cockpit-window {
-    fill: #0284c7;
-    stroke: #0f172a;
-    stroke-width: 2.5;
-}
-
-.plane-cabin-windows circle {
-    fill: #0f172a;
-    opacity: 0.7;
-}
-
-.plane-tail-fin {
-    fill: #0284c7;
-    stroke: #0f172a;
+.hangar-guide-rail {
+    stroke: #334155;
     stroke-width: 3;
+    stroke-linecap: round;
 }
 
-.plane-tail-accent {
-    fill: #38bdf8;
+.hazard-stripe-rect {
+    fill: url(#hazardStripePattern);
 }
 
-.plane-main-wing {
-    fill: #e2e8f0;
-    stroke: #0f172a;
+/* Sliding Hangar Bay Doors in the Back */
+.hangar-bay-door {
+    fill: #1e293b;
+    stroke: #334155;
+    stroke-width: 2;
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hangar-doors-open .hangar-door-left {
+    transform: translateX(-160px);
+}
+
+.hangar-doors-open .hangar-door-right {
+    transform: translateX(160px);
+}
+
+.hangar-open-sky-glow {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.hangar-doors-open .hangar-open-sky-glow {
+    opacity: 1;
+}
+
+/* Ready for Takeoff Banner (Gleams when $50k reached) */
+.ready-takeoff-tag {
+    display: none;
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #10b981, #00b4d8);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--iso-radius-full);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+    z-index: 25;
+    animation: takeoffPulse 1.5s infinite alternate;
+}
+
+@keyframes takeoffPulse {
+    0% { transform: translateX(-50%) scale(1); }
+    100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 35px rgba(0, 180, 216, 0.9); }
+}
+
+.hangar-doors-open .ready-takeoff-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* =============================================================
+   MODULAR AIRCRAFT ASSEMBLY PARTS (PHYSICAL MOTION, NO FADE-IN!)
+   ============================================================= */
+
+/* Module 1: Fuselage / Base Frame (Root chassis) */
+.aircraft-assembly-root {
+    transition: transform 0.4s var(--iso-spring-ease);
+}
+
+.mod-fuselage-frame {
+    fill: url(#planeMetallicGrad);
+    stroke: #07182e;
     stroke-width: 3.5;
 }
 
-.strobe-light {
-    fill: #ef4444;
-    animation: strobeBlink 1s infinite alternate;
-}
-
-@keyframes strobeBlink {
-    0%, 70% { opacity: 0.3; }
-    100% { opacity: 1; filter: drop-shadow(0 0 6px #ef4444); }
-}
-
-/* =============================================================
-   MODULAR PARTS VISIBILITY & ANIMATION BY TIER
-   ============================================================= */
-
-/* Modular Part 1: Nose Spinning Propeller (Tier 1 only) */
-.part-propeller {
-    display: none;
-}
-
-.tier-economy .part-propeller {
-    display: block;
-}
-
-.propeller-blade-spin {
-    transform-origin: 448px 110px;
-    animation: propSpinAnim 0.08s infinite linear;
-}
-
-@keyframes propSpinAnim {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Modular Part 2: Underwing Turbofan Jet Engines (Tier 2+) */
-.part-turbofans {
-    display: none;
-}
-
-.tier-standard .part-turbofans,
-.tier-business .part-turbofans,
-.tier-royal .part-turbofans {
-    display: block;
-}
-
-.plane-engine-pod {
-    fill: #0284c7;
-    stroke: #0f172a;
+.mod-cockpit-glass {
+    fill: #00b4d8;
+    stroke: #07182e;
     stroke-width: 2.5;
 }
 
-.engine-intake {
-    fill: #0f172a;
+/* Module 2: Swept Wings (Slides horizontally from left & right assembly rails) */
+.mod-wings-left {
+    transform-origin: 220px 110px;
+    transform: translateX(-140px);
+    opacity: 0;
+    transition: transform 0.5s var(--iso-spring-ease), opacity 0.3s ease;
 }
 
-.engine-core-glow {
-    fill: #38bdf8;
-    filter: drop-shadow(0 0 6px #38bdf8);
-    animation: corePulse 1s infinite alternate;
+.mod-wings-right {
+    transform-origin: 220px 110px;
+    transform: translateX(140px);
+    opacity: 0;
+    transition: transform 0.5s var(--iso-spring-ease), opacity 0.3s ease;
 }
 
-@keyframes corePulse {
-    from { opacity: 0.6; }
-    to { opacity: 1; }
+.assembly-wings-installed .mod-wings-left,
+.assembly-wings-installed .mod-wings-right {
+    transform: translateX(0);
+    opacity: 1;
 }
 
-/* Modular Part 3: Supersonic Mach-2 Delta Nose Probe & Wings (Tier 3+) */
-.part-supersonic {
-    display: none;
-}
-
-.tier-business .part-supersonic,
-.tier-royal .part-supersonic {
-    display: block;
-}
-
-.delta-wing-extender {
+.wing-snap-latch {
     fill: #f59e0b;
-    stroke: #0f172a;
-    stroke-width: 2.5;
 }
 
-/* Supersonic Shockwaves */
-.supersonic-shockwaves {
-    display: none;
+/* Module 3: Dual Jet Turbofan Engines (Rises from bottom pit into wing sockets) */
+.mod-engine-assembly {
+    transform-origin: 240px 150px;
+    transform: translateY(90px);
+    opacity: 0;
+    transition: transform 0.55s var(--iso-spring-ease), opacity 0.3s ease;
 }
 
-.tier-business .supersonic-shockwaves,
-.tier-royal .supersonic-shockwaves {
-    display: block;
+.assembly-engines-installed .mod-engine-assembly {
+    transform: translateY(0);
+    opacity: 1;
 }
 
-.shockwave-ring {
-    fill: none;
-    stroke: #f59e0b;
-    stroke-width: 2;
-    transform-origin: 65px 110px;
-}
-
-.ring-s1 {
-    animation: shockwavePulse 1.2s infinite linear;
-}
-
-.ring-s2 {
-    animation: shockwavePulse 1.2s infinite linear 0.6s;
-}
-
-@keyframes shockwavePulse {
-    0% { transform: scale(0.6); opacity: 1; }
-    100% { transform: scale(1.6); opacity: 0; }
-}
-
-/* Modular Part 4: Canard Wings (Tier 4) */
-.part-canards {
-    display: none;
-}
-
-.tier-royal .part-canards {
-    display: block;
-    animation: canardSnap 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.canard-wing {
-    fill: #ec4899;
-    stroke: #0f172a;
-    stroke-width: 2;
-}
-
-@keyframes canardSnap {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-/* Modular Part 5: Quad Hyperdrive Rocket Boosters (Tier 4) */
-.part-hyper-boosters {
-    display: none;
-}
-
-.tier-royal .part-hyper-boosters {
-    display: block;
-}
-
-.hyper-booster-pod {
-    fill: #334155;
-    stroke: #0f172a;
-    stroke-width: 2;
-}
-
-.aux-plasma-jet {
-    fill: #c084fc;
-    filter: drop-shadow(0 0 10px #ec4899);
-    animation: auxFlame 0.15s infinite alternate;
-}
-
-@keyframes auxFlame {
-    from { rx: 12px; }
-    to { rx: 18px; }
-}
-
-/* Modular Part 6: Royal Golden Crown Crest (Tier 4) */
-.part-royal-crown {
-    display: none;
-}
-
-.tier-royal .part-royal-crown {
-    display: block;
-    animation: crownGleam 2.5s infinite ease-in-out;
-}
-
-@keyframes crownGleam {
-    0%, 100% { filter: drop-shadow(0 0 6px #fbbf24); }
-    50% { filter: drop-shadow(0 0 16px #f59e0b) drop-shadow(0 0 4px #ffffff); }
-}
-
-/* =============================================================
-   TIER-SPECIFIC AIRCRAFT DETAILS & CONTRAIL STYLES
-   ============================================================= */
-
-/* Tier 1: Economy */
-.tier-economy .plane-tail-fin { fill: #64748b; }
-.tier-economy .contrail-stream {
-    stroke: rgba(255, 255, 255, 0.4);
-    stroke-width: 5;
-    fill: none;
-    stroke-linecap: round;
-}
-.tier-economy .plane-booster-flame {
-    fill: #fbbf24;
-    opacity: 0.5;
-}
-
-/* Tier 2: Standard */
-.tier-standard .plane-tail-fin { fill: #0284c7; }
-.tier-standard .contrail-stream {
-    stroke: url(#contrailStandard);
-    stroke-width: 10;
-    fill: none;
-    stroke-linecap: round;
-}
-.tier-standard .plane-booster-flame {
+.engine-core-fan {
     fill: #38bdf8;
     filter: drop-shadow(0 0 8px #38bdf8);
 }
 
-/* Tier 3: Business */
-.tier-business .plane-fuselage {
-    stroke: #b45309;
-}
-.tier-business .plane-tail-fin { fill: #f59e0b; }
-.tier-business .plane-tail-accent { fill: #fbbf24; }
-.tier-business .plane-cockpit-window { fill: #fbbf24; }
-.tier-business .contrail-stream {
-    stroke: url(#contrailBusiness);
-    stroke-width: 14;
-    fill: none;
-    stroke-linecap: round;
-}
-.tier-business .plane-booster-flame {
-    fill: #f59e0b;
-    filter: drop-shadow(0 0 16px #f59e0b);
+/* Module 4: Tail Fin & Cabin Windows & Winglets (Slides down from overhead crane) */
+.mod-tail-fin {
+    transform-origin: 90px 80px;
+    transform: translateY(-70px);
+    opacity: 0;
+    transition: transform 0.5s var(--iso-spring-ease), opacity 0.3s ease;
 }
 
-/* Tier 4: Royal Celestial */
-.tier-royal .plane-fuselage {
-    fill: #fef9c3;
-    stroke: #b45309;
-    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.6));
+.mod-cabin-windows {
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
-.tier-royal .plane-tail-fin { fill: #ec4899; }
-.tier-royal .plane-cockpit-window { fill: #38bdf8; }
-.tier-royal .contrail-stream {
+
+.assembly-tail-installed .mod-tail-fin {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.assembly-tail-installed .mod-cabin-windows {
+    opacity: 1;
+}
+
+/* Module 5: Canards, Quad Boosters & Royal Crown (Unfolds & docks for $30k-$50k) */
+.mod-canards-wings {
+    transform-origin: 360px 110px;
+    transform: scale(0);
+    transition: transform 0.45s var(--iso-spring-ease);
+}
+
+.mod-quad-boosters {
+    transform-origin: 80px 110px;
+    transform: translateX(-50px);
+    opacity: 0;
+    transition: transform 0.5s var(--iso-spring-ease), opacity 0.3s ease;
+}
+
+.mod-royal-crown {
+    transform-origin: 80px 30px;
+    transform: translateY(-50px) scale(0.5);
+    opacity: 0;
+    transition: transform 0.6s var(--iso-spring-ease), opacity 0.3s ease;
+}
+
+.assembly-premium-installed .mod-canards-wings {
+    transform: scale(1);
+}
+
+.assembly-premium-installed .mod-quad-boosters {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.assembly-premium-installed .mod-royal-crown {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* Thrust exhaust plumes */
+.hangar-exhaust-flame {
+    fill: #f59e0b;
+    filter: drop-shadow(0 0 15px #f59e0b);
+    transition: all 0.3s ease;
+}
+
+.assembly-premium-installed .hangar-exhaust-flame {
+    fill: #ec4899;
+    filter: drop-shadow(0 0 25px #ec4899);
+}
+
+/* Rainbow Aurora Trail at $50k */
+.mod-aurora-trail {
+    display: none;
+}
+
+.assembly-aurora-active .mod-aurora-trail {
+    display: block;
     stroke: url(#contrailRainbow);
-    stroke-width: 18;
+    stroke-width: 20;
     fill: none;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 16px #ec4899);
-}
-.tier-royal .plane-booster-flame {
-    fill: #ec4899;
     filter: drop-shadow(0 0 20px #ec4899);
 }
 
-/* Hyperspace Launch Animation */
-.aircraft-model-container.hyperspace-launch {
-    animation: hyperLaunch 0.9s cubic-bezier(0.7, 0, 0.84, 0) forwards !important;
-}
-
-@keyframes hyperLaunch {
-    0% { transform: translateX(0) scale(1); }
-    30% { transform: translateX(-40px) scale(0.95); }
-    100% { transform: translateX(800px) scale(1.6); opacity: 0; }
-}
-
-/* Perks Strip at Bottom of Left Card */
-.aircraft-perks-box {
-    position: relative;
-    z-index: 10;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    padding: 0.65rem 1rem;
-    font-size: 0.78rem;
-    color: #e2e8f0;
+/* Mechanical Assembly Status Tag (Upper Left of Hangar) */
+.hangar-status-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 15;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    line-height: 1.4;
+    gap: 0.65rem;
+    background: rgba(7, 24, 46, 0.88);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.5rem 1.15rem;
+    border-radius: var(--iso-radius-full);
+    backdrop-filter: blur(10px);
 }
 
-/* =============================================================
-   RIGHT HALF (50%): BUDGET CONTROL STUDIO
-   ============================================================= */
+.hangar-status-badge strong {
+    color: #38bdf8;
+    font-size: 0.85rem;
+}
+
+.hangar-status-badge small {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.68rem;
+}
+
+/* Right: Budget Studio Controller */
 .budget-studio-card {
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 1.75rem;
+    background: #0b2545;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-lg);
+    padding: 1.6rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--iso-shadow-3d);
 }
 
 .studio-section-group {
-    margin-bottom: 1.35rem;
+    margin-bottom: 1.2rem;
 }
 
 .studio-label {
@@ -1548,43 +1208,43 @@
     gap: 0.45rem;
     font-size: 0.82rem;
     font-weight: 800;
-    color: #0f172a;
+    color: #ffffff;
     margin-bottom: 0.55rem;
 }
 
 .studio-label i {
-    color: #0284c7;
+    color: #00b4d8;
 }
 
 /* Currency Selector Pills */
 .currency-pills-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 0.5rem;
 }
 
 .currency-chip {
-    background: #f1f5f9;
-    border: 1.5px solid #e2e8f0;
-    color: #334155;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-full);
-    font-size: 0.78rem;
+    background: #07182e;
+    border: 1.5px solid #1e3a5f;
+    color: #e2e8f0;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--iso-radius-full);
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.2s ease;
 }
 
 .currency-chip:hover {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: #133b68;
+    border-color: #38bdf8;
 }
 
 .currency-chip.active {
-    background: #0284c7;
-    border-color: #0284c7;
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
+    border-color: #38bdf8;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.4);
 }
 
 /* Amount Input Wrapper */
@@ -1597,10 +1257,11 @@
 .usd-equivalent-pill {
     font-size: 0.75rem;
     font-weight: 800;
-    color: #059669;
-    background: #ecfdf5;
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, 0.15);
     padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-full);
+    border-radius: var(--iso-radius-full);
+    border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .budget-input-box-wrapper {
@@ -1611,22 +1272,21 @@
 
 .budget-big-input {
     width: 100%;
-    background: #f8fafc;
-    border: 2px solid #cbd5e1;
-    border-radius: 14px;
+    background: #07182e;
+    border: 2px solid #1e3a5f;
+    border-radius: var(--iso-radius-md);
     padding: 0.85rem 3.5rem 0.85rem 1.25rem;
     font-size: 1.7rem;
     font-weight: 800;
-    color: #0f172a;
+    color: #ffffff;
     outline: none;
     font-family: var(--font-main);
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
 
 .budget-big-input:focus {
-    border-color: #0284c7;
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+    border-color: #00b4d8;
+    box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.25);
 }
 
 .budget-currency-symbol {
@@ -1638,7 +1298,7 @@
     pointer-events: none;
 }
 
-/* Range Slider (Scaling up to $50,000 USD) */
+/* Range Slider */
 .slider-meter-track {
     width: 100%;
     padding: 0.35rem 0;
@@ -1650,10 +1310,10 @@
     width: 100%;
     height: 12px;
     border-radius: 6px;
-    background: linear-gradient(90deg, #10b981 0%, #0284c7 35%, #f59e0b 70%, #ec4899 100%);
+    background: linear-gradient(90deg, #10b981 0%, #00b4d8 35%, #f59e0b 70%, #ec4899 100%);
     outline: none;
     cursor: pointer;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
 }
 
 .game-range-slider::-webkit-slider-thumb {
@@ -1663,8 +1323,8 @@
     height: 28px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3.5px solid #0284c7;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    border: 3.5px solid #00b4d8;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: transform 0.15s ease;
 }
@@ -1677,15 +1337,76 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.72rem;
-    color: #64748b;
+    color: #94a3b8;
     margin-top: 0.45rem;
     font-weight: 600;
 }
 
 .slider-mid-label {
-    color: #0284c7;
+    color: #00b4d8;
     font-weight: 700;
 }
+
+/* 5 Quick Presets ($500, $2,500, $8,000, $20,000, $50,000) */
+.budget-presets-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.45rem;
+}
+
+.preset-chip {
+    background: #07182e;
+    border: 1.5px solid #1e3a5f;
+    border-radius: var(--iso-radius-md);
+    padding: 0.55rem 0.35rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s var(--iso-spring-ease);
+}
+
+.preset-chip:hover {
+    background: #133b68;
+    border-color: #38bdf8;
+    transform: translateY(-2px);
+}
+
+.preset-chip.active {
+    background: #133b68;
+    border-color: #00b4d8;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.35);
+}
+
+.preset-icon { display: block; font-size: 1.1rem; margin-bottom: 0.15rem; }
+.preset-chip strong { display: block; font-size: 0.78rem; color: #ffffff; }
+.preset-chip small { display: block; font-size: 0.65rem; color: #94a3b8; margin-top: 0.1rem; }
+
+/* Experience Tier Suggestions Box */
+.experience-tier-box {
+    background: #07182e;
+    border: 1.5px solid #1e3a5f;
+    border-radius: var(--iso-radius-md);
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.exp-category-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+}
+
+.exp-category-pill {
+    background: #0b2545;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.72rem;
+}
+
+.exp-category-pill i { color: #00b4d8; margin-right: 0.25rem; }
+.exp-category-pill strong { display: block; color: #ffffff; font-size: 0.74rem; }
+.exp-category-pill span { display: block; color: #94a3b8; font-size: 0.68rem; margin-top: 0.1rem; }
 
 /* Summary Corridor Badge */
 .budget-summary-corridor {
@@ -1693,8 +1414,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.85rem 1.15rem;
-    background: #f1f5f9;
-    border-radius: 14px;
+    background: #07182e;
+    border: 1px solid #1e3a5f;
+    border-radius: var(--iso-radius-md);
     font-size: 0.82rem;
     margin-bottom: 1.25rem;
     flex-wrap: wrap;
@@ -1706,27 +1428,67 @@
     align-items: center;
     gap: 0.5rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #ffffff;
 }
 
-.corridor-route-badge i {
-    color: #0284c7;
-}
+.corridor-route-badge i { color: #00b4d8; }
+.corridor-budget-badge { color: #94a3b8; }
+.corridor-budget-badge strong { color: #38bdf8; font-size: 0.95rem; margin-left: 0.35rem; }
 
-.corridor-budget-badge {
-    color: #475569;
-}
-
-.corridor-budget-badge strong {
-    color: #0284c7;
-    font-size: 0.95rem;
-    margin-left: 0.35rem;
-}
-
-/* Launch Button */
-.studio-action-row {
+/* =============================================================
+   8. BOTTOM NAVIGATION & ACTION BUTTONS
+   ============================================================= */
+.studio-action-row,
+.rpg-action-footer {
     display: flex;
     gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-game-next {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
+    color: #ffffff;
+    border: none;
+    padding: 0.95rem 1.5rem;
+    border-radius: var(--iso-radius-full);
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 180, 216, 0.45);
+    transition: all 0.25s var(--iso-spring-ease);
+}
+
+.btn-game-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.65);
+}
+
+.btn-game-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #0f172a;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    padding: 0.95rem 1.35rem;
+    border-radius: var(--iso-radius-full);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-game-back:hover {
+    background: #1e293b;
+    color: #ffffff;
 }
 
 .btn-game-launch-plan {
@@ -1734,52 +1496,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.65rem;
-    background: linear-gradient(135deg, #059669, #0284c7);
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #10b981, #00b4d8);
     color: #ffffff;
     border: none;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius-full);
-    font-size: 0.95rem;
+    padding: 1rem 1.75rem;
+    border-radius: var(--iso-radius-full);
+    font-size: 1rem;
     font-weight: 800;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     cursor: pointer;
-    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+    transition: all 0.25s var(--iso-spring-ease);
 }
 
 .btn-game-launch-plan:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 30px rgba(5, 150, 105, 0.55);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.75);
 }
 
-/* -------------------------------------------------------------
-   6. Responsive Layout Breakpoints
-   ------------------------------------------------------------- */
+/* =============================================================
+   9. RESPONSIVE BREAKPOINTS (1366x768 & 1920x1080)
+   ============================================================= */
 @media (max-width: 1024px) {
-    .game-map-layout-grid {
-        grid-template-columns: 1fr;
-    }
-    .budget-split-grid {
-        grid-template-columns: 1fr;
-    }
-    .aircraft-sky-canvas {
-        min-height: 320px;
-    }
+    .game-map-layout-grid { grid-template-columns: 1fr; }
+    .eco-triangle-grid { grid-template-columns: 1fr; }
+    .budget-split-grid { grid-template-columns: 1fr; }
+    .vietnam-map-card { min-height: 400px; }
+    .hangar-assembly-card { min-height: 380px; }
 }
 
 @media (max-width: 640px) {
-    .game-hud-bar {
-        padding: 0.85rem 1rem;
-    }
-    .game-stages-nav {
-        width: 100%;
-        justify-content: space-between;
-    }
-    .game-stage-screen {
-        padding: 1rem 1rem 1.5rem;
-    }
-    .studio-action-row {
-        flex-direction: column;
-    }
+    .game-hud-bar { padding: 0.85rem 1rem; }
+    .game-stages-nav { width: 100%; justify-content: space-between; }
+    .game-stage-screen { padding: 1rem 1rem 1.5rem; }
+    .budget-presets-row { grid-template-columns: repeat(3, 1fr); }
+    .exp-category-row { grid-template-columns: 1fr; }
+    .studio-action-row { flex-direction: column; }
 }

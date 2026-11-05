@@ -239,15 +239,27 @@ const App = (function() {
             });
         }
 
-        // Nhập ngân sách tùy chỉnh
+        // Nhập ngân sách tùy chỉnh (Tự động định dạng dấu phẩy ngăn cách hàng nghìn / triệu trực tiếp: 1000000 -> 1,000,000)
         if (elements.customBudgetInput) {
             elements.customBudgetInput.addEventListener('input', (e) => {
+                const cursorPosition = e.target.selectionStart;
+                const originalLength = e.target.value.length;
                 const cleanStr = e.target.value.replace(/[^0-9]/g, '');
-                const value = Number(cleanStr);
-                if (value > 0) {
-                    state.currentBudget = value;
-                    onParametersChanged();
+                if (!cleanStr) {
+                    e.target.value = '';
+                    state.currentBudget = 0;
+                    return;
                 }
+                const value = Number(cleanStr);
+                state.currentBudget = value;
+                const formatted = value.toLocaleString('en-US');
+                e.target.value = formatted;
+
+                const newLength = formatted.length;
+                const newCursor = Math.max(0, cursorPosition + (newLength - originalLength));
+                e.target.setSelectionRange(newCursor, newCursor);
+
+                onParametersChanged();
             });
             elements.customBudgetInput.addEventListener('blur', (e) => {
                 const cleanStr = e.target.value.replace(/[^0-9]/g, '');
@@ -545,9 +557,10 @@ const App = (function() {
                     elements.resultsContainer.classList.remove('hidden');
                 }
 
-                // Auto-refresh 3-day itinerary if active
+                // Tự động hiển thị và đồng bộ Lịch trình 3 ngày (3-Day Quy Nhon Experience)
                 const itinerarySection = document.getElementById('generated-itinerary-section');
-                if (itinerarySection && itinerarySection.style.display !== 'none') {
+                if (itinerarySection) {
+                    itinerarySection.style.display = 'block';
                     renderItineraryContent();
                 }
             }
@@ -616,7 +629,7 @@ const App = (function() {
                     </div>
                     <div class="route-card-fare">
                         <small>${isVi ? 'Ước tính' : 'Est.'}</small>
-                        <strong>${Number(routeFare).toLocaleString('en-US')}</strong>
+                        <strong>$${Number(routeFare).toLocaleString('en-US')}</strong>
                     </div>
                 </div>
             `;
@@ -1803,19 +1816,19 @@ const App = (function() {
                     </div>
                     <div class="pass-grid-item">
                         <small>${t('passEstCost', lang)}</small>
-                        <strong>$${transitCost} USD</strong>
+                        <strong>$${Number(transitCost).toLocaleString('en-US')} USD</strong>
                     </div>
                     <div class="pass-grid-item">
                         <small>${t('passEstCarbon', lang)}</small>
-                        <strong style="color: #34d399;">${carbonKg} kg CO₂e ${routeData.carbonSavedPercent > 0 ? `(-${routeData.carbonSavedPercent}%)` : ''}</strong>
+                        <strong style="color: #34d399;">${Number(carbonKg).toLocaleString('en-US')} kg CO₂e ${routeData.carbonSavedPercent > 0 ? `(-${routeData.carbonSavedPercent}%)` : ''}</strong>
                     </div>
                     <div class="pass-grid-item">
                         <small>${t('labelBudget', lang)}</small>
-                        <strong>$${budget.toLocaleString()} USD</strong>
+                        <strong>$${Number(budget).toLocaleString('en-US')} USD</strong>
                     </div>
                     <div class="pass-grid-item">
                         <small>${t('stayDiningCostLabel', lang)}</small>
-                        <strong>$${stayCost} USD</strong>
+                        <strong>$${Number(stayCost).toLocaleString('en-US')} USD</strong>
                     </div>
                     <div class="pass-grid-item">
                         <small>${remaining < 0 ? t('budgetShortfallLabel', lang) : t('experienceSavingsLabel', lang)}</small>

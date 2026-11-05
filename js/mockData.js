@@ -1724,12 +1724,12 @@ const MOCK_ACTIVITIES_POOL = {
             time: "08:30",
             category: "TRANSIT",
             title: {
-                en: "Phu Cat Airport (UIH) Arrival & Transfer to Quy Nhon",
-                vi: "Hạ cánh Sân bay Phù Cát (UIH) & Di chuyển về trung tâm Quy Nhơn"
+                en: "Phu Cat Airport (UIH) Arrival & Transfer to Quy Nhon (~40–45 mins, ~35 km)",
+                vi: "Hạ cánh Sân bay Phù Cát (UIH) & Di chuyển về Quy Nhơn (Ước tính 40–45 phút, ~35 km)"
             },
             desc: {
-                en: "Arrive at Phu Cat Airport (UIH) with a scenic ~40-45 minute coastal transfer (~35 km via Highway 19B) by airport shuttle bus (~$2 / 50,000 VND) or private taxi (~$12-15) directly to your hotel or resort.",
-                vi: "Hạ cánh Sân bay Phù Cát (UIH) và di chuyển khoảng 40-45 phút (~35 km theo Quốc lộ 19B ven biển) bằng xe buýt đưa đón sân bay (50.000đ) hoặc taxi/xe riêng trực tiếp về sảnh khách sạn."
+                en: "Arrive at Phu Cat Airport (UIH). Estimated transfer time to downtown Quy Nhon is ~40–45 minutes (~35 km via scenic coastal Highway 19B). Convenient transport includes airport shuttle buses (~50,000 VND / $2) or private taxi (~250,000 – 350,000 VND / $12–15) directly to your hotel or resort.",
+                vi: "Hạ cánh tại Sân bay Phù Cát (UIH). Thời gian di chuyển về trung tâm TP. Quy Nhơn ước tính khoảng 40–45 phút (quãng đường ~35 km theo Quốc lộ 19B ven biển). Du khách có thể chọn xe buýt đưa đón sân bay (50,000đ / vé) hoặc taxi/xe riêng (~250,000đ – 350,000đ) đưa thẳng về khách sạn hoặc resort."
             }
         }
     ],
@@ -1739,8 +1739,8 @@ const MOCK_ACTIVITIES_POOL = {
             category: "BEACH",
             title: { en: "Ky Co Beach & Coral Reef", vi: "Biển Kỳ Co & Rạn san hô Hòn Sẹo" },
             desc: {
-                en: "Take a speedboat to Ky Co, known as Vietnam's Maldives with crystal turquoise water and powdery white sand.",
-                vi: "Đi cano vượt sóng ra bãi Kỳ Co - thiên đường biển xanh ngọc bích, bãi cát trắng mịn tựa Maldives của Việt Nam."
+                en: "Take a speedboat to Ky Co, known as Vietnam's Maldives with crystal turquoise water and powdery white sand (speedboat + snorkeling tour ~350,000 – 450,000 VND / $15–18).",
+                vi: "Đi cano vượt sóng ra bãi Kỳ Co - thiên đường biển xanh ngọc bích, bãi cát trắng mịn tựa Maldives của Việt Nam (vé trọn gói cano + lặn ngắm san hô ~350,000đ – 450,000đ)."
             }
         },
         {
@@ -1749,7 +1749,7 @@ const MOCK_ACTIVITIES_POOL = {
             title: { en: "Eo Gio Windy Strait & Coastal Walkway", vi: "Cung đường đi bộ ven biển Eo Gió" },
             desc: {
                 en: "Stroll along the dramatic cliffside walking path of Eo Gio, admiring sunset over wild rocky headlands.",
-                vi: "Dạo bước trên cung đường bậc thang uốn lượn ven vách đá Eo Gió, chiêm ngưỡng hoàng hôn lộng gió rực rỡ."
+                vi: "Dạo bước trên cung đường bậc thang uốn lượn ven vách đá Eo Gió, chiêm ngưỡng hoàng hôn lộng gió rực rỡ bên biển xanh."
             }
         },
         {
@@ -1768,8 +1768,8 @@ const MOCK_ACTIVITIES_POOL = {
             category: "FOOD",
             title: { en: "Jumping Shrimp Pancakes (Banh Xeo Tom Nhay)", vi: "Bánh xèo tôm nhảy Mỹ Cang giòn rụm" },
             desc: {
-                en: "Savor crispy golden rice pancakes with fresh lively red shrimp, rolled with wild herbs and sweet-sour garlic sauce.",
-                vi: "Thưởng thức bánh xèo tôm nhảy đỏ tươi giòn rụm, cuốn cùng rau mầm, xoài xanh và nước chấm tỏi ớt gia truyền."
+                en: "Savor crispy golden rice pancakes with fresh lively red shrimp, rolled with wild herbs and sweet-sour garlic sauce (~35,000 – 55,000 VND).",
+                vi: "Thưởng thức bánh xèo tôm nhảy đỏ tươi giòn rụm, cuốn cùng rau mầm, xoài xanh và nước chấm tỏi ớt gia truyền (khoảng 35,000đ – 55,000đ/phần)."
             }
         },
         {
@@ -1777,8 +1777,8 @@ const MOCK_ACTIVITIES_POOL = {
             category: "FOOD",
             title: { en: "Nhon Ly Seafood Feast by the Pier", vi: "Đại tiệc hải sản tươi sống làng chài Nhơn Lý" },
             desc: {
-                en: "Indulge in freshly caught king crab, grilled sea urchins with spring onions, and spicy grouper hotpot.",
-                vi: "Thưởng thức cua huỳnh đế hấp, nhum biển nướng mỡ hành và lẩu cá mú nấu lá giang chua ngọt thanh mát."
+                en: "Indulge in freshly caught king crab, grilled sea urchins with spring onions, and spicy grouper hotpot right by the fishing pier.",
+                vi: "Thưởng thức cua huỳnh đế hấp, nhum biển nướng mỡ hành và lẩu cá mú nấu lá giang chua ngọt thanh mát ngay bên bến cảng."
             }
         },
         {
@@ -1786,8 +1786,8 @@ const MOCK_ACTIVITIES_POOL = {
             category: "FOOD",
             title: { en: "Quy Nhon Fish Cake Noodles & Banh Hoi", vi: "Bún chả cá Quy Nhơn & Bánh hỏi lòng heo" },
             desc: {
-                en: "Taste iconic savory fish cake noodle soup in clear sweet broth paired with delicate Banh Hoi rice weaves.",
-                vi: "Thưởng thức bún chả cá thu thanh ngọt truyền thống và đĩa bánh hỏi lòng heo nóng hổi trứ danh đất võ."
+                en: "Taste iconic savory fish cake noodle soup in clear sweet broth paired with delicate Banh Hoi rice weaves (~30,000 – 50,000 VND).",
+                vi: "Thưởng thức bún chả cá thu thanh ngọt truyền thống và đĩa bánh hỏi lòng heo nóng hổi trứ danh đất võ (khoảng 30,000đ – 50,000đ/phần)."
             }
         },
         {
@@ -1795,8 +1795,8 @@ const MOCK_ACTIVITIES_POOL = {
             category: "FOOD",
             title: { en: "Ngo Van So Night Culinary Street", vi: "Thiên đường ẩm thực đêm phố Ngô Văn Sở" },
             desc: {
-                en: "Taste legendary local street specialties: grilled pork rolls (Nem Nuong Cho Huyen), steamed rice cakes, and sea snails.",
-                vi: "Trải nghiệm phố ẩm thực sầm uất: nem nướng Chợ Huyện, bánh bèo chén tôm cháy, tré rơm và ốc biển tươi sống."
+                en: "Taste legendary local street specialties: grilled pork rolls (Nem Nuong Cho Huyen), steamed rice cakes, and sea snails (~20,000 – 100,000 VND).",
+                vi: "Trải nghiệm phố ẩm thực sầm uất: nem nướng Chợ Huyện, bánh bèo chén tôm cháy, tré rơm và ốc biển tươi sống (khoảng 20,000đ – 100,000đ/món)."
             }
         }
     ],
@@ -1805,12 +1805,12 @@ const MOCK_ACTIVITIES_POOL = {
             time: "14:30",
             category: "SCIENCE",
             title: {
-                en: "Explorascience Quy Nhon (Space & Science Center)",
+                en: "Explorascience Quy Nhon (Space & Science Discovery Center)",
                 vi: "Tổ hợp Không gian Khoa học - Explorascience Quy Nhơn"
             },
             desc: {
-                en: "Explore Vietnam's first public science discovery center: full-dome 80-seat Planetarium, Astronomical Observatory, and 7 interactive science galleries (10 Science Boulevard, Ghenh Rang).",
-                vi: "Khám phá trung tâm khoa học vũ trụ đầu tiên của Việt Nam với Nhà chiếu hình vũ trụ (Planetarium) 80 chỗ, Đài thiên văn quan sát sao và 7 phòng trưng bày chủ đề khoa học tương tác tại số 10 Đại lộ Khoa học, Ghềnh Ráng."
+                en: "Explore Vietnam's first public science discovery center (Explorascience) at 10 Science Boulevard: full-dome 80-seat Planetarium with 4K cosmic projections, public Astronomical Observatory with high-power optical telescopes, and 7 interactive scientific theme galleries.",
+                vi: "Khám phá trung tâm khoa học vũ trụ đại chúng đầu tiên của Việt Nam (Explorascience) tại số 10 Đại lộ Khoa học: Nhà chiếu hình vũ trụ (Planetarium) 80 chỗ màn hình vòm 12m công nghệ 4K, Đài thiên văn quan sát kính quang học và 7 phòng trưng bày khoa học tương tác kỳ thú."
             }
         }
     ],
@@ -1828,12 +1828,12 @@ const MOCK_ACTIVITIES_POOL = {
             time: "19:30",
             category: "CULTURE",
             title: {
-                en: "Binh Dinh Traditional Arts Theater (Friday Free Show)",
-                vi: "Nhà hát Nghệ thuật Truyền thống tỉnh (Tối Thứ 6 Miễn Phí)"
+                en: "Binh Dinh Traditional Arts Theater (Every Friday 19:30 - FREE ADMISSION)",
+                vi: "Nhà hát Nghệ thuật Truyền thống tỉnh Bình Định (Tối Thứ 6 hàng tuần 19h30 MIỄN PHÍ)"
             },
             desc: {
-                en: "Experience authentic Tuong martial opera and UNESCO-recognized Bai Choi folk singing at 590 Nguyen Thai Hoc - Every Friday evening at 19:30 with FREE ADMISSION for all visitors.",
-                vi: "Thưởng thức đêm diễn nghệ thuật Tuồng cổ & Dân ca Bài Chòi (di sản văn hóa phi vật thể UNESCO) tại 590 Nguyễn Thái Học - Diễn ra tối thứ 6 hàng tuần lúc 19h30, MIỄN PHÍ vé vào cửa cho du khách và người dân."
+                en: "Experience authentic Binh Dinh Tuong classical opera and UNESCO-recognized Bai Choi folk singing at 590 Nguyen Thai Hoc - Staged every Friday evening at 19:30 with completely FREE ADMISSION for all visitors and locals.",
+                vi: "Thưởng thức đêm diễn nghệ thuật Tuồng cổ Bình Định và Dân ca Bài Chòi (di sản văn hóa phi vật thể đại diện nhân loại được UNESCO vinh danh) tại số 590 Nguyễn Thái Học - Diễn ra định kỳ vào tối Thứ 6 hàng tuần lúc 19h30, hoàn toàn MIỄN PHÍ vé vào cửa cho tất cả du khách và người dân."
             }
         },
         {
@@ -2019,27 +2019,27 @@ function generatePersonalizedItinerary(options = {}) {
     // - Thời gian Sân bay Phù Cát -> Quy Nhơn (40-45 phút, ~35 km)
     // - Explorascience Quy Nhơn (Tổ hợp không gian khoa học & Planetarium)
     // - Nhà hát Nghệ thuật Truyền thống tỉnh (Tối Thứ 6 lúc 19h30 MIỄN PHÍ)
-    return [
+    const itinerary = [
         {
             dayNumber: 1,
             label: isVi ? "Ngày 1" : "Day 1",
-            title: isVi ? "Hạ cánh Sân bay Phù Cát & Vịnh biển Kỳ Co" : "Phu Cat Airport Arrival & Coastal Welcome",
+            title: isVi ? "Hạ cánh Sân bay Phù Cát (Ước tính 40–45 phút) & Vịnh biển Kỳ Co" : "Phu Cat Airport Arrival (~40-45 min transfer) & Coastal Welcome",
             activities: [
                 MOCK_ACTIVITIES_POOL.transit[0],
-                MOCK_ACTIVITIES_POOL.food[0], // Bánh xèo tôm nhảy
-                MOCK_ACTIVITIES_POOL.beaches[1], // Cung đường Eo Gió
-                MOCK_ACTIVITIES_POOL.food[3] // Phố ẩm thực Ngô Văn Sở
+                MOCK_ACTIVITIES_POOL.food[0], // Bánh xèo tôm nhảy (12:00)
+                MOCK_ACTIVITIES_POOL.beaches[1], // Cung đường Eo Gió (15:30)
+                MOCK_ACTIVITIES_POOL.food[3] // Phố ẩm thực Ngô Văn Sở (18:30)
             ]
         },
         {
             dayNumber: 2,
             label: isVi ? "Ngày 2" : "Day 2",
-            title: isVi ? "Biển Kỳ Co, Explorascience & Nhà Hát Nghệ Thuật" : "Ky Co Waters, Explorascience & Traditional Theater",
+            title: isVi ? "Biển Kỳ Co, Explorascience & Nhà Hát Nghệ Thuật (Tối Thứ 6 Miễn Phí)" : "Ky Co Waters, Explorascience & Traditional Theater (Friday Free Show)",
             activities: [
-                MOCK_ACTIVITIES_POOL.beaches[0], // Biển Kỳ Co & Hòn Sẹo
-                MOCK_ACTIVITIES_POOL.food[1], // Hải sản Nhơn Lý
-                MOCK_ACTIVITIES_POOL.science[0], // Explorascience Quy Nhơn
-                MOCK_ACTIVITIES_POOL.culture[1] // Nhà hát Nghệ thuật Truyền thống (Tối Thứ 6 miễn phí)
+                MOCK_ACTIVITIES_POOL.beaches[0], // Biển Kỳ Co & Hòn Sẹo (09:00)
+                MOCK_ACTIVITIES_POOL.food[1], // Hải sản Nhơn Lý (12:30)
+                MOCK_ACTIVITIES_POOL.science[0], // Explorascience Quy Nhơn (14:30)
+                MOCK_ACTIVITIES_POOL.culture[1] // Nhà hát Nghệ thuật Truyền thống (Tối Thứ 6 miễn phí - 19:30)
             ]
         },
         {
@@ -2047,14 +2047,23 @@ function generatePersonalizedItinerary(options = {}) {
             label: isVi ? "Ngày 3" : "Day 3",
             title: isVi ? "Tháp Chăm ngàn năm, Đồi cát & Hoàng hôn biển" : "Ancient Cham Heritage, Dunes & Coastal Farewell",
             activities: [
-                MOCK_ACTIVITIES_POOL.culture[0], // Tháp Chăm Bánh Ít & Tháp Đôi
-                MOCK_ACTIVITIES_POOL.food[2], // Bún chả cá & Bánh hỏi lòng heo
-                MOCK_ACTIVITIES_POOL.adventure[0], // Trượt cát Phương Mai
-                MOCK_ACTIVITIES_POOL.beaches[2], // Bãi Trứng Hoàng Hậu & Ghềnh Ráng
-                MOCK_ACTIVITIES_POOL.nightlife[0] // Surf Bar
+                MOCK_ACTIVITIES_POOL.culture[0], // Tháp Chăm Bánh Ít & Tháp Đôi (09:00)
+                MOCK_ACTIVITIES_POOL.food[2], // Bún chả cá & Bánh hỏi lòng heo (12:00)
+                MOCK_ACTIVITIES_POOL.adventure[0], // Trượt cát Phương Mai (15:00)
+                MOCK_ACTIVITIES_POOL.beaches[2], // Bãi Trứng Hoàng Hậu & Ghềnh Ráng (16:30)
+                MOCK_ACTIVITIES_POOL.nightlife[0] // Surf Bar (20:00)
             ]
         }
     ];
+
+    // Đảm bảo các hoạt động luôn được xếp theo thứ tự thời gian tăng dần
+    itinerary.forEach(day => {
+        if (Array.isArray(day.activities)) {
+            day.activities.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+        }
+    });
+
+    return itinerary;
 }
 
 const MOCK_FUTURE_FEATURES = [

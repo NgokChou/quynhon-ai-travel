@@ -2375,7 +2375,17 @@ const GameWizard = (function() {
             });
 
             numInput.addEventListener('input', (e) => {
+                const cursorPosition = e.target.selectionStart;
+                const originalLength = e.target.value.length;
                 const cleanStr = e.target.value.replace(/[^0-9]/g, '');
+                if (!cleanStr) {
+                    e.target.value = '';
+                    state.currentAmount = 0;
+                    state.budgetUSD = 0;
+                    slider.value = 0;
+                    updateBudgetTier(0, true);
+                    return;
+                }
                 let val = parseFloat(cleanStr) || 0;
                 const max = CURRENCIES[state.selectedCurrency].max;
                 if (val > max) val = max;
@@ -2386,6 +2396,13 @@ const GameWizard = (function() {
 
                 const cur = CURRENCIES[state.selectedCurrency] || CURRENCIES.USD;
                 state.budgetUSD = Math.round(val / cur.rate);
+
+                const formatted = Math.round(val).toLocaleString('en-US');
+                e.target.value = formatted;
+                const newLength = formatted.length;
+                const newCursor = Math.max(0, cursorPosition + (newLength - originalLength));
+                e.target.setSelectionRange(newCursor, newCursor);
+
                 updateBudgetTier(state.budgetUSD, true);
             });
 
@@ -2407,7 +2424,7 @@ const GameWizard = (function() {
                 state.currentAmount = converted;
 
                 if (slider) slider.value = converted;
-                if (numInput) numInput.value = converted;
+                if (numInput) numInput.value = Math.round(converted).toLocaleString('en-US');
 
                 document.querySelectorAll('.preset-stage-chip').forEach(p => p.classList.remove('active'));
                 chip.classList.add('active');

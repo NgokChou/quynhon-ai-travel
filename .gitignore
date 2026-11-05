@@ -7,3 +7,7 @@
 node_modules/
 *.log
 .DS_Store
+
+# Local preview artifacts
+shots/
+.taste-skill/

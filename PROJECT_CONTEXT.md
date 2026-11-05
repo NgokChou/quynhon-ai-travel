@@ -46,7 +46,7 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 | 1 | **Lập lộ trình di chuyển AI (AI Journey Planner)** | Người dùng chọn quốc gia xuất phát (Bỉ, Pháp, Đức, Mỹ, Úc, Nhật); hệ thống tính toán chuỗi chặng bay, quá cảnh và trung chuyển đến Quy Nhơn. | Hoàn thành một phần | Hoạt động trơn tru với dữ liệu mẫu (mock data), chưa liên kết với cổng vé máy bay thực tế. |
 | 2 | **Cân chỉnh ngân sách chuyến đi (Budget Selector)** | Cho phép chọn mức ngân sách từ $1,000 đến $5,000 hoặc tự nhập ngân sách riêng để hệ thống tự tính giá các phương án (Nhanh nhất, Đáng giá nhất, Dừng chân linh hoạt). | Hoàn thành | Logic tính toán và hiển thị các gói lộ trình theo ngân sách hoạt động chính xác. |
 | 3 | **Cá nhân hóa hành trình 3 ngày (Personalized Itinerary)** | Cho phép người dùng chọn các sở thích (Biển, Ẩm thực, Văn hóa, Phiêu lưu, Cuộc sống về đêm) và nhấn nút tạo hành trình 3 ngày tại Quy Nhơn. | Hoàn thành một phần | Giao diện và hiệu ứng hoạt động tốt; nội dung lịch trình hiện tại là nội dung mẫu đại diện cho bản demo. |
-| 4 | **Bản đồ vệ tinh đường bay tương tác (Interactive Route Map)** | Bản đồ vệ tinh thế giới trực quan hóa đường bay uốn cong từ điểm xuất phát qua trạm trung chuyển (Đà Nẵng / Hà Nội / TP.HCM) về Quy Nhơn, kèm huy hiệu chỉ dẫn. | Hoàn thành | Tích hợp Leaflet.js mượt mà, hỗ trợ phóng to, thu nhỏ và kéo bản đồ. |
+| 4 | **Bản đồ vệ tinh đường bay tương tác (Interactive Route Map)** | Bản đồ vệ tinh thế giới trực quan hóa đường bay uốn cong từ điểm xuất phát qua trạm trung chuyển (Đà Nẵng / Hà Nội / TP.HCM) về Quy Nhơn, kèm huy hiệu chỉ dẫn. | Hoàn thành | Nằm trong tab "Đường bay" của khu vực bản đồ (`#map-section`). |
 | 5 | **Mô phỏng tư duy AI & Hiệu ứng gõ chữ (AI Simulator)** | Mô phỏng quá trình AI suy nghĩ qua thanh tiến trình 4 giai đoạn và hiệu ứng gõ chữ từng ký tự câu tóm tắt hành trình. | Hoàn thành | Tạo cảm giác hệ thống AI đang làm việc thực tế, rất phù hợp khi demo pitching. |
 | 6 | **Trợ lý phát giọng nói AI (Text-to-Speech Assistant)** | Nút bấm "Listen to AI" đọc lời giải thích hành trình bằng tiếng Anh hoặc tiếng Việt, có sóng âm động và nút dừng âm thanh. | Hoàn thành | Đã có cơ chế chạy dự phòng (fallback) đảm bảo luôn phát được âm thanh trên mọi trình duyệt. |
 | 7 | **Quả bóng thuyết trình nổi (AI Voice Orb)** | Quả cầu tương tác ở góc màn hình; khi bấm sẽ kích hoạt bài phát biểu giới thiệu ý tưởng dự án kèm bong bóng phụ đề trực quan. | Hoàn thành | Hoạt động ổn định trên giao diện chính, hỗ trợ cả tiếng Anh và tiếng Việt. |
@@ -55,6 +55,7 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 | 10 | **Trang thuyết trình chuyên biệt (`pitch.html`)** | Màn hình tối giản tập trung vào quả cầu AI phát giọng nói giới thiệu dự án, kết nối qua cổng proxy server. | Hoàn thành | Dành riêng cho kịch bản pitching dự án. |
 | 11 | **Trang chào đón tại sân bay (`airport.html`)** | Màn hình dành cho thiết bị di động mô phỏng khi du khách vừa hạ cánh tại Sân bay Phù Cát, cho phép chọn xe Taxi, Shuttle để về thành phố. | Hoàn thành một phần | Giao diện đã có hiệu ứng chọn phương tiện, chưa chuyển tiếp đến màn hình chi tiết hoặc đặt xe. |
 | 12 | **Lộ trình tương lai (Startup Roadmap)** | Khối thông tin giới thiệu 4 định hướng phát triển sản phẩm tiếp theo (Vé thời gian thực, Tối ưu lộ trình tự động, Đặt chỗ 1 chạm, Trợ lý giọng nói 24/7). | Hoàn thành | Khối thông tin hiển thị rõ ràng trên giao diện. |
+| 13 | **Bản đồ chọn tỉnh thành (Vietnam Province Selection Map)** | Bản đồ 34 tỉnh thành dạng bản đồ game (địa hình olive, viền tỉnh tối, nhãn chữ vàng). Nhấn vào một vùng đã khoanh → vùng đó nổi bật, các vùng khác mờ đi, bảng thông tin bên cạnh hiện mô tả + 4 điểm đáng ghé thăm. Có phóng to/thu nhỏ, kéo bản đồ, chú giải vùng miền và song ngữ Anh - Việt. | Hoàn thành | Là chế độ xem mặc định của `#map-section`; tab "Đường bay" giữ nguyên bản đồ lộ trình cũ. |
 
 ---
 
@@ -75,6 +76,8 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 ### Các vấn đề cần chú ý
 1. **Trang `pitch.html`**: Sử dụng giọng đọc từ dịch vụ ElevenLabs qua server. Nếu file `.env` chưa có khóa API hợp lệ thì trang này sẽ báo lỗi âm thanh (trong khi trang chính `index.html` vẫn tự động phát bình thường nhờ hệ thống âm thanh dự phòng).
 2. **Biểu tượng PWA trong `manifest.json`**: Đang dẫn tới file `/assets/airport-icon.png`, nhưng trong thư mục thực tế file ảnh đang có đuôi là `.jpg`.
+3. **Dữ liệu ranh giới bản đồ tỉnh thành**: `js/vietnamMapData.js` được sinh tự động từ bộ dữ liệu GADM 4.1 (miễn phí cho mục đích học thuật / phi thương mại). Khi đưa sản phẩm ra thương mại phải thay bằng nguồn dữ liệu được cấp phép (dữ liệu của Bộ NN&MT hoặc OpenStreetMap). Script sinh dữ liệu: `tools/build_map_data.py`.
+4. **Đơn vị hành chính 34 tỉnh**: Bản đồ dùng cơ cấu 34 đơn vị cấp tỉnh theo Nghị quyết 202/2025/QH15 (hiệu lực 12/06/2025). Bình Định đã gộp vào Gia Lai, trung tâm hành chính đặt tại Quy Nhơn. Một số nội dung tĩnh khác của app (ví dụ `destFixed: "Quy Nhơn, Bình Định"`) vẫn dùng tên cũ.
 
 ---
 

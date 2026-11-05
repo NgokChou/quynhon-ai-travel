@@ -19,6 +19,7 @@
     <!-- Application Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/vietnam-map.css">
 </head>
 <body>
 
@@ -515,35 +516,136 @@
             </div>
         </section>
 
-        <!-- World Route Map Section -->
+        <!-- ===============================================================
+             Map Section - Vietnam province selection map
+             =============================================================== -->
         <section id="map-section" class="section-block">
             <div class="section-heading-row">
                 <div>
-                    <h3 class="section-title" data-i18n="mapTitle">Interactive Route Map</h3>
-                    <p class="section-subtitle" data-i18n="mapSubtitle">Global visual preview showing flight paths and scenic ground transfers to Quy Nhon.</p>
+                    <h3 class="section-title" data-i18n="mapTitle">Explore Vietnam</h3>
+                    <p class="section-subtitle" data-i18n="mapSubtitle">Pick any province to see what it is worth a detour for.</p>
                 </div>
-                <div class="mock-disclaimer-pill">
-                    <i class="fa-solid fa-map-pin"></i>
-                    <span>SATELLITE ROUTE MAP</span>
+
+                <div id="map-view-switch" class="map-view-switch" role="tablist" aria-label="Map view">
+                    <button type="button" data-view="province" class="is-active" role="tab" aria-selected="true">
+                        <i class="fa-solid fa-map"></i>
+                        <span data-i18n="mapViewProvince">Province Map</span>
+                    </button>
+                    <button type="button" data-view="route" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-plane"></i>
+                        <span data-i18n="mapViewRoute">Flight Route</span>
+                    </button>
                 </div>
             </div>
 
             <div class="map-container-card">
-                <div id="route-map"></div>
+                <div id="map-stage" class="map-stage">
 
-                <div class="map-legend-overlay">
-                    <div class="legend-item">
-                        <span class="legend-dot dot-origin"></span>
-                        <span data-i18n="mapLegendOrigin">Departure Country</span>
+                    <!-- Province selection map -->
+                    <div id="vietnam-map" class="vn-map">
+                        <div class="vn-map-canvas">
+                            <div class="vn-sea-glow" aria-hidden="true"></div>
+                            <svg id="vn-map-svg" class="vn-svg" role="group"
+                                 aria-label="Interactive map of the 34 provinces of Vietnam"></svg>
+
+                            <span class="vn-sea-label" aria-hidden="true">BIỂN ĐÔNG</span>
+
+                            <div class="vn-legend">
+                                <span class="vn-legend-title" data-i18n="vnLegendTitle">Regions</span>
+                                <ul id="vn-legend-list"></ul>
+                            </div>
+
+                            <div class="vn-compass" aria-hidden="true">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+                                    <circle cx="50" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+                                    <path d="M50 14 L56 46 L50 40 L44 46 Z" fill="currentColor" opacity="0.75"/>
+                                    <path d="M50 86 L44 54 L50 60 L56 54 Z" fill="currentColor" opacity="0.3"/>
+                                    <text x="50" y="10" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">N</text>
+                                </svg>
+                            </div>
+
+                            <div class="vn-zoom-controls">
+                                <button type="button" id="vn-zoom-in" class="vn-zoom-btn" aria-label="Zoom in">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" id="vn-zoom-out" class="vn-zoom-btn" aria-label="Zoom out">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <button type="button" id="vn-zoom-reset" class="vn-zoom-btn" aria-label="Reset view">
+                                    <i class="fa-solid fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <aside class="vn-panel">
+                            <div id="vn-panel-empty" class="vn-panel-empty">
+                                <div class="vn-empty-icon">
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                </div>
+                                <h4 data-i18n="vnEmptyTitle">Pick a province</h4>
+                                <p data-i18n="vnEmptyText">Thirty-four provinces, one long coastline. Pick any outlined region to see what it is worth a detour for.</p>
+
+                                <ul class="vn-hints">
+                                    <li>
+                                        <i class="fa-solid fa-hand-pointer"></i>
+                                        <span data-i18n="vnHintClick">Click a province to open its panel</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                        <span data-i18n="vnHintZoom">Scroll or use + / − to zoom</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-hand"></i>
+                                        <span data-i18n="vnHintPan">Drag the sea to pan</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div id="vn-panel-body" class="vn-panel-body" hidden>
+                                <div class="vn-panel-head">
+                                    <div class="vn-silhouette-box">
+                                        <svg id="vn-panel-silhouette" preserveAspectRatio="xMidYMid meet">
+                                            <path />
+                                        </svg>
+                                    </div>
+                                    <div class="vn-panel-titles">
+                                        <span id="vn-panel-region" class="vn-region-tag"></span>
+                                        <h4 id="vn-panel-name" class="vn-panel-name"></h4>
+                                        <span id="vn-panel-name-en" class="vn-panel-name-en"></span>
+                                    </div>
+                                </div>
+
+                                <p id="vn-panel-desc" class="vn-panel-desc"></p>
+
+                                <div class="vn-highlights">
+                                    <h5 id="vn-panel-highlights-title">Worth a detour</h5>
+                                    <ul id="vn-panel-list"></ul>
+                                </div>
+                            </div>
+                        </aside>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-dot dot-transit"></span>
-                        <span data-i18n="mapLegendTransit">Transit Gateway</span>
+
+                    <!-- World flight route (Leaflet) -->
+                    <div id="route-view" class="route-view" hidden>
+                        <div id="route-map"></div>
+
+                        <div class="map-legend-overlay">
+                            <div class="legend-item">
+                                <span class="legend-dot dot-origin"></span>
+                                <span data-i18n="mapLegendOrigin">Departure Country</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot dot-transit"></span>
+                                <span data-i18n="mapLegendTransit">Transit Gateway</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot dot-dest"></span>
+                                <span data-i18n="mapLegendDest">Quy Nhon Destination</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-dot dot-dest"></span>
-                        <span data-i18n="mapLegendDest">Quy Nhon Destination</span>
-                    </div>
+
                 </div>
             </div>
         </section>
@@ -683,6 +785,9 @@
     <script src="js/translations.js"></script>
     <script src="js/voice.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/vietnamMapData.js"></script>
+    <script src="js/vietnamRegions.js"></script>
+    <script src="js/vietnamMap.js"></script>
     <script src="js/aiSimulator.js"></script>
     <script src="js/app.js"></script>
 </body>

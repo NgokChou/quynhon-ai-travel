@@ -156,6 +156,13 @@ if (elements.customBudgetInput) {
     });
 }
 
+        // Chuyển đổi ngôn ngữ từ thanh Header
+        if (elements.langSelect) {
+            elements.langSelect.addEventListener('change', (e) => {
+                updateLanguage(e.target.value);
+            });
+        }
+
         // Thay đổi quốc gia xuất phát
         if (elements.countrySelect) {
             elements.countrySelect.addEventListener('change', (e) => {

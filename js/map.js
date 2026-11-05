@@ -9,6 +9,7 @@ const MapController = (function() {
     let markersLayer = null;
     let routesLayer = null;
     let badgesLayer = null;
+    let lastRoute = null;
 
     // Helper tạo custom HTML Icon cho marker điểm dừng
     function createCustomMarkerIcon(type, iconClass, label) {
@@ -106,6 +107,8 @@ const MapController = (function() {
 
     function updateRoute(countryData, destinationData, currentLang = 'en') {
         if (!mapInstance) return;
+
+        lastRoute = { countryData: countryData, destinationData: destinationData, currentLang: currentLang };
 
         // Xóa markers, routes và badges cũ
         markersLayer.clearLayers();
@@ -248,9 +251,23 @@ const MapController = (function() {
         }, 250);
     }
 
+    /**
+     * Gọi khi khung bản đồ được hiển thị lại sau khi bị ẩn (tab chuyển đổi).
+     * Leaflet khởi tạo trong container display:none sẽ có kích thước 0,
+     * nên cần đo lại và vẽ lại lộ trình với khung hình đúng.
+     */
+    function refresh() {
+        if (!mapInstance) return;
+        mapInstance.invalidateSize();
+        if (lastRoute) {
+            updateRoute(lastRoute.countryData, lastRoute.destinationData, lastRoute.currentLang);
+        }
+    }
+
     return {
         init: init,
         updateRoute: updateRoute,
+        refresh: refresh,
         getMap: function() { return mapInstance; }
     };
 })();

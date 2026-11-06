@@ -431,6 +431,8 @@ const GameWizard = (function() {
     container: null,
     globeGroup: null,
     globeMesh: null,
+    borderMesh: null,
+    highlightMesh: null,
     atmosphereMesh: null,
     pinsGroup: null,
     arcGroup: null,
@@ -449,22 +451,35 @@ const GameWizard = (function() {
     targetRotY: -1.6,
     isInteracting: false,
     interactTimer: null,
-    camDistance: 24,
-    targetCamDistance: 24,
+    camDistance: 27,
+    targetCamDistance: 27,
+
+    // Dữ liệu quốc gia (Natural Earth) dùng chung với bản đồ tỉnh
+    countries: [],
+    countryByIso: {},
+    pickData: null,
+    pickW: 2048,
+    pickH: 1024,
+    borderCanvas: null,
+    highlightCanvas: null,
+    highlightCtx: null,
+    highlightTex: null,
+    selectedIso: null,
+    hoverIso: null,
 
     AIRPORT_COORDS: {
-        quynhon: { lat: 13.78, lon: 109.21, name: "Quy Nhơn", code: "UIH", flag: "🇻🇳" },
-        belgium: { lat: 50.85, lon: 4.35, name: "Brussels", code: "BRU", flag: "🇧🇪" },
-        usa: { lat: 37.62, lon: -122.38, name: "San Francisco", code: "SFO", flag: "🇺🇸" },
-        uk: { lat: 51.47, lon: -0.45, name: "London", code: "LHR", flag: "🇬🇧" },
-        france: { lat: 49.01, lon: 2.55, name: "Paris", code: "CDG", flag: "🇫🇷" },
-        germany: { lat: 50.03, lon: 8.57, name: "Frankfurt", code: "FRA", flag: "🇩🇪" },
-        china: { lat: 31.14, lon: 121.80, name: "Shanghai", code: "PVG", flag: "🇨🇳" },
-        korea: { lat: 37.46, lon: 126.44, name: "Seoul", code: "ICN", flag: "🇰🇷" },
-        japan: { lat: 35.54, lon: 139.78, name: "Tokyo", code: "HND", flag: "🇯🇵" },
-        singapore: { lat: 1.36, lon: 103.99, name: "Singapore", code: "SIN", flag: "🇸🇬" },
-        australia: { lat: -33.94, lon: 151.17, name: "Sydney", code: "SYD", flag: "🇦🇺" },
-        vietnam: { lat: 21.03, lon: 105.85, name: "Hà Nội", code: "HAN", flag: "🇻🇳" }
+        quynhon: { lat: 13.78, lon: 109.21, name: "Quy Nhơn", code: "UIH", flag: "🇻🇳", iso: "VNM" },
+        belgium: { lat: 50.85, lon: 4.35, name: "Brussels", code: "BRU", flag: "🇧🇪", iso: "BEL" },
+        usa: { lat: 37.62, lon: -122.38, name: "San Francisco", code: "SFO", flag: "🇺🇸", iso: "USA" },
+        uk: { lat: 51.47, lon: -0.45, name: "London", code: "LHR", flag: "🇬🇧", iso: "GBR" },
+        france: { lat: 49.01, lon: 2.55, name: "Paris", code: "CDG", flag: "🇫🇷", iso: "FRA" },
+        germany: { lat: 50.03, lon: 8.57, name: "Frankfurt", code: "FRA", flag: "🇩🇪", iso: "DEU" },
+        china: { lat: 31.14, lon: 121.80, name: "Shanghai", code: "PVG", flag: "🇨🇳", iso: "CHN" },
+        korea: { lat: 37.46, lon: 126.44, name: "Seoul", code: "ICN", flag: "🇰🇷", iso: "KOR" },
+        japan: { lat: 35.54, lon: 139.78, name: "Tokyo", code: "HND", flag: "🇯🇵", iso: "JPN" },
+        singapore: { lat: 1.36, lon: 103.99, name: "Singapore", code: "SIN", flag: "🇸🇬", iso: "SGP" },
+        australia: { lat: -33.94, lon: 151.17, name: "Sydney", code: "SYD", flag: "🇦🇺", iso: "AUS" },
+        vietnam: { lat: 21.03, lon: 105.85, name: "Hà Nội", code: "HAN", flag: "🇻🇳", iso: "VNM" }
     },
 
     latLonToVector3(lat, lon, radius = 9, alt = 0) {
@@ -477,17 +492,110 @@ const GameWizard = (function() {
         return (typeof THREE !== 'undefined') ? new THREE.Vector3(x, y, z) : { x, y, z };
     },
 
-    pointInPolygon(pt, poly) {
-        let inside = false;
-        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-            const xi = poly[i][0], yi = poly[i][1];
-            const xj = poly[j][0], yj = poly[j][1];
-            const intersect = ((yi > pt[1]) !== (yj > pt[1]))
-                && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi);
-            if (intersect) inside = !inside;
-        }
-        return inside;
+    /* ---------------- texture layers ---------------- */
+
+    buildCountryLayers() {
+        if (this.borderCanvas) return;
+
+        const data = window.WORLD_MAP_DATA;
+        this.countries = (data && data.countries) || [];
+        this.countries.forEach(c => { this.countryByIso[c.id] = c; });
+
+        // --- border layer (4096 x 2048) ---
+        const bw = 4096, bh = 2048;
+        const bc = document.createElement('canvas');
+        bc.width = bw;
+        bc.height = bh;
+        const bctx = bc.getContext('2d');
+        bctx.lineJoin = 'round';
+        bctx.lineCap = 'round';
+        bctx.strokeStyle = 'rgba(125, 226, 255, 0.42)';
+        bctx.lineWidth = 2.4;
+
+        const strokeRings = (ctx, rings, W, H) => {
+            for (let r = 0; r < rings.length; r++) {
+                const ring = rings[r];
+                ctx.beginPath();
+                let prev = null;
+                for (let i = 0; i < ring.length; i++) {
+                    const x = (ring[i][0] + 180) / 360 * W;
+                    const y = (90 - ring[i][1]) / 180 * H;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else if (prev !== null && Math.abs(ring[i][0] - prev) > 180) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                    prev = ring[i][0];
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+        };
+
+        this.countries.forEach(c => strokeRings(bctx, c.rings, bw, bh));
+        this.borderCanvas = bc;
+
+        // --- picking layer ---
+        const W = this.pickW, H = this.pickH;
+        const pc = document.createElement('canvas');
+        pc.width = W;
+        pc.height = H;
+        const pctx = pc.getContext('2d', { willReadFrequently: true });
+
+        this.countries.forEach((c, i) => {
+            const v = i + 1;
+            pctx.fillStyle = `rgb(${v & 255},${(v >> 8) & 255},0)`;
+            for (let r = 0; r < c.rings.length; r++) {
+                const ring = c.rings[r];
+                pctx.beginPath();
+                for (let k = 0; k < ring.length; k++) {
+                    const x = (ring[k][0] + 180) / 360 * W;
+                    const y = (90 - ring[k][1]) / 180 * H;
+                    if (k === 0) pctx.moveTo(x, y); else pctx.lineTo(x, y);
+                }
+                pctx.closePath();
+                pctx.fill();
+            }
+        });
+        this.pickData = pctx.getImageData(0, 0, W, H).data;
+
+        // --- highlight layer ---
+        const hc = document.createElement('canvas');
+        hc.width = W;
+        hc.height = H;
+        this.highlightCanvas = hc;
+        this.highlightCtx = hc.getContext('2d');
     },
+
+    paintHighlight(iso) {
+        const ctx = this.highlightCtx;
+        if (!ctx) return;
+        ctx.clearRect(0, 0, this.pickW, this.pickH);
+
+        const c = iso ? this.countryByIso[iso] : null;
+        if (c) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.42)';
+            ctx.strokeStyle = 'rgba(186, 240, 255, 0.95)';
+            ctx.lineWidth = 5;
+            ctx.shadowColor = 'rgba(56, 189, 248, 0.9)';
+            ctx.shadowBlur = 18;
+            for (let r = 0; r < c.rings.length; r++) {
+                const ring = c.rings[r];
+                ctx.beginPath();
+                for (let k = 0; k < ring.length; k++) {
+                    const x = (ring[k][0] + 180) / 360 * this.pickW;
+                    const y = (90 - ring[k][1]) / 180 * this.pickH;
+                    if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        if (this.highlightTex) this.highlightTex.needsUpdate = true;
+    },
+
+    /* ---------------- scene ---------------- */
 
     init(containerId) {
         if (typeof document === 'undefined') return;
@@ -495,12 +603,34 @@ const GameWizard = (function() {
         if (!container || !window.THREE) return;
         this.container = container;
 
+        if (!document.getElementById('globe-country-card')) {
+            container.insertAdjacentHTML('beforeend', `
+                <div class="globe-country-card" id="globe-country-card" hidden>
+                    <button type="button" class="gcc-close" id="gcc-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="gcc-head">
+                        <div class="gcc-silhouette"><svg id="gcc-svg" preserveAspectRatio="xMidYMid meet"><path id="gcc-path"></path></svg></div>
+                        <div class="gcc-titles">
+                            <span class="gcc-region" id="gcc-region"></span>
+                            <h4 id="gcc-name"></h4>
+                            <small id="gcc-sub"></small>
+                        </div>
+                    </div>
+                    <ul class="gcc-stats" id="gcc-stats"></ul>
+                    <p class="gcc-desc" id="gcc-desc"></p>
+                    <div class="gcc-hl" id="gcc-hl"></div>
+                    <button type="button" class="gcc-cta" id="gcc-cta" hidden></button>
+                </div>
+            `);
+        }
+
         if (this.renderer && this.renderer.domElement && container.contains(this.renderer.domElement)) {
             container.removeChild(this.renderer.domElement);
         }
         if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
         this.interactivePins = [];
         this.radarRings = [];
+
+        this.buildCountryLayers();
 
         const width = container.clientWidth || 600;
         const height = container.clientHeight || 480;
@@ -512,19 +642,16 @@ const GameWizard = (function() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
         this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.domElement.id = 'globe-webgl-canvas';
         container.appendChild(this.renderer.domElement);
 
-        const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+        const ambient = new THREE.AmbientLight(0xffffff, 1.15);
         this.scene.add(ambient);
 
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
-        sunLight.position.set(20, 20, 30);
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.15);
+        sunLight.position.set(20, 16, 30);
         this.scene.add(sunLight);
-
-        const cyanRim = new THREE.DirectionalLight(0x06b6d4, 1.2);
-        cyanRim.position.set(-30, -10, 10);
-        this.scene.add(cyanRim);
 
         this.buildGlobe();
         this.buildPins();
@@ -544,143 +671,52 @@ const GameWizard = (function() {
         });
     },
 
-    createGlobeTexture() {
-        if (typeof document === 'undefined') return null;
-        const canvas = document.createElement('canvas');
-        canvas.width = 2048;
-        canvas.height = 1024;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return null;
-
-        const grad = ctx.createLinearGradient(0, 0, 0, 1024);
-        grad.addColorStop(0, '#030816');
-        grad.addColorStop(0.5, '#07152f');
-        grad.addColorStop(1, '#020612');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 2048, 1024);
-
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(30, 58, 95, 0.45)';
-        for (let lat = -80; lat <= 80; lat += 20) {
-            const y = ((90 - lat) / 180) * 1024;
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(2048, y);
-            ctx.stroke();
-        }
-        for (let lon = -180; lon <= 180; lon += 30) {
-            const x = ((lon + 180) / 360) * 2048;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, 1024);
-            ctx.stroke();
-        }
-
-        ctx.strokeStyle = 'rgba(14, 165, 233, 0.4)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(0, 512);
-        ctx.lineTo(2048, 512);
-        ctx.moveTo(1024, 0);
-        ctx.lineTo(1024, 1024);
-        ctx.stroke();
-
-        const continents = [
-            [[72, -168], [71, -155], [70, -135], [69, -115], [60, -90], [55, -80], [58, -65], [52, -55], [47, -53], [43, -65], [41, -70], [35, -75], [30, -81], [25, -80], [22, -87], [29, -95], [26, -97], [20, -105], [15, -93], [9, -79], [9, -83], [14, -92], [18, -103], [24, -110], [32, -117], [38, -123], [48, -125], [54, -130], [58, -136], [60, -145], [59, -153], [55, -163], [64, -166], [66, -168]],
-            [[78, -20], [70, -22], [60, -43], [65, -53], [76, -68], [82, -35]],
-            [[11, -75], [9, -60], [5, -52], [-3, -40], [-8, -35], [-18, -39], [-23, -43], [-32, -52], [-39, -62], [-53, -68], [-55, -71], [-45, -75], [-35, -72], [-18, -71], [-5, -81], [5, -77]],
-            [[36, -6], [43, -9], [48, -5], [51, 2], [54, 8], [58, 12], [65, 23], [70, 28], [68, 44], [60, 50], [52, 40], [46, 38], [42, 28], [37, 24], [36, 15], [41, 9], [44, 8], [43, 3], [37, -2]],
-            [[58, 6], [63, 5], [69, 15], [71, 26], [68, 30], [60, 20], [56, 12]],
-            [[50, -5], [54, -3], [58, -5], [58, -2], [52, 1], [51, 1]],
-            [[36, -5], [37, 10], [32, 13], [32, 25], [31, 32], [22, 37], [12, 44], [12, 51], [2, 45], [-5, 40], [-11, 40], [-17, 38], [-26, 33], [-34, 26], [-34, 18], [-28, 16], [-17, 12], [-5, 12], [4, 9], [5, 1], [4, -7], [11, -15], [15, -17], [21, -17], [28, -13], [32, -9]],
-            [[-12, 49], [-16, 50], [-25, 47], [-25, 44], [-17, 44]],
-            [[42, 28], [46, 38], [52, 40], [60, 50], [68, 44], [70, 70], [73, 80], [75, 100], [77, 105], [70, 135], [70, 160], [65, 175], [60, 165], [55, 155], [52, 142], [45, 135], [40, 128], [35, 129], [38, 120], [31, 122], [23, 117], [22, 114], [21, 108], [11, 109], [8, 105], [10, 100], [2, 102], [7, 98], [13, 100], [16, 96], [22, 91], [21, 87], [12, 80], [8, 77], [15, 74], [25, 68], [25, 60], [27, 51], [15, 52], [13, 45], [22, 38], [31, 35], [36, 36]],
-            [[45, 142], [41, 140], [35, 140], [33, 131], [34, 136], [38, 141]],
-            [[-6, 106], [-7, 114], [-8, 115], [-9, 120], [-8, 126], [-3, 128], [-1, 137], [-8, 141], [-6, 134], [2, 128], [1, 124], [0, 117], [4, 114], [1, 104], [-5, 105]],
-            [[-11, 142], [-15, 145], [-24, 153], [-32, 153], [-38, 149], [-38, 140], [-35, 136], [-32, 132], [-34, 119], [-32, 116], [-22, 114], [-15, 124], [-15, 130], [-12, 136]],
-            [[-35, 173], [-41, 175], [-46, 167], [-41, 172]]
-        ];
-
-        ctx.fillStyle = '#0f2747';
-        ctx.strokeStyle = '#0284c7';
-        ctx.lineWidth = 1.5;
-
-        continents.forEach(poly => {
-            ctx.beginPath();
-            poly.forEach((pt, idx) => {
-                const x = ((pt[1] + 180) / 360) * 2048;
-                const y = ((90 - pt[0]) / 180) * 1024;
-                if (idx === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        });
-
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.75)';
-        continents.forEach(poly => {
-            let minX = 2048, maxX = 0, minY = 1024, maxY = 0;
-            const pixelPoly = poly.map(pt => {
-                const x = ((pt[1] + 180) / 360) * 2048;
-                const y = ((90 - pt[0]) / 180) * 1024;
-                if (x < minX) minX = x;
-                if (x > maxX) maxX = x;
-                if (y < minY) minY = y;
-                if (y > maxY) maxY = y;
-                return [x, y];
-            });
-
-            for (let py = minY; py <= maxY; py += 12) {
-                for (let px = minX; px <= maxX; px += 12) {
-                    if (this.pointInPolygon([px, py], pixelPoly)) {
-                        ctx.beginPath();
-                        ctx.arc(px, py, 1.8, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-            }
-        });
-
-        Object.keys(this.AIRPORT_COORDS).forEach(key => {
-            const item = this.AIRPORT_COORDS[key];
-            const cx = ((item.lon + 180) / 360) * 2048;
-            const cy = ((90 - item.lat) / 180) * 1024;
-
-            const haloGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 24);
-            haloGrad.addColorStop(0, key === 'quynhon' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(14, 165, 233, 0.8)');
-            haloGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-            ctx.fillStyle = haloGrad;
-            ctx.beginPath();
-            ctx.arc(cx, cy, 24, 0, Math.PI * 2);
-            ctx.fill();
-        });
-
-        return new THREE.CanvasTexture(canvas);
-    },
-
     buildGlobe() {
         this.globeGroup = new THREE.Group();
 
-        const texture = this.createGlobeTexture();
-        const sphereGeo = new THREE.SphereGeometry(9, 64, 64);
+        const loader = new THREE.TextureLoader();
+        const aniso = this.renderer.capabilities.getMaxAnisotropy();
+
+        const earthTex = loader.load('assets/earth-blue-marble.jpg');
+        earthTex.encoding = THREE.sRGBEncoding;
+        earthTex.anisotropy = aniso;
+
+        const sphereGeo = new THREE.SphereGeometry(9, 96, 64);
         const sphereMat = new THREE.MeshStandardMaterial({
-            map: texture,
-            roughness: 0.55,
-            metalness: 0.35
+            map: earthTex,
+            roughness: 0.95,
+            metalness: 0.02
         });
         this.globeMesh = new THREE.Mesh(sphereGeo, sphereMat);
         this.globeGroup.add(this.globeMesh);
 
-        const atmoGeo = new THREE.SphereGeometry(9.35, 48, 48);
+        // Biên giới quốc gia
+        const borderTex = new THREE.CanvasTexture(this.borderCanvas);
+        borderTex.anisotropy = aniso;
+        this.borderMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(9.012, 96, 64),
+            new THREE.MeshBasicMaterial({ map: borderTex, transparent: true, depthWrite: false })
+        );
+        this.globeGroup.add(this.borderMesh);
+
+        // Lớp làm nổi bật quốc gia đang chọn
+        this.highlightTex = new THREE.CanvasTexture(this.highlightCanvas);
+        this.highlightTex.anisotropy = aniso;
+        this.highlightMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(9.024, 96, 64),
+            new THREE.MeshBasicMaterial({ map: this.highlightTex, transparent: true, depthWrite: false })
+        );
+        this.globeGroup.add(this.highlightMesh);
+
+        // Khí quyển
         const atmoMat = new THREE.MeshBasicMaterial({
-            color: 0x06b6d4,
+            color: 0x22b8e6,
             transparent: true,
             opacity: 0.16,
             side: THREE.BackSide,
             blending: THREE.AdditiveBlending
         });
-        this.atmosphereMesh = new THREE.Mesh(atmoGeo, atmoMat);
+        this.atmosphereMesh = new THREE.Mesh(new THREE.SphereGeometry(9.42, 48, 48), atmoMat);
         this.globeGroup.add(this.atmosphereMesh);
 
         this.scene.add(this.globeGroup);
@@ -701,22 +737,22 @@ const GameWizard = (function() {
             pin.position.copy(pos);
             pin.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
 
-            const shaftGeo = new THREE.CylinderGeometry(0.04, 0.08, 0.75, 8);
-            const shaftMat = new THREE.MeshBasicMaterial({ color: isQuyNhon ? 0xf59e0b : 0x06b6d4 });
+            const shaftGeo = new THREE.CylinderGeometry(0.035, 0.07, 0.7, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({ color: isQuyNhon ? 0xf59e0b : 0x38bdf8 });
             const shaft = new THREE.Mesh(shaftGeo, shaftMat);
-            shaft.position.y = 0.38;
+            shaft.position.y = 0.35;
             pin.add(shaft);
 
-            const headGeo = isQuyNhon ? new THREE.OctahedronGeometry(0.35, 0) : new THREE.SphereGeometry(0.2, 16, 16);
-            const headMat = new THREE.MeshBasicMaterial({ color: isQuyNhon ? 0xfbbf24 : 0x38bdf8 });
+            const headGeo = isQuyNhon ? new THREE.OctahedronGeometry(0.32, 0) : new THREE.SphereGeometry(0.18, 16, 16);
+            const headMat = new THREE.MeshBasicMaterial({ color: isQuyNhon ? 0xfbbf24 : 0x7dd3fc });
             const head = new THREE.Mesh(headGeo, headMat);
-            head.position.y = 0.85;
+            head.position.y = 0.8;
             pin.add(head);
 
-            const ringGeo = new THREE.RingGeometry(0.2, 0.42, 24);
+            const ringGeo = new THREE.RingGeometry(0.18, 0.4, 24);
             ringGeo.rotateX(-Math.PI / 2);
             const ringMat = new THREE.MeshBasicMaterial({
-                color: isQuyNhon ? 0xf59e0b : 0x06b6d4,
+                color: isQuyNhon ? 0xf59e0b : 0x38bdf8,
                 transparent: true,
                 opacity: 0.75,
                 side: THREE.DoubleSide
@@ -726,7 +762,7 @@ const GameWizard = (function() {
             pin.add(ring);
             this.radarRings.push(ring);
 
-            const hitGeo = new THREE.SphereGeometry(0.9, 8, 8);
+            const hitGeo = new THREE.SphereGeometry(0.85, 8, 8);
             const hitMat = new THREE.MeshBasicMaterial({ visible: false });
             const hit = new THREE.Mesh(hitGeo, hitMat);
             hit.position.y = 0.5;
@@ -737,6 +773,173 @@ const GameWizard = (function() {
             this.pinsGroup.add(pin);
         });
     },
+
+    /* ---------------- picking ---------------- */
+
+    countryAtPixel(px, py) {
+        if (!this.pickData) return null;
+        const W = this.pickW, H = this.pickH;
+        px = Math.max(0, Math.min(W - 1, Math.round(px)));
+        py = Math.max(0, Math.min(H - 1, Math.round(py)));
+
+        const counts = new Map();
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                const x = px + dx, y = py + dy;
+                if (x < 0 || y < 0 || x >= W || y >= H) continue;
+                const o = (y * W + x) * 4;
+                const idx = this.pickData[o] + (this.pickData[o + 1] << 8);
+                if (!idx) continue;
+                counts.set(idx, (counts.get(idx) || 0) + 1);
+            }
+        }
+        let best = 0, bestN = 0;
+        counts.forEach((n, idx) => { if (n > bestN) { bestN = n; best = idx; } });
+        return best ? this.countries[best - 1] : null;
+    },
+
+    pickCountry(clientX, clientY) {
+        if (!this.globeMesh || !this.camera) return null;
+        const rect = this.container.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+            ((clientX - rect.left) / rect.width) * 2 - 1,
+            -((clientY - rect.top) / rect.height) * 2 + 1
+        );
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, this.camera);
+        const hits = raycaster.intersectObject(this.globeMesh, false);
+        if (!hits.length || !hits[0].uv) return null;
+        return this.countryAtPixel(hits[0].uv.x * this.pickW, (1 - hits[0].uv.y) * this.pickH);
+    },
+
+    /* ---------------- country detail card ---------------- */
+
+    loc(v) {
+        if (v == null) return '';
+        if (typeof v === 'string') return v;
+        return v[state.currentLang] || v.vi || v.en || '';
+    },
+
+    formatPop(n) {
+        if (!n) return '—';
+        if (state.currentLang === 'vi') {
+            if (n >= 1e9) return (n / 1e9).toFixed(2).replace('.', ',') + ' tỷ';
+            if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' tr';
+            return Math.round(n / 1e3) + ' nghìn';
+        }
+        if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+        return Math.round(n / 1e3) + 'K';
+    },
+
+    departureKeyForIso(iso) {
+        const keys = Object.keys(this.AIRPORT_COORDS);
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (k !== 'quynhon' && this.AIRPORT_COORDS[k].iso === iso) return k;
+        }
+        return null;
+    },
+
+    showCountryCard(iso) {
+        const card = document.getElementById('globe-country-card');
+        if (!card) return;
+        const c = this.countryByIso[iso];
+        if (!c) { card.hidden = true; return; }
+
+        const info = window.WORLD_INFO || { regions: {}, countries: {} };
+        const detail = (info.countries && info.countries[iso]) || null;
+        const region = (info.regions && info.regions[c.cont]) || { vi: '', en: '' };
+        const isVi = state.currentLang === 'vi';
+
+        const name = isVi ? c.vi : c.name;
+        const sub = isVi ? c.name : c.vi;
+
+        document.getElementById('gcc-region').textContent = this.loc(region);
+        document.getElementById('gcc-name').textContent = name;
+        const subEl = document.getElementById('gcc-sub');
+        const strip = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase();
+        subEl.textContent = strip(sub) !== strip(name) ? sub : '';
+
+        // silhouette
+        const b = c.bbox;
+        const pad = Math.max(b[2] - b[0], b[3] - b[1]) * 0.08;
+        const svg = document.getElementById('gcc-svg');
+        svg.setAttribute('viewBox', `${b[0] - pad} ${-b[3] - pad} ${b[2] - b[0] + pad * 2} ${b[3] - b[1] + pad * 2}`);
+
+        let big = null, bigArea = 0;
+        c.rings.forEach(ring => {
+            let a = 0;
+            for (let i = 0; i < ring.length - 1; i++) a += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+            a = Math.abs(a / 2);
+            if (a > bigArea) { bigArea = a; big = ring; }
+        });
+        document.getElementById('gcc-path').setAttribute('d',
+            big ? 'M' + big.map(p => `${p[0].toFixed(2)},${(-p[1]).toFixed(2)}`).join('L') + 'Z' : '');
+
+        // stats
+        const stats = [];
+        const cap = detail && detail.cap ? this.loc(detail.cap) : c.cap;
+        if (cap) stats.push([isVi ? 'Thủ đô' : 'Capital', cap]);
+        if (c.pop) stats.push([isVi ? 'Dân số' : 'Population', this.formatPop(c.pop)]);
+        const cur = detail && detail.cur ? this.loc(detail.cur) : (c.cur && c.cur[0] ? `${c.cur[0]}` : '');
+        if (cur) stats.push([isVi ? 'Tiền tệ' : 'Currency', cur]);
+        const lang = detail && detail.lang ? this.loc(detail.lang) : c.lang;
+        if (lang) stats.push([isVi ? 'Ngôn ngữ' : 'Language', lang]);
+        if (detail && detail.tz) stats.push([isVi ? 'Múi giờ' : 'Time zone', detail.tz]);
+
+        const statsEl = document.getElementById('gcc-stats');
+        statsEl.innerHTML = stats.map(([k, v]) => `<li><span>${k}</span><strong>${v}</strong></li>`).join('');
+
+        // description
+        const descEl = document.getElementById('gcc-desc');
+        if (detail && detail.desc) {
+            descEl.textContent = this.loc(detail.desc);
+        } else {
+            descEl.textContent = isVi
+                ? `Quốc gia thuộc ${this.loc(region)}. Chưa có ghi chú du lịch chi tiết cho điểm đến này.`
+                : `A country in ${this.loc(region)}. Travel notes for this destination are still being written.`;
+        }
+
+        // highlights
+        const hlEl = document.getElementById('gcc-hl');
+        const hl = ((detail && detail.hl) || []).slice(0, 3);
+        hlEl.innerHTML = hl.length
+            ? `<h5>${isVi ? 'Đáng ghé thăm' : 'Worth a visit'}</h5><ul>` +
+              hl.map(h => `<li><i class="fa-solid fa-location-dot"></i><span>${this.loc(h)}</span></li>`).join('') +
+              `</ul>`
+            : '';
+
+        // CTA
+        const cta = document.getElementById('gcc-cta');
+        const depKey = this.departureKeyForIso(iso);
+        if (depKey) {
+            cta.hidden = false;
+            cta.dataset.country = depKey;
+            cta.innerHTML = `<i class="fa-solid fa-plane-departure"></i> ${isVi ? 'Chọn làm điểm khởi hành' : 'Use as departure'}`;
+        } else {
+            cta.hidden = false;
+            cta.dataset.country = '';
+            cta.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${isVi ? 'Chưa có chuyến bay trực tiếp' : 'No direct flight yet'}`;
+        }
+
+        card.hidden = false;
+        card.classList.remove('is-entering');
+        void card.offsetWidth;
+        card.classList.add('is-entering');
+    },
+
+    selectIso(iso) {
+        this.selectedIso = iso;
+        this.paintHighlight(iso);
+        if (iso) this.showCountryCard(iso);
+        else {
+            const card = document.getElementById('globe-country-card');
+            if (card) card.hidden = true;
+        }
+    },
+
+    /* ---------------- flight arc ---------------- */
 
     updateFlightArc(countryKey) {
         if (!this.arcGroup || !this.AIRPORT_COORDS[countryKey] || countryKey === 'quynhon') return;
@@ -758,12 +961,11 @@ const GameWizard = (function() {
         const pApex = mid.normalize().multiplyScalar(apexHeight);
 
         const curve = new THREE.QuadraticBezierCurve3(pA, pApex, pB);
-        const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.08, 8, false);
+        const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.075, 8, false);
         const tubeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-        const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-        this.arcGroup.add(tubeMesh);
+        this.arcGroup.add(new THREE.Mesh(tubeGeo, tubeMat));
 
-        const pulseGeo = new THREE.SphereGeometry(0.24, 16, 16);
+        const pulseGeo = new THREE.SphereGeometry(0.22, 16, 16);
         const pulseMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
         const pulseMesh = new THREE.Mesh(pulseGeo, pulseMat);
         this.arcGroup.add(pulseMesh);
@@ -795,8 +997,11 @@ const GameWizard = (function() {
         this.targetRotY = -((midLon + 90) * Math.PI / 180);
         this.targetRotX = (midLat * Math.PI / 180);
 
+        this.selectIso(dep.iso || null);
         this.updateFlightArc(countryKey);
     },
+
+    /* ---------------- controls ---------------- */
 
     bindControls(container) {
         let isDown = false;
@@ -833,6 +1038,7 @@ const GameWizard = (function() {
             this.interactTimer = setTimeout(() => { this.isInteracting = false; }, 2800);
 
             if (totalMoved < 6 && typeof clientX === 'number' && this.camera) {
+                // 1) ưu tiên pin sân bay
                 const rect = container.getBoundingClientRect();
                 const mouse = new THREE.Vector2(
                     ((clientX - rect.left) / rect.width) * 2 - 1,
@@ -846,7 +1052,13 @@ const GameWizard = (function() {
                     if (cId && cId !== 'quynhon' && typeof updateCountrySelection === 'function') {
                         updateCountrySelection(cId, true);
                     }
+                    return;
                 }
+
+                // 2) chọn quốc gia bất kỳ trên mặt cầu
+                const country = this.pickCountry(clientX, clientY);
+                if (country) this.selectIso(country.id);
+                else this.selectIso(null);
             }
         };
 
@@ -870,8 +1082,27 @@ const GameWizard = (function() {
         container.addEventListener('wheel', (e) => {
             e.preventDefault();
             this.targetCamDistance += e.deltaY * 0.02;
-            this.targetCamDistance = Math.max(16, Math.min(36, this.targetCamDistance));
+            this.targetCamDistance = Math.max(13, Math.min(30, this.targetCamDistance));
         }, { passive: false });
+
+        // Nút CTA trong thẻ quốc gia
+        document.addEventListener('click', (e) => {
+            const cta = e.target.closest && e.target.closest('#gcc-cta');
+            if (cta) {
+                const key = cta.dataset.country;
+                if (key && typeof updateCountrySelection === 'function') {
+                    updateCountrySelection(key, true);
+                } else if (!key) {
+                    showTacticalToast(state.currentLang === 'vi'
+                        ? 'Quốc gia này chưa có chuyến bay trực tiếp đến Quy Nhơn. Hãy chọn điểm khởi hành khác.'
+                        : 'This country has no direct flight to Quy Nhon yet. Pick another departure.');
+                }
+                return;
+            }
+            if (e.target.closest && e.target.closest('#gcc-close')) {
+                this.selectIso(null);
+            }
+        });
     },
 
     animate() {
@@ -934,6 +1165,7 @@ const GameWizard = (function() {
         wingletsScale: 0,
         cabinEmissive: 0,
         afterburnerScale: 0,
+        engineScale: 0.9,
         platformLedColor: 0x3b82f6
     },
     isEnginesLocked: true,
@@ -981,6 +1213,31 @@ const GameWizard = (function() {
         this.renderer.toneMappingExposure = 1.25;
         this.renderer.domElement.id = 'aircraft-webgl-canvas';
         container.appendChild(this.renderer.domElement);
+
+        // Environment map: kim loại bóng cần phản chiếu, nếu không sẽ ra màu đen
+        try {
+            const envCanvas = document.createElement('canvas');
+            envCanvas.width = 64;
+            envCanvas.height = 32;
+            const ectx = envCanvas.getContext('2d');
+            const eg = ectx.createLinearGradient(0, 0, 0, 32);
+            eg.addColorStop(0.00, '#0a1526');
+            eg.addColorStop(0.42, '#1e3a5f');
+            eg.addColorStop(0.62, '#93c5fd');
+            eg.addColorStop(0.80, '#f8fafc');
+            eg.addColorStop(1.00, '#0b1220');
+            ectx.fillStyle = eg;
+            ectx.fillRect(0, 0, 64, 32);
+
+            const envTex = new THREE.CanvasTexture(envCanvas);
+            envTex.mapping = THREE.EquirectangularReflectionMapping;
+            const pmrem = new THREE.PMREMGenerator(this.renderer);
+            this.scene.environment = pmrem.fromEquirectangular(envTex).texture;
+            pmrem.dispose();
+            envTex.dispose();
+        } catch (e) {
+            console.warn('[Aircraft3D] environment map unavailable', e);
+        }
 
         this.setupLighting();
         this.buildShowroomEnvironment();
@@ -1084,322 +1341,396 @@ const GameWizard = (function() {
         this.scene.add(this.platformGlowLight);
     },
 
+    createFuselageTexture() {
+        if (typeof document === 'undefined') return null;
+        const canvas = document.createElement('canvas');
+        canvas.width = 1024;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+
+        // Thân máy bay trắng ngà
+        ctx.fillStyle = '#f6f8fb';
+        ctx.fillRect(0, 0, 1024, 512);
+
+        // Bụng máy bay tối hơn (u = 0 và u = 1 là mặt dưới)
+        const belly = ctx.createLinearGradient(0, 0, 1024, 0);
+        belly.addColorStop(0.00, 'rgba(150,170,192,0.55)');
+        belly.addColorStop(0.10, 'rgba(255,255,255,0)');
+        belly.addColorStop(0.90, 'rgba(255,255,255,0)');
+        belly.addColorStop(1.00, 'rgba(150,170,192,0.55)');
+        ctx.fillStyle = belly;
+        ctx.fillRect(0, 0, 1024, 512);
+
+        // Sọc cheatline hai bên thân (u 0.25 = mạn phải, 0.75 = mạn trái)
+        const band = (u0, u1, color) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(u0 * 1024, 0, (u1 - u0) * 1024, 512);
+        };
+        band(0.236, 0.268, '#0284c7');
+        band(0.272, 0.280, '#f59e0b');
+        band(0.732, 0.764, '#0284c7');
+        band(0.720, 0.728, '#f59e0b');
+
+        // Cửa cabin + số hiệu
+        ctx.fillStyle = 'rgba(120,140,164,0.55)';
+        [0.30, 0.42, 0.58, 0.70].forEach(v => {
+            ctx.fillRect(258, v * 512, 10, 26);
+            ctx.fillRect(756, v * 512, 10, 26);
+        });
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.anisotropy = 8;
+        return tex;
+    },
+
     buildAircraftModular() {
         this.aircraftRootGroup = new THREE.Group();
+        this.aircraftRootGroup.rotation.order = 'YXZ';
         this.aircraftRootGroup.position.set(0, 0, 0);
 
-        this.materials.fuselage = new THREE.MeshStandardMaterial({
-            color: 0xf8fafc,
-            roughness: 0.22,
-            metalness: 0.45
+        const M = this.materials;
+
+        M.fuselage = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            map: this.createFuselageTexture(),
+            roughness: 0.26,
+            metalness: 0.42
         });
 
-        this.materials.cockpitGlass = new THREE.MeshStandardMaterial({
-            color: 0x0ea5e9,
-            roughness: 0.05,
-            metalness: 0.95,
-            opacity: 0.88,
-            transparent: true
+        M.cockpitGlass = new THREE.MeshStandardMaterial({
+            color: 0x1b3f5e,
+            emissive: 0x0b2a44,
+            emissiveIntensity: 0.55,
+            roughness: 0.14,
+            metalness: 0.72,
+            transparent: true,
+            opacity: 0.96
         });
 
-        this.materials.chrome = new THREE.MeshStandardMaterial({
-            color: 0xf1f5f9,
-            roughness: 0.08,
-            metalness: 0.94
+        M.chrome = new THREE.MeshStandardMaterial({
+            color: 0xe2e8f0,
+            roughness: 0.1,
+            metalness: 0.96
         });
 
-        this.materials.fanBlades = new THREE.MeshStandardMaterial({
-            color: 0x334155,
-            roughness: 0.22,
-            metalness: 0.85
-        });
-
-        this.materials.liveryCyan = new THREE.MeshStandardMaterial({
-            color: 0x0284c7,
-            roughness: 0.28,
-            metalness: 0.6
-        });
-
-        this.materials.liveryGold = new THREE.MeshStandardMaterial({
-            color: 0xf59e0b,
-            roughness: 0.22,
+        M.darkMetal = new THREE.MeshStandardMaterial({
+            color: 0x2b3546,
+            roughness: 0.34,
             metalness: 0.82
         });
 
-        this.materials.cabinWindows = new THREE.MeshStandardMaterial({
-            color: 0xffedd5,
+        M.fanBlades = new THREE.MeshStandardMaterial({
+            color: 0x3b4757,
+            roughness: 0.24,
+            metalness: 0.88
+        });
+
+        M.liveryCyan = new THREE.MeshStandardMaterial({
+            color: 0x0284c7,
+            roughness: 0.26,
+            metalness: 0.62
+        });
+
+        M.liveryGold = new THREE.MeshStandardMaterial({
+            color: 0xf59e0b,
+            roughness: 0.2,
+            metalness: 0.85
+        });
+
+        M.cabinWindows = new THREE.MeshStandardMaterial({
+            color: 0xfff2d8,
             emissive: 0xf59e0b,
             emissiveIntensity: 0.0
         });
 
-        this.materials.afterburnerCore = new THREE.MeshBasicMaterial({
-            color: 0x22d3ee,
+        M.afterburnerCore = new THREE.MeshBasicMaterial({
+            color: 0x67e8f9,
             transparent: true,
-            opacity: 0.88
+            opacity: 0.85
         });
 
-        this.materials.afterburnerPlume = new THREE.MeshBasicMaterial({
-            color: 0xf97316,
+        M.afterburnerPlume = new THREE.MeshBasicMaterial({
+            color: 0xfb923c,
             transparent: true,
-            opacity: 0.65
+            opacity: 0.6
         });
 
-        // 1. Fuselage
+        // ---------------------------------------------------------------
+        // 1. Thân máy bay: lathe mượt (mũi nhọn, thân trụ, đuôi thuôn)
+        // ---------------------------------------------------------------
         const fuselageGroup = new THREE.Group();
-        const bodyGeo = new THREE.CylinderGeometry(1.35, 1.35, 11, 32);
+
+        const profile = [
+            [-10.0, 0.05], [-9.4, 0.34], [-8.8, 0.62], [-8.0, 0.92],
+            [-7.0, 1.14], [-5.8, 1.28], [-4.4, 1.35], [-2.2, 1.38],
+            [1.6, 1.38], [3.8, 1.36], [5.2, 1.30], [6.4, 1.19],
+            [7.6, 1.02], [8.6, 0.78], [9.5, 0.45], [9.9, 0.18], [10.0, 0.04]
+        ].map(p => new THREE.Vector2(p[1], p[0]));
+
+        const bodyGeo = new THREE.LatheGeometry(profile, 72);
         bodyGeo.rotateX(Math.PI / 2);
-        const bodyMesh = new THREE.Mesh(bodyGeo, this.materials.fuselage);
+        const bodyMesh = new THREE.Mesh(bodyGeo, M.fuselage);
         bodyMesh.castShadow = true;
         bodyMesh.receiveShadow = true;
         fuselageGroup.add(bodyMesh);
 
-        const noseGeo = new THREE.ConeGeometry(1.35, 3.8, 32);
-        noseGeo.rotateX(Math.PI / 2);
-        const noseMesh = new THREE.Mesh(noseGeo, this.materials.fuselage);
-        noseMesh.position.set(0, 0, 7.4);
-        noseMesh.castShadow = true;
-        fuselageGroup.add(noseMesh);
+        // Kính buồng lái: dải cong úp quanh mũi
+        const glassGeo = new THREE.CylinderGeometry(1.08, 1.22, 0.95, 40, 1, true, Math.PI * 0.735, Math.PI * 0.53);
+        glassGeo.rotateX(Math.PI / 2);
+        const glassMesh = new THREE.Mesh(glassGeo, M.cockpitGlass);
+        glassMesh.position.set(0, 0.06, 7.15);
+        fuselageGroup.add(glassMesh);
 
-        const canopyGeo = new THREE.BoxGeometry(1.65, 0.82, 2.8);
-        const canopyMesh = new THREE.Mesh(canopyGeo, this.materials.cockpitGlass);
-        canopyMesh.position.set(0, 0.95, 5.0);
-        canopyMesh.rotation.x = -0.28;
-        fuselageGroup.add(canopyMesh);
+        // Vành khung kính
+        const frameGeo = new THREE.TorusGeometry(1.14, 0.028, 8, 40, Math.PI * 0.56);
+        const frameMesh = new THREE.Mesh(frameGeo, M.chrome);
+        frameMesh.position.set(0, 0.06, 6.66);
+        frameMesh.rotation.z = Math.PI * 0.22;
+        fuselageGroup.add(frameMesh);
 
-        const pitotGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.8, 12);
+        // Ăng-ten mũi
+        const pitotGeo = new THREE.CylinderGeometry(0.035, 0.02, 0.9, 10);
         pitotGeo.rotateX(Math.PI / 2);
-        const pitotMesh = new THREE.Mesh(pitotGeo, this.materials.chrome);
-        pitotMesh.position.set(0, 0, 9.6);
-        fuselageGroup.add(pitotMesh);
+        const pitot = new THREE.Mesh(pitotGeo, M.chrome);
+        pitot.position.set(0, 0, 10.35);
+        fuselageGroup.add(pitot);
 
-        const tailConeGeo = new THREE.ConeGeometry(1.35, 4.2, 32);
-        tailConeGeo.rotateX(-Math.PI / 2);
-        const tailConeMesh = new THREE.Mesh(tailConeGeo, this.materials.fuselage);
-        tailConeMesh.position.set(0, 0.15, -7.6);
-        tailConeMesh.castShadow = true;
-        fuselageGroup.add(tailConeMesh);
-
-        // Landing gear
-        const gearMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.8 });
-        const tireMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9, metalness: 0.1 });
-        const createGearLeg = (xPos, zPos) => {
-            const leg = new THREE.Group();
-            leg.position.set(xPos, -1.35, zPos);
-            const strutGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.25, 12);
-            const strut = new THREE.Mesh(strutGeo, gearMat);
-            strut.position.y = -0.62;
-            leg.add(strut);
-            [-0.18, 0.18].forEach(wX => {
-                const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.14, 16);
-                wheelGeo.rotateZ(Math.PI / 2);
-                const wheel = new THREE.Mesh(wheelGeo, tireMat);
-                wheel.position.set(wX, -1.22, 0);
-                leg.add(wheel);
-            });
-            return leg;
-        };
-        fuselageGroup.add(createGearLeg(0, 5.6));
-        fuselageGroup.add(createGearLeg(-2.6, -0.6));
-        fuselageGroup.add(createGearLeg(2.6, -0.6));
         this.aircraftRootGroup.add(fuselageGroup);
 
-        // 2. Wings
+        // ---------------------------------------------------------------
+        // 2. Cánh chính (planform vuốt, dihedral nhẹ)
+        // ---------------------------------------------------------------
         const wingsGroup = new THREE.Group();
-        const wingExtrudeOpts = { depth: 0.28, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.06, bevelThickness: 0.06 };
 
-        const leftWingShape = new THREE.Shape();
-        leftWingShape.moveTo(0, 0);
-        leftWingShape.lineTo(-12.5, -4.2);
-        leftWingShape.lineTo(-12.0, -5.8);
-        leftWingShape.lineTo(0, -3.2);
-        leftWingShape.closePath();
-        const leftWingGeo = new THREE.ExtrudeGeometry(leftWingShape, wingExtrudeOpts);
-        leftWingGeo.rotateX(Math.PI / 2);
-        const leftWingMesh = new THREE.Mesh(leftWingGeo, this.materials.fuselage);
-        leftWingMesh.position.set(-1.2, -0.15, 1.0);
-        leftWingMesh.rotation.z = -0.035;
-        leftWingMesh.castShadow = true;
-        wingsGroup.add(leftWingMesh);
+        const buildWing = (dir) => {
+            const shape = new THREE.Shape();
+            shape.moveTo(0, 3.4);
+            shape.lineTo(dir * 9.6, -0.6);
+            shape.lineTo(dir * 9.6, -3.0);
+            shape.lineTo(0, -2.6);
+            shape.closePath();
 
-        const rightWingShape = new THREE.Shape();
-        rightWingShape.moveTo(0, 0);
-        rightWingShape.lineTo(12.5, -4.2);
-        rightWingShape.lineTo(12.0, -5.8);
-        rightWingShape.lineTo(0, -3.2);
-        rightWingShape.closePath();
-        const rightWingGeo = new THREE.ExtrudeGeometry(rightWingShape, wingExtrudeOpts);
-        rightWingGeo.rotateX(Math.PI / 2);
-        const rightWingMesh = new THREE.Mesh(rightWingGeo, this.materials.fuselage);
-        rightWingMesh.position.set(1.2, -0.15, 1.0);
-        rightWingMesh.rotation.z = 0.035;
-        rightWingMesh.castShadow = true;
-        wingsGroup.add(rightWingMesh);
+            const geo = new THREE.ExtrudeGeometry(shape, {
+                depth: 0.34,
+                bevelEnabled: true,
+                bevelSegments: 2,
+                bevelSize: 0.05,
+                bevelThickness: 0.05,
+                curveSegments: 1
+            });
+            geo.rotateX(Math.PI / 2);
+            geo.translate(0, 0.17, 0);
+
+            const mesh = new THREE.Mesh(geo, M.fuselage);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        };
+
+        const wingR = buildWing(1);
+        wingR.position.set(1.1, -0.42, 0.2);
+        wingR.rotation.z = 0.055;
+        wingsGroup.add(wingR);
+
+        const wingL = buildWing(-1);
+        wingL.position.set(-1.1, -0.42, 0.2);
+        wingL.rotation.z = -0.055;
+        wingsGroup.add(wingL);
+
         this.aircraftRootGroup.add(wingsGroup);
 
-        // 3. Engines
+        // ---------------------------------------------------------------
+        // 3. Động cơ turbofan
+        // ---------------------------------------------------------------
         const enginesGroup = new THREE.Group();
-        const createEngineAssembly = (isLeft) => {
+
+        const nacelleProfile = [
+            [-2.35, 0.30], [-2.05, 0.44], [-1.55, 0.54], [-0.60, 0.62],
+            [0.35, 0.65], [1.05, 0.63], [1.40, 0.57], [1.52, 0.50]
+        ].map(p => new THREE.Vector2(p[1], p[0]));
+
+        const buildEngine = (xPos) => {
             const eng = new THREE.Group();
-            const xOff = isLeft ? -4.8 : 4.8;
-            eng.position.set(xOff, -1.3, 0.2);
+            eng.position.set(xPos, -1.52, 0.95);
 
-            const nacelleGeo = new THREE.CylinderGeometry(0.85, 0.8, 3.4, 28);
-            nacelleGeo.rotateX(Math.PI / 2);
-            const nacelle = new THREE.Mesh(nacelleGeo, this.materials.fuselage);
-            nacelle.castShadow = true;
-            eng.add(nacelle);
+            const cowlGeo = new THREE.LatheGeometry(nacelleProfile, 40);
+            cowlGeo.rotateX(Math.PI / 2);
+            const cowl = new THREE.Mesh(cowlGeo, M.fuselage);
+            cowl.castShadow = true;
+            eng.add(cowl);
 
-            const lipGeo = new THREE.TorusGeometry(0.82, 0.08, 16, 28);
-            const lip = new THREE.Mesh(lipGeo, this.materials.chrome);
-            lip.position.set(0, 0, 1.7);
+            const lipGeo = new THREE.TorusGeometry(0.5, 0.055, 10, 36);
+            const lip = new THREE.Mesh(lipGeo, M.chrome);
+            lip.position.set(0, 0, 1.5);
             eng.add(lip);
 
-            const spinnerGeo = new THREE.ConeGeometry(0.24, 0.65, 16);
-            spinnerGeo.rotateX(Math.PI / 2);
-            const spinner = new THREE.Mesh(spinnerGeo, this.materials.chrome);
-            spinner.position.set(0, 0, 1.4);
-            eng.add(spinner);
+            // Hốc hút gió tối
+            const ductGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.9, 32, 1, true);
+            ductGeo.rotateX(Math.PI / 2);
+            const duct = new THREE.Mesh(ductGeo, M.darkMetal);
+            duct.position.set(0, 0, 1.05);
+            duct.material.side = THREE.DoubleSide;
+            eng.add(duct);
 
             const fanDisc = new THREE.Group();
-            fanDisc.position.set(0, 0, 1.35);
-            for (let i = 0; i < 14; i++) {
-                const bladeGeo = new THREE.BoxGeometry(0.08, 0.62, 0.04);
-                const blade = new THREE.Mesh(bladeGeo, this.materials.fanBlades);
-                blade.rotation.z = (i / 14) * Math.PI * 2;
-                blade.position.set(Math.cos(blade.rotation.z) * 0.38, Math.sin(blade.rotation.z) * 0.38, 0);
-                blade.rotation.y = 0.25;
+            fanDisc.position.set(0, 0, 1.28);
+            for (let i = 0; i < 18; i++) {
+                const bladeGeo = new THREE.BoxGeometry(0.055, 0.42, 0.03);
+                const blade = new THREE.Mesh(bladeGeo, M.fanBlades);
+                const a = (i / 18) * Math.PI * 2;
+                blade.position.set(Math.cos(a) * 0.26, Math.sin(a) * 0.26, 0);
+                blade.rotation.z = a;
+                blade.rotation.y = 0.3;
                 fanDisc.add(blade);
             }
             eng.add(fanDisc);
             this.rotatingFanDiscs.push(fanDisc);
 
-            const pylonGeo = new THREE.BoxGeometry(0.18, 0.75, 2.0);
-            const pylon = new THREE.Mesh(pylonGeo, this.materials.fuselage);
-            pylon.position.set(0, 0.65, -0.2);
+            const spinnerGeo = new THREE.ConeGeometry(0.13, 0.42, 16);
+            spinnerGeo.rotateX(Math.PI / 2);
+            const spinner = new THREE.Mesh(spinnerGeo, M.chrome);
+            spinner.position.set(0, 0, 1.34);
+            eng.add(spinner);
+
+            // Pylon nối vào cánh
+            const pylonGeo = new THREE.BoxGeometry(0.2, 0.9, 2.4);
+            const pylon = new THREE.Mesh(pylonGeo, M.fuselage);
+            pylon.position.set(0, 0.72, -0.35);
+            pylon.castShadow = true;
             eng.add(pylon);
 
-            const nozzleGeo = new THREE.CylinderGeometry(0.6, 0.68, 0.6, 24);
+            // Nozzle thoát
+            const nozzleGeo = new THREE.CylinderGeometry(0.42, 0.34, 0.7, 24, 1, true);
             nozzleGeo.rotateX(Math.PI / 2);
-            const nozzle = new THREE.Mesh(nozzleGeo, this.materials.chrome);
-            nozzle.position.set(0, 0, -1.8);
+            const nozzle = new THREE.Mesh(nozzleGeo, M.darkMetal);
+            nozzle.position.set(0, 0, -2.5);
             eng.add(nozzle);
-
-            const glowGeo = new THREE.TorusGeometry(0.52, 0.06, 12, 24);
-            const glow = new THREE.Mesh(glowGeo, this.materials.afterburnerCore);
-            glow.position.set(0, 0, -1.85);
-            eng.add(glow);
 
             return eng;
         };
-        enginesGroup.add(createEngineAssembly(true));
-        enginesGroup.add(createEngineAssembly(false));
+
+        this.engineNodes = [buildEngine(-3.5), buildEngine(3.5)];
+        this.engineNodes.forEach(e => enginesGroup.add(e));
+        this.enginesGroup = enginesGroup;
         this.aircraftRootGroup.add(enginesGroup);
 
-        // 4. Details (Fin, Horizontal Tail, Windows)
+        // ---------------------------------------------------------------
+        // 4. Đuôi + cửa sổ cabin
+        // ---------------------------------------------------------------
         const detailsGroup = new THREE.Group();
+
+        // Đuôi đứng
         const finShape = new THREE.Shape();
-        finShape.moveTo(0, 0);
-        finShape.lineTo(3.2, 4.6);
-        finShape.lineTo(4.4, 4.6);
-        finShape.lineTo(4.0, 0);
+        finShape.moveTo(-6.1, 0);
+        finShape.lineTo(-9.5, 0);
+        finShape.lineTo(-9.5, 3.9);
+        finShape.lineTo(-8.35, 3.9);
         finShape.closePath();
-        const finGeo = new THREE.ExtrudeGeometry(finShape, { depth: 0.24, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.04 });
-        finGeo.rotateY(Math.PI / 2);
-        finGeo.translate(-0.12, 0, 0);
-        const finMesh = new THREE.Mesh(finGeo, this.materials.fuselage);
-        finMesh.position.set(0, 1.35, -4.6);
+        const finGeo = new THREE.ExtrudeGeometry(finShape, {
+            depth: 0.22, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.04, bevelThickness: 0.04
+        });
+        finGeo.rotateY(-Math.PI / 2);
+        finGeo.translate(0.11, 0, 0);
+        const finMesh = new THREE.Mesh(finGeo, M.fuselage);
+        finMesh.position.set(0, 0.62, 0);
         finMesh.castShadow = true;
         detailsGroup.add(finMesh);
 
-        const finLiveryGeo = new THREE.BoxGeometry(0.26, 0.6, 1.4);
-        const finLivery = new THREE.Mesh(finLiveryGeo, this.materials.liveryCyan);
-        finLivery.position.set(0, 4.6, -7.8);
-        detailsGroup.add(finLivery);
+        // Đuôi ngang
+        const hTailShape = new THREE.Shape();
+        hTailShape.moveTo(0, -7.0);
+        hTailShape.lineTo(4.0, -8.6);
+        hTailShape.lineTo(4.0, -9.5);
+        hTailShape.lineTo(0, -9.2);
+        hTailShape.closePath();
+        const hTailGeo = new THREE.ExtrudeGeometry(hTailShape, {
+            depth: 0.16, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.03, bevelThickness: 0.03
+        });
+        hTailGeo.rotateX(Math.PI / 2);
+        hTailGeo.translate(0, 0.08, 0);
+        const hTailR = new THREE.Mesh(hTailGeo, M.fuselage);
+        hTailR.position.set(0.5, 0.5, 0);
+        hTailR.rotation.z = 0.08;
+        detailsGroup.add(hTailR);
+        const hTailL = hTailR.clone();
+        hTailL.scale.x = -1;
+        hTailL.position.x = -0.5;
+        hTailL.rotation.z = -0.08;
+        detailsGroup.add(hTailL);
 
+        // Đèn strobe đuôi
         const tailStrobe = new THREE.PointLight(0xffffff, 4, 14);
-        tailStrobe.position.set(0, 6.0, -7.8);
+        tailStrobe.position.set(0, 4.6, -9.2);
         detailsGroup.add(tailStrobe);
         this.strobeLights.push(tailStrobe);
 
-        const hTailLeftShape = new THREE.Shape();
-        hTailLeftShape.moveTo(0, 0);
-        hTailLeftShape.lineTo(-4.2, -1.8);
-        hTailLeftShape.lineTo(-3.8, -2.6);
-        hTailLeftShape.lineTo(0, -1.4);
-        hTailLeftShape.closePath();
-        const hTailLeftGeo = new THREE.ExtrudeGeometry(hTailLeftShape, { depth: 0.16, bevelEnabled: true, bevelSize: 0.03 });
-        hTailLeftGeo.rotateX(Math.PI / 2);
-        const hTailLeftMesh = new THREE.Mesh(hTailLeftGeo, this.materials.fuselage);
-        hTailLeftMesh.position.set(-0.8, 0.5, -7.6);
-        detailsGroup.add(hTailLeftMesh);
-
-        const hTailRightShape = new THREE.Shape();
-        hTailRightShape.moveTo(0, 0);
-        hTailRightShape.lineTo(4.2, -1.8);
-        hTailRightShape.lineTo(3.8, -2.6);
-        hTailRightShape.lineTo(0, -1.4);
-        hTailRightShape.closePath();
-        const hTailRightGeo = new THREE.ExtrudeGeometry(hTailRightShape, { depth: 0.16, bevelEnabled: true, bevelSize: 0.03 });
-        hTailRightGeo.rotateX(Math.PI / 2);
-        const hTailRightMesh = new THREE.Mesh(hTailRightGeo, this.materials.fuselage);
-        hTailRightMesh.position.set(0.8, 0.5, -7.6);
-        detailsGroup.add(hTailRightMesh);
-
+        // Cửa sổ cabin (phát sáng theo hạng vé)
         this.cabinWindowsGroup = new THREE.Group();
-        for (let z = -3.8; z <= 3.2; z += 0.85) {
-            const winGeo = new THREE.BoxGeometry(0.08, 0.18, 0.32);
-            const winL = new THREE.Mesh(winGeo, this.materials.cabinWindows);
-            winL.position.set(-1.36, 0.35, z);
-            this.cabinWindowsGroup.add(winL);
-            const winR = new THREE.Mesh(winGeo, this.materials.cabinWindows);
-            winR.position.set(1.36, 0.35, z);
-            this.cabinWindowsGroup.add(winR);
+        for (let z = -5.0; z <= 4.2; z += 0.58) {
+            [-1, 1].forEach(dir => {
+                const winGeo = new THREE.BoxGeometry(0.05, 0.16, 0.26);
+                const win = new THREE.Mesh(winGeo, M.cabinWindows);
+                win.position.set(dir * 1.362, 0.34, z);
+                this.cabinWindowsGroup.add(win);
+            });
         }
         detailsGroup.add(this.cabinWindowsGroup);
+
         this.aircraftRootGroup.add(detailsGroup);
 
-        // 5. Upgrades
+        // ---------------------------------------------------------------
+        // 5. Nâng cấp theo ngân sách
+        // ---------------------------------------------------------------
         const upgradeGroup = new THREE.Group();
+
+        // Winglets
         this.wingletsGroup = new THREE.Group();
-        const createWinglet = (isLeft) => {
-            const wGeo = new THREE.BoxGeometry(0.16, 1.8, 0.85);
-            const wMesh = new THREE.Mesh(wGeo, this.materials.liveryCyan);
-            const xOff = isLeft ? -13.5 : 13.5;
-            wMesh.position.set(xOff, 0.8, -4.0);
-            wMesh.rotation.z = isLeft ? 0.15 : -0.15;
-            return wMesh;
+        const buildWinglet = (dir) => {
+            const geo = new THREE.BoxGeometry(0.13, 1.5, 0.95);
+            const mesh = new THREE.Mesh(geo, M.liveryCyan);
+            mesh.position.set(dir * 10.66, -0.42 + 9.6 * 0.055 + 0.68, -1.55);
+            mesh.rotation.z = dir * -0.13;
+            mesh.scale.setScalar(0.001);
+            mesh.castShadow = true;
+            return mesh;
         };
-        this.wingletsGroup.add(createWinglet(true));
-        this.wingletsGroup.add(createWinglet(false));
+        this.wingletsGroup.add(buildWinglet(1));
+        this.wingletsGroup.add(buildWinglet(-1));
         upgradeGroup.add(this.wingletsGroup);
 
+        // Sọc vàng hạng sang
         this.liveryGroup = new THREE.Group();
-        [-1.38, 1.38].forEach(xSide => {
-            const stripeGeo = new THREE.BoxGeometry(0.04, 0.12, 8.5);
-            const stripe = new THREE.Mesh(stripeGeo, this.materials.liveryGold);
-            stripe.position.set(xSide, 0.1, -0.5);
-            this.liveryGroup.add(stripe);
+        const finStripe = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.55, 1.1), M.liveryGold);
+        finStripe.position.set(0, 3.55, -8.6);
+        this.liveryGroup.add(finStripe);
+        [-3.5, 3.5].forEach(x => {
+            const ringGeo = new THREE.TorusGeometry(0.63, 0.035, 8, 32);
+            const ring = new THREE.Mesh(ringGeo, M.liveryGold);
+            ring.position.set(x, -1.52, 0.6);
+            this.liveryGroup.add(ring);
         });
         upgradeGroup.add(this.liveryGroup);
 
+        // Afterburner
         this.afterburnersGroup = new THREE.Group();
-        const createAfterburnerPlume = (xPos) => {
+        const buildAfterburner = (xPos) => {
             const ab = new THREE.Group();
-            ab.position.set(xPos, -1.3, -2.0);
-            const coreGeo = new THREE.ConeGeometry(0.35, 2.5, 16);
+            ab.position.set(xPos, -1.52, -2.75);
+            const coreGeo = new THREE.ConeGeometry(0.3, 2.0, 18, 1, true);
             coreGeo.rotateX(-Math.PI / 2);
-            const core = new THREE.Mesh(coreGeo, this.materials.afterburnerCore);
-            core.position.set(0, 0, -1.25);
+            const core = new THREE.Mesh(coreGeo, M.afterburnerCore);
+            core.position.set(0, 0, -1.0);
             ab.add(core);
-            const plumeGeo = new THREE.ConeGeometry(0.55, 3.8, 16);
+            const plumeGeo = new THREE.ConeGeometry(0.44, 3.2, 18, 1, true);
             plumeGeo.rotateX(-Math.PI / 2);
-            const plume = new THREE.Mesh(plumeGeo, this.materials.afterburnerPlume);
-            plume.position.set(0, 0, -1.9);
+            const plume = new THREE.Mesh(plumeGeo, M.afterburnerPlume);
+            plume.position.set(0, 0, -1.6);
             ab.add(plume);
             return ab;
         };
-        this.afterburnersGroup.add(createAfterburnerPlume(-4.8));
-        this.afterburnersGroup.add(createAfterburnerPlume(4.8));
+        this.afterburnersGroup.add(buildAfterburner(-3.5));
+        this.afterburnersGroup.add(buildAfterburner(3.5));
         this.afterburnersGroup.visible = false;
         upgradeGroup.add(this.afterburnersGroup);
 
@@ -1482,66 +1813,39 @@ const GameWizard = (function() {
     updateTierUpgrades(usd) {
         if (!this.aircraftRootGroup) return;
 
+        // Tiến hoá theo ngân sách: càng cao → cánh khoẻ hơn, động cơ lớn hơn, hoàn thiện bóng hơn
+        let cfg;
         if (usd >= 50000) {
-            this.targets.wingletsScale = 1.0;
-            this.targets.cabinEmissive = 1.0;
-            this.targets.aircraftPitch = -0.06;
-            this.targets.afterburnerScale = 1.0;
-            this.targets.platformLedColor = 0xfbbf24;
-            if (this.materials.fuselage) {
-                this.materials.fuselage.metalness = 0.92;
-                this.materials.fuselage.roughness = 0.08;
-                this.materials.fuselage.color.setHex(0xffffff);
-            }
+            cfg = { winglets: 1, cabin: 1, engine: 1.24, pitch: -0.06, afterburner: 1,
+                    led: 0xfbbf24, metal: 0.94, rough: 0.06, color: 0xffffff, livery: true };
         } else if (usd >= 20000) {
-            this.targets.wingletsScale = 1.0;
-            this.targets.cabinEmissive = 1.0;
-            this.targets.aircraftPitch = 0;
-            this.targets.afterburnerScale = 0;
-            this.targets.platformLedColor = 0xf59e0b;
-            if (this.materials.fuselage) {
-                this.materials.fuselage.metalness = 0.75;
-                this.materials.fuselage.roughness = 0.16;
-                this.materials.fuselage.color.setHex(0xf8fafc);
-            }
+            cfg = { winglets: 1, cabin: 1, engine: 1.18, pitch: 0, afterburner: 0,
+                    led: 0xf59e0b, metal: 0.8, rough: 0.12, color: 0xf8fafc, livery: true };
         } else if (usd >= 8000) {
-            this.targets.wingletsScale = 0;
-            this.targets.cabinEmissive = 1.0;
-            this.targets.aircraftPitch = 0;
-            this.targets.afterburnerScale = 0;
-            this.targets.platformLedColor = 0x10b981;
-            if (this.materials.fuselage) {
-                this.materials.fuselage.metalness = 0.55;
-                this.materials.fuselage.roughness = 0.22;
-                this.materials.fuselage.color.setHex(0xf8fafc);
-            }
+            cfg = { winglets: 1, cabin: 1, engine: 1.12, pitch: 0, afterburner: 0,
+                    led: 0x10b981, metal: 0.62, rough: 0.18, color: 0xf8fafc, livery: false };
         } else if (usd >= 2500) {
-            this.targets.wingletsScale = 0;
-            this.targets.cabinEmissive = 0.0;
-            this.targets.aircraftPitch = 0;
-            this.targets.afterburnerScale = 0;
-            this.targets.platformLedColor = 0x3b82f6;
-            if (this.materials.fuselage) {
-                this.materials.fuselage.metalness = 0.42;
-                this.materials.fuselage.roughness = 0.26;
-                this.materials.fuselage.color.setHex(0xf8fafc);
-            }
+            cfg = { winglets: 1, cabin: 0, engine: 1.0, pitch: 0, afterburner: 0,
+                    led: 0x3b82f6, metal: 0.46, rough: 0.24, color: 0xf8fafc, livery: false };
         } else {
-            this.targets.wingletsScale = 0;
-            this.targets.cabinEmissive = 0.0;
-            this.targets.aircraftPitch = 0;
-            this.targets.afterburnerScale = 0;
-            this.targets.platformLedColor = 0x06b6d4;
-            if (this.materials.fuselage) {
-                this.materials.fuselage.metalness = 0.35;
-                this.materials.fuselage.roughness = 0.32;
-                this.materials.fuselage.color.setHex(0xf8fafc);
-            }
+            cfg = { winglets: 0, cabin: 0, engine: 0.88, pitch: 0, afterburner: 0,
+                    led: 0x06b6d4, metal: 0.34, rough: 0.3, color: 0xf8fafc, livery: false };
         }
 
-        if (this.liveryGroup) {
-            this.liveryGroup.visible = usd >= 20000;
+        this.targets.wingletsScale = cfg.winglets;
+        this.targets.cabinEmissive = cfg.cabin;
+        this.targets.engineScale = cfg.engine;
+        this.targets.aircraftPitch = cfg.pitch;
+        this.targets.afterburnerScale = cfg.afterburner;
+        this.targets.platformLedColor = cfg.led;
+
+        if (this.materials.fuselage) {
+            this.materials.fuselage.metalness = cfg.metal;
+            this.materials.fuselage.roughness = cfg.rough;
+            this.materials.fuselage.color.setHex(cfg.color);
         }
+
+        if (this.liveryGroup) this.liveryGroup.visible = cfg.livery;
     },
 
     animate() {
@@ -1549,10 +1853,20 @@ const GameWizard = (function() {
         const lerpRate = 0.08;
 
         if (this.wingletsGroup) {
-            const curWScale = this.wingletsGroup.scale.x;
-            const nextWScale = THREE.MathUtils.lerp(curWScale, this.targets.wingletsScale, lerpRate);
-            this.wingletsGroup.scale.set(nextWScale, nextWScale, nextWScale);
-            this.wingletsGroup.visible = nextWScale > 0.05;
+            const curW = this.wingletsGroup.userData.k ?? 0;
+            const nextW = THREE.MathUtils.lerp(curW, this.targets.wingletsScale, lerpRate);
+            this.wingletsGroup.userData.k = nextW;
+            this.wingletsGroup.children.forEach(m => m.scale.setScalar(Math.max(0.001, nextW)));
+            this.wingletsGroup.visible = nextW > 0.04;
+        }
+
+        if (this.engineNodes) {
+            const curE = this.engineNodes[0].userData.k ?? 0.9;
+            const nextE = THREE.MathUtils.lerp(curE, this.targets.engineScale, lerpRate);
+            this.engineNodes.forEach(e => {
+                e.userData.k = nextE;
+                e.scale.setScalar(nextE);
+            });
         }
 
         if (this.materials.cabinWindows) {
@@ -1573,7 +1887,7 @@ const GameWizard = (function() {
                 this.afterburnersGroup.visible = true;
                 const pulse = 1.0 + Math.sin(Date.now() * 0.03) * 0.14;
                 const baseScale = (this.targets.afterburnerScale || 1.0) * pulse;
-                this.afterburnersGroup.scale.set(baseScale, baseScale, baseScale * 1.3);
+                this.afterburnersGroup.children.forEach(c => c.scale.set(baseScale, baseScale, baseScale * 1.3));
             } else {
                 this.afterburnersGroup.visible = false;
             }
@@ -1629,9 +1943,12 @@ const GameWizard = (function() {
             const progress = frame / maxFrames;
             const easeProgress = progress * progress * 1.3;
 
-            this.aircraftRootGroup.position.z = -easeProgress * 50;
-            this.aircraftRootGroup.position.y = easeProgress * 15;
-            this.aircraftRootGroup.rotation.x = -0.22 - easeProgress * 0.15;
+            // Quay đầu ra xa camera rồi mới cất cánh (mũi hướng +Z)
+            const turn = Math.min(1, progress * 1.7);
+            this.aircraftRootGroup.rotation.y = turn * Math.PI;
+            this.aircraftRootGroup.position.z = -easeProgress * 52;
+            this.aircraftRootGroup.position.y = easeProgress * 16;
+            this.aircraftRootGroup.rotation.x = -0.18 - easeProgress * 0.12;
 
             if (this.camera) {
                 const rumble = (1 - progress) * (Math.random() - 0.5) * 0.25;

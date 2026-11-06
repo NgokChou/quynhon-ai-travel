@@ -580,6 +580,10 @@ const VietnamMap = (function () {
             els.zoomReset.addEventListener('click', () => resetView(true));
         }
 
+        if (els.backBtn) {
+            els.backBtn.addEventListener('click', () => setView('globe'));
+        }
+
         // --- view switch (province map / flight route) ------------------
         if (els.viewSwitch) {
             els.viewSwitch.addEventListener('click', e => {
@@ -602,17 +606,39 @@ const VietnamMap = (function () {
     }
 
     function setView(view) {
-        if (!els.viewSwitch) return;
         const isRoute = view === 'route';
+        const isProvince = view === 'province';
+        const isGlobe = view === 'globe';
 
-        els.viewSwitch.querySelectorAll('[data-view]').forEach(b => {
-            b.classList.toggle('is-active', b.getAttribute('data-view') === view);
-            b.setAttribute('aria-selected', b.getAttribute('data-view') === view ? 'true' : 'false');
-        });
+        if (els.viewSwitch) {
+            els.viewSwitch.querySelectorAll('[data-view]').forEach(b => {
+                const v = b.getAttribute('data-view');
+                // Bản đồ tỉnh là nhánh drill-down của tab quả cầu
+                const active = v === 'route' ? isRoute : !isRoute;
+                b.classList.toggle('is-active', active);
+                b.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
 
-        if (els.mapStage) els.mapStage.classList.toggle('is-route', isRoute);
+        if (els.globeView) els.globeView.hidden = !isGlobe;
         if (els.routeView) els.routeView.hidden = !isRoute;
-        if (els.vnMap) els.vnMap.hidden = isRoute;
+        if (els.vnMap) els.vnMap.hidden = !isProvince;
+        if (els.backBtn) els.backBtn.hidden = !isProvince;
+
+        const titleKey = isRoute ? 'mapTitleRoute' : isProvince ? 'mapTitleProvince' : 'mapTitleGlobe';
+        const subKey = isRoute ? 'mapSubtitleRoute' : isProvince ? 'mapSubtitleProvince' : 'mapSubtitleGlobe';
+        if (els.titleEl) {
+            els.titleEl.setAttribute('data-i18n', titleKey);
+            els.titleEl.textContent = t(titleKey, state.lang);
+        }
+        if (els.subtitleEl) {
+            els.subtitleEl.setAttribute('data-i18n', subKey);
+            els.subtitleEl.textContent = t(subKey, state.lang);
+        }
+
+        if (isGlobe && typeof GlobeMap !== 'undefined' && GlobeMap.onShow) {
+            setTimeout(() => GlobeMap.onShow(), 30);
+        }
 
         if (isRoute) {
             setTimeout(() => {
@@ -620,6 +646,16 @@ const VietnamMap = (function () {
                     MapController.refresh();
                 }
             }, 60);
+        }
+    }
+
+    /** Chuyển xuống bản đồ 34 tỉnh (gọi từ quả cầu khi bấm Việt Nam) */
+    function drillDown() {
+        setView('province');
+        resetView(false);
+        if (els.mapStage) {
+            els.mapStage.classList.add('is-drilling');
+            setTimeout(() => els.mapStage.classList.remove('is-drilling'), 520);
         }
     }
 
@@ -667,6 +703,10 @@ const VietnamMap = (function () {
         els.routeView = document.getElementById('route-view');
         els.routeMap = document.getElementById('route-map');
         els.vnMap = document.getElementById('vietnam-map');
+        els.globeView = document.getElementById('globe-view');
+        els.backBtn = document.getElementById('vn-back-to-globe');
+        els.titleEl = document.getElementById('map-title');
+        els.subtitleEl = document.getElementById('map-subtitle');
         els.canvas = document.querySelector('.vn-map-canvas');
 
         baseVB = { x: 0, y: 0, w: data.width, h: data.height };
@@ -679,14 +719,16 @@ const VietnamMap = (function () {
         applyVB();
         bindEvents();
         renderPanel();
-        setView('province');
+        setView('globe');
     }
 
     return {
         init: init,
         setLanguage: setLanguage,
         select: select,
-        resetView: resetView
+        resetView: resetView,
+        drillDown: drillDown,
+        setView: setView
     };
 })();
 

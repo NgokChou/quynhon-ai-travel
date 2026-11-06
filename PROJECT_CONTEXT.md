@@ -55,7 +55,8 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 | 10 | **Trang thuyết trình chuyên biệt (`pitch.html`)** | Màn hình tối giản tập trung vào quả cầu AI phát giọng nói giới thiệu dự án, kết nối qua cổng proxy server. | Hoàn thành | Dành riêng cho kịch bản pitching dự án. |
 | 11 | **Trang chào đón tại sân bay (`airport.html`)** | Màn hình dành cho thiết bị di động mô phỏng khi du khách vừa hạ cánh tại Sân bay Phù Cát, cho phép chọn xe Taxi, Shuttle để về thành phố. | Hoàn thành một phần | Giao diện đã có hiệu ứng chọn phương tiện, chưa chuyển tiếp đến màn hình chi tiết hoặc đặt xe. |
 | 12 | **Lộ trình tương lai (Startup Roadmap)** | Khối thông tin giới thiệu 4 định hướng phát triển sản phẩm tiếp theo (Vé thời gian thực, Tối ưu lộ trình tự động, Đặt chỗ 1 chạm, Trợ lý giọng nói 24/7). | Hoàn thành | Khối thông tin hiển thị rõ ràng trên giao diện. |
-| 13 | **Bản đồ chọn tỉnh thành (Vietnam Province Selection Map)** | Bản đồ 34 tỉnh thành dạng bản đồ game (địa hình olive, viền tỉnh tối, nhãn chữ vàng). Nhấn vào một vùng đã khoanh → vùng đó nổi bật, các vùng khác mờ đi, bảng thông tin bên cạnh hiện mô tả + 4 điểm đáng ghé thăm. Có phóng to/thu nhỏ, kéo bản đồ, chú giải vùng miền và song ngữ Anh - Việt. | Hoàn thành | Là chế độ xem mặc định của `#map-section`; tab "Đường bay" giữ nguyên bản đồ lộ trình cũ. |
+| 13 | **Bản đồ chọn tỉnh thành (Vietnam Province Selection Map)** | Bản đồ 34 tỉnh thành dạng bản đồ game (địa hình olive, viền tỉnh tối, nhãn chữ vàng). Nhấn vào một vùng đã khoanh → vùng đó nổi bật, các vùng khác mờ đi, bảng thông tin bên cạnh hiện mô tả + 4 điểm đáng ghé thăm. Có phóng to/thu nhỏ, kéo bản đồ, chú giải vùng miền và song ngữ Anh - Việt. | Hoàn thành | Là nhánh drill-down: bấm Việt Nam trên quả cầu 3D để mở, có nút "← Quả cầu" quay lại. |
+| 14 | **Quả cầu 3D tương tác (3D Interactive Globe)** | Quả cầu Trái Đất dùng ảnh vệ tinh Blue Marble 4096px, viền quốc gia, khí quyển phát sáng và nền sao. Kéo để xoay, cuộn để phóng to, bấm một quốc gia → nổi bật màu vàng và mở bảng thông tin (thủ đô, dân số, tiền tệ, ngôn ngữ, múi giờ + mô tả + điểm đáng ghé thăm). Tự xoay chậm khi rảnh. | Hoàn thành | 234 quốc gia & vùng lãnh thổ; 60 quốc gia có nội dung biên tập đầy đủ, phần còn lại dùng dữ liệu tự động. |
 
 ---
 
@@ -78,6 +79,9 @@ Dưới đây là bảng tổng hợp toàn bộ các chức năng đã được
 2. **Biểu tượng PWA trong `manifest.json`**: Đang dẫn tới file `/assets/airport-icon.png`, nhưng trong thư mục thực tế file ảnh đang có đuôi là `.jpg`.
 3. **Dữ liệu ranh giới bản đồ tỉnh thành**: `js/vietnamMapData.js` được sinh tự động từ bộ dữ liệu GADM 4.1 (miễn phí cho mục đích học thuật / phi thương mại). Khi đưa sản phẩm ra thương mại phải thay bằng nguồn dữ liệu được cấp phép (dữ liệu của Bộ NN&MT hoặc OpenStreetMap). Script sinh dữ liệu: `tools/build_map_data.py`.
 4. **Đơn vị hành chính 34 tỉnh**: Bản đồ dùng cơ cấu 34 đơn vị cấp tỉnh theo Nghị quyết 202/2025/QH15 (hiệu lực 12/06/2025). Bình Định đã gộp vào Gia Lai, trung tâm hành chính đặt tại Quy Nhơn. Một số nội dung tĩnh khác của app (ví dụ `destFixed: "Quy Nhơn, Bình Định"`) vẫn dùng tên cũ.
+5. **Dữ liệu quả cầu 3D**: `js/worldMapData.js` sinh từ Natural Earth 1:110m + 1:50m (phạm vi công cộng) và metadata thủ đô/tiền tệ/ngôn ngữ từ bộ `mledoze/countries` (giấy phép ODbL — cần ghi nguồn nếu phát hành thương mại). Ảnh Trái Đất `assets/earth-blue-marble.jpg` là Blue Marble của NASA (phạm vi công cộng), 4096×2048. Script sinh dữ liệu: `tools/build_globe_data.py`.
+6. **Dân số trên quả cầu**: lấy từ ước tính POP_EST của Natural Earth (khoảng 2019), riêng Việt Nam đã cập nhật 101 triệu. Panel ghi rõ "ước tính".
+7. **Quy ước chính trị**: Đài Loan, Hồng Kông, Ma Cao được gộp vào hình học Trung Quốc trong dữ liệu quả cầu; không tồn tại như quốc gia riêng.
 
 ---
 

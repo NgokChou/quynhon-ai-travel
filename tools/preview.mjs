@@ -144,6 +144,8 @@ function cleanup(code) {
         });
         if (res.exceptionDetails) {
             console.error('JS error:', JSON.stringify(res.exceptionDetails).slice(0, 600));
+        } else if (res.result && res.result.value !== undefined) {
+            console.log('JS result:', typeof res.result.value === 'string' ? res.result.value : JSON.stringify(res.result.value));
         }
         await new Promise(r => setTimeout(r, 700));
     }

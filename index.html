@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/vietnam-map.css">
+    <link rel="stylesheet" href="css/globe.css">
 </head>
 <body>
 
@@ -522,14 +523,14 @@
         <section id="map-section" class="section-block">
             <div class="section-heading-row">
                 <div>
-                    <h3 class="section-title" data-i18n="mapTitle">Explore Vietnam</h3>
-                    <p class="section-subtitle" data-i18n="mapSubtitle">Pick any province to see what it is worth a detour for.</p>
+                    <h3 id="map-title" class="section-title" data-i18n="mapTitleGlobe">Explore the World</h3>
+                    <p id="map-subtitle" class="section-subtitle" data-i18n="mapSubtitleGlobe">Spin the globe, then click any country to see what it is worth a visit for.</p>
                 </div>
 
                 <div id="map-view-switch" class="map-view-switch" role="tablist" aria-label="Map view">
-                    <button type="button" data-view="province" class="is-active" role="tab" aria-selected="true">
-                        <i class="fa-solid fa-map"></i>
-                        <span data-i18n="mapViewProvince">Province Map</span>
+                    <button type="button" data-view="globe" class="is-active" role="tab" aria-selected="true">
+                        <i class="fa-solid fa-earth-asia"></i>
+                        <span data-i18n="mapViewGlobe">Globe</span>
                     </button>
                     <button type="button" data-view="route" role="tab" aria-selected="false">
                         <i class="fa-solid fa-plane"></i>
@@ -541,12 +542,103 @@
             <div class="map-container-card">
                 <div id="map-stage" class="map-stage">
 
+                    <!-- 3D globe -->
+                    <div id="globe-view" class="globe-view">
+                        <div id="globe-canvas" class="globe-canvas">
+                            <canvas id="globe-canvas-el"></canvas>
+
+                            <div id="globe-loader" class="globe-loader">
+                                <span class="globe-loader-ring"></span>
+                                <span data-i18n="globeLoading">Loading satellite imagery…</span>
+                            </div>
+
+                            <div id="globe-tooltip" class="globe-tooltip" hidden></div>
+                            <div id="globe-focus-label" class="globe-focus-label" hidden></div>
+
+                            <div class="globe-hint">
+                                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                                <span data-i18n="globeHint">Drag to rotate · Scroll to zoom</span>
+                            </div>
+
+                            <div class="vn-zoom-controls">
+                                <button type="button" id="globe-zoom-in" class="vn-zoom-btn" aria-label="Zoom in">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" id="globe-zoom-out" class="vn-zoom-btn" aria-label="Zoom out">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <button type="button" id="globe-zoom-reset" class="vn-zoom-btn" aria-label="Reset view">
+                                    <i class="fa-solid fa-earth-asia"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <aside class="vn-panel globe-panel">
+                            <div id="globe-panel-empty" class="vn-panel-empty">
+                                <div class="vn-empty-icon">
+                                    <i class="fa-solid fa-earth-asia"></i>
+                                </div>
+                                <h4 data-i18n="globeEmptyTitle">Spin the globe</h4>
+                                <p data-i18n="globeEmptyText">Drag to rotate, scroll to zoom, then click any country to see what it is worth a visit for.</p>
+
+                                <ul class="vn-hints">
+                                    <li>
+                                        <i class="fa-solid fa-hand-pointer"></i>
+                                        <span data-i18n="globeHintClick">Click a country to open its panel</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                        <span data-i18n="globeHintZoom">Scroll or use + / − to zoom</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                                        <span data-i18n="globeHintDrag">Drag the globe to spin it</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div id="globe-panel-body" class="vn-panel-body" hidden>
+                                <div class="vn-panel-head">
+                                    <div class="vn-silhouette-box">
+                                        <svg id="globe-panel-silhouette" preserveAspectRatio="xMidYMid meet">
+                                            <path />
+                                        </svg>
+                                    </div>
+                                    <div class="vn-panel-titles">
+                                        <span id="globe-panel-region" class="vn-region-tag"></span>
+                                        <h4 id="globe-panel-name" class="vn-panel-name"></h4>
+                                        <span id="globe-panel-name-en" class="vn-panel-name-en"></span>
+                                    </div>
+                                </div>
+
+                                <ul id="globe-panel-stats" class="globe-stats"></ul>
+
+                                <p id="globe-panel-desc" class="vn-panel-desc"></p>
+
+                                <div id="globe-highlights" class="vn-highlights">
+                                    <h5 data-i18n="globeHighlights">Worth a visit</h5>
+                                    <ul id="globe-panel-list"></ul>
+                                </div>
+
+                                <button type="button" id="globe-drill-btn" class="globe-drill-btn" hidden>
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                    <span data-i18n="globeDrill">Explore the 34 provinces</span>
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+
                     <!-- Province selection map -->
-                    <div id="vietnam-map" class="vn-map">
+                    <div id="vietnam-map" class="vn-map" hidden>
                         <div class="vn-map-canvas">
                             <div class="vn-sea-glow" aria-hidden="true"></div>
                             <svg id="vn-map-svg" class="vn-svg" role="group"
                                  aria-label="Interactive map of the 34 provinces of Vietnam"></svg>
+
+                            <button type="button" id="vn-back-to-globe" class="vn-back-btn">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span data-i18n="backToGlobe">Globe</span>
+                            </button>
 
                             <span class="vn-sea-label" aria-hidden="true">BIỂN ĐÔNG</span>
 
@@ -779,12 +871,18 @@
     <!-- Leaflet.js CDN -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
+    <!-- Three.js CDN (3D globe) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.149.0/three.min.js"></script>
+
     <!-- Application Modules -->
     <script src="js/mockData.js"></script>
     <script src="js/pitchScript.js"></script>
     <script src="js/translations.js"></script>
     <script src="js/voice.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/worldMapData.js"></script>
+    <script src="js/worldRegions.js"></script>
+    <script src="js/globe.js"></script>
     <script src="js/vietnamMapData.js"></script>
     <script src="js/vietnamRegions.js"></script>
     <script src="js/vietnamMap.js"></script>

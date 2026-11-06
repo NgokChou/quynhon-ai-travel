@@ -271,11 +271,43 @@
     z-index: 2;
 }
 
+/* ---------- Back to globe -------------------------------------------- */
+.vn-back-btn {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-full);
+    background: rgba(8, 16, 22, 0.75);
+    border: 1px solid rgba(232, 196, 122, 0.28);
+    color: #e8c47a;
+    font-family: var(--font-main);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: var(--transition);
+}
+
+.vn-back-btn:hover {
+    background: rgba(232, 196, 122, 0.16);
+    border-color: rgba(232, 196, 122, 0.55);
+}
+
+.vn-back-btn[hidden] {
+    display: none;
+}
+
 /* ---------- Region legend on the sea -------------------------------- */
 .vn-legend {
     position: absolute;
     left: 22px;
-    top: 22px;
+    top: 70px;
     z-index: 2;
     padding: 11px 14px;
     border-radius: 10px;

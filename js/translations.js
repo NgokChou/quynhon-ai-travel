@@ -53,6 +53,32 @@ const TRANSLATIONS = {
         stepHotelTag: "STAY RECOMMENDATION",
         stepExploreTag: "DESTINATION EXPERIENCE",
 
+        // Globe Section
+        mapViewGlobe: "Globe",
+        globeLoading: "Loading satellite imagery…",
+        globeEmptyTitle: "Spin the globe",
+        globeEmptyText: "Drag to rotate, scroll to zoom, then click any country to see what it is worth a visit for.",
+        globeHintClick: "Click a country to open its panel",
+        globeHintZoom: "Scroll or use + / \u2212 to zoom",
+        globeHintDrag: "Drag the globe to spin it",
+        globeHint: "Drag to rotate \u00b7 Scroll to zoom",
+        globeHighlights: "Worth a visit",
+        globeDrill: "Explore the 34 provinces",
+        backToGlobe: "Globe",
+        globeStatCapital: "Capital",
+        globeStatPop: "Population (est.)",
+        globeStatCurrency: "Currency",
+        globeStatLanguage: "Language",
+        globeStatTimezone: "Time zone",
+
+        mapTitleGlobe: "Explore the World",
+        mapSubtitleGlobe: "Spin the globe, then click any country to see what it is worth a visit for.",
+        mapTitleProvince: "Explore Vietnam",
+        mapSubtitleProvince: "Pick any province to see what it is worth a detour for.",
+        mapTitleRoute: "Flight Route to Quy Nhon",
+        mapSubtitleRoute: "Global flight paths and scenic ground transfers from your country to Quy Nhon.",
+
+
         // Map Section
         mapTitle: "Explore Vietnam",
         mapSubtitle: "Pick any province to see what it is worth a detour for.",
@@ -132,6 +158,31 @@ const TRANSLATIONS = {
         stepTransferTag: "CHẶNG TRUNG CHUYỂN",
         stepHotelTag: "ĐIỂM NGHỈ DƯỠNG",
         stepExploreTag: "TRẢI NGHIỆM ĐIỂM ĐẾN",
+
+        // Globe Section
+        mapViewGlobe: "Quả cầu",
+        globeLoading: "Đang tải ảnh vệ tinh…",
+        globeEmptyTitle: "Xoay quả cầu",
+        globeEmptyText: "Kéo để xoay, cuộn để phóng to, rồi bấm vào một quốc gia để xem điều gì đáng để ghé thăm.",
+        globeHintClick: "Bấm vào một quốc gia để mở bảng thông tin",
+        globeHintZoom: "Cuộn hoặc dùng + / \u2212 để phóng to",
+        globeHintDrag: "Kéo quả cầu để xoay",
+        globeHint: "Kéo để xoay \u00b7 Cuộn để phóng to",
+        globeHighlights: "Đáng ghé thăm",
+        globeDrill: "Khám phá 34 tỉnh thành",
+        backToGlobe: "Quả cầu",
+        globeStatCapital: "Thủ đô",
+        globeStatPop: "Dân số (ước tính)",
+        globeStatCurrency: "Tiền tệ",
+        globeStatLanguage: "Ngôn ngữ",
+        globeStatTimezone: "Múi giờ",
+
+        mapTitleGlobe: "Khám Phá Thế Giới",
+        mapSubtitleGlobe: "Xoay quả cầu, rồi bấm vào một quốc gia để xem điều gì đáng để ghé thăm.",
+        mapTitleProvince: "Khám Phá Việt Nam",
+        mapSubtitleProvince: "Chọn một tỉnh thành để xem điều gì đáng để ghé thăm.",
+        mapTitleRoute: "Đường Bay Đến Quy Nhơn",
+        mapSubtitleRoute: "Chặng bay quốc tế và cung đường trung chuyển từ quốc gia của bạn đến Quy Nhơn.",
 
         // Map Section
         mapTitle: "Khám Phá Việt Nam",

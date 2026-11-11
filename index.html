@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome 6 (Free CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -163,7 +163,379 @@
                 </div>
 
                 <!-- Feature 0: Kurzgesagt Interactive 2D Game Booking Wizard -->
-                <div id="game-booking-wizard-container"></div>
+                <div id="game-booking-wizard-container">
+
+                <!-- Unified Tactical Explorer & 3D Budget Showroom (Sprint C.4 Integration) -->
+                <div class="game-wizard-shell" id="unified-game-wizard">
+                    <header class="top-navbar">
+                            <div class="step-badge">
+                                <div class="step-number" id="step-number-badge">1</div>
+                                <h1 class="step-title" id="step-title-text">Chọn Điểm Khởi Hành</h1>
+                            </div>
+                    
+                            <nav class="step-crumbs">
+                                <div class="crumb-item active" id="crumb-step-1"><i class="fa-solid fa-plane-departure"></i> 1. Khởi hành</div>
+                                <div class="crumb-item" id="crumb-step-2"><i class="fa-solid fa-location-dot"></i> 2. Điểm đến (VN)</div>
+                                <div class="crumb-item" id="crumb-step-3"><i class="fa-solid fa-coins"></i> 3. Ngân sách</div>
+                            </nav>
+                    
+                            <div class="brand-logo">
+                                <i class="fa-solid fa-plane"></i>
+                                <span>Quy Nhon AI</span>
+                            </div>
+                        </header>
+                    
+                        <!-- Main Workspace Grid -->
+                        <main class="workspace-grid">
+                            <!-- Map Canvas Viewport -->
+                            <section class="map-section" id="stage-map-section">
+                                <div id="pixi-map-container"></div>
+                    
+                                <!-- Compass Rose Watermark -->
+                                <svg class="compass-watermark" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="2 3"/>
+                                    <circle cx="50" cy="50" r="35" fill="none" stroke="#ffd700" stroke-width="1"/>
+                                    <polygon points="50,5 56,44 50,38 44,44" fill="#ffd700"/>
+                                    <polygon points="50,95 56,56 50,62 44,56" fill="#8ea2b9"/>
+                                    <polygon points="5,50 44,44 38,50 44,56" fill="#8ea2b9"/>
+                                    <polygon points="95,50 56,44 62,50 56,56" fill="#8ea2b9"/>
+                                    <text x="50" y="2" fill="#ffd700" font-size="9" font-weight="bold" text-anchor="middle">N</text>
+                                </svg>
+                    
+                                <!-- Map View Controls -->
+                                <div class="map-controls-box">
+                                    <button class="ctrl-btn" id="btn-zoom-in" title="Phóng to (Zoom In)"><i class="fa-solid fa-plus"></i></button>
+                                    <button class="ctrl-btn" id="btn-zoom-out" title="Thu nhỏ (Zoom Out)"><i class="fa-solid fa-minus"></i></button>
+                                    <button class="ctrl-btn" id="btn-reset-view" title="Đặt lại góc nhìn (Reset)"><i class="fa-solid fa-rotate-left"></i></button>
+                                    <button class="ctrl-btn" id="btn-fullscreen" title="Toàn màn hình"><i class="fa-solid fa-expand"></i></button>
+                                </div>
+                    
+                                <!-- Live Telemetry Pill -->
+                                <div class="telemetry-pill">
+                                    <span>FPS: <strong id="val-fps">60</strong></span>
+                                    <span>Zoom: <strong id="val-zoom">1.0x</strong></span>
+                                    <span>Tuyến: <strong id="val-route">FRA → UIH</strong></span>
+                                </div>
+                    
+                                <!-- Tooltip -->
+                                <div class="map-tooltip" id="map-tooltip"></div>
+                            </section>
+                    
+                            <!-- 3D Piggy Bank Showroom Viewport (Step 3) -->
+                            <section class="showroom-section" id="showroom-section" style="display: none;">
+                                <div id="showroom-canvas-container"></div>
+                    
+                                <!-- Showroom HUD Tier & Model Overlay -->
+                                <div class="showroom-hud-card">
+                                    <div class="hud-tier-tag" id="hud-tier-tag">TIER 2 • COMFORT VOYAGE</div>
+                                    <div class="hud-model-name" id="hud-model-name">Heo Đất Tròn Trĩnh (Tiện Nghi)</div>
+                                    <div class="hud-spec-pill" id="hud-spec-pill">48 xu vàng • 8 tờ USD & cọc tiền • Khách sạn 3–4 sao</div>
+                                </div>
+                    
+                                <!-- Showroom Top Right Controls (Sound Toggle + Route Badge) -->
+                                <div class="showroom-top-controls">
+                                    <button type="button" class="showroom-sound-btn" id="btn-sound-toggle" title="Bật/Tắt âm thanh xu rơi" aria-label="Bật/Tắt âm thanh">
+                                        <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                                        <span id="sound-label">ÂM THANH</span>
+                                    </button>
+                                    <div class="showroom-route-badge" id="showroom-route-badge">
+                                        <i class="fa-solid fa-route"></i>
+                                        <span id="showroom-route-text">HND ➔ UIH</span>
+                                    </div>
+                                </div>
+                    
+                                <!-- 3D Hint -->
+                                <div class="showroom-hint">
+                                    <i class="fa-solid fa-coins" style="color: var(--gold);"></i> Kéo thanh ngân sách để nạp tiền vàng & đô la vào heo đất
+                                </div>
+                            </section>
+                    
+                            <!-- Control Hub (Bottom Sheet on Mobile) -->
+                            <aside class="control-panel" id="control-panel">
+                                <div class="sheet-handle"></div>
+                    
+                                <!-- STEP 1 VIEW: CHỌN ĐIỂM KHỞI HÀNH -->
+                                <div class="step-view" id="step-1-view">
+                                    <div class="panel-header-box">
+                                        <div class="panel-header-icon">
+                                            <i class="fa-solid fa-globe"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="panel-title">WHERE ARE YOU FLYING FROM?</h2>
+                                            <p class="panel-subtitle">Chọn quốc gia và sân bay khởi hành của bạn</p>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- Autocomplete Search Bar -->
+                                    <div class="search-box-container">
+                                        <div class="search-input-wrapper">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                            <input type="text" id="country-search-input" class="search-input" placeholder="Nhập tên nước (ví dụ: Germany, Japan, Bỉ, Đức...)" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+                                        </div>
+                                        <div class="search-dropdown" id="search-dropdown"></div>
+                                    </div>
+                    
+                                    <!-- 11 Supported Departure Country Chips -->
+                                    <div class="countries-grid-section-title">
+                                        <i class="fa-solid fa-plane-departure" style="color: var(--gold);"></i> 11 Quốc Gia Được Hỗ Trợ Bay Thẳng
+                                    </div>
+                                    <div class="country-chips-grid" id="country-chips-grid"></div>
+                    
+                                    <!-- Select Departure Airport Section -->
+                                    <div class="airport-section">
+                                        <div class="airport-header">
+                                            <i class="fa-solid fa-plane-up" style="color: var(--gold);"></i> Chọn Sân Bay Khởi Hành <span style="font-size:10px;color:var(--gold-light);font-weight:600;margin-left:auto;">(Tự động bay đến VN khi chọn)</span>
+                                        </div>
+                                        <div class="airport-list" id="departure-airport-list"></div>
+                                    </div>
+                    
+                                    <!-- To Step 2 Button -->
+                                    <div class="btn-row">
+                                        <button class="confirm-btn" id="btn-to-step-2">
+                                            <span>TIẾP TỤC ĐẾN VIỆT NAM</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                    
+                                <!-- STEP 2 VIEW: CHỌN SÂN BAY ĐẾN TẠI VIỆT NAM -->
+                                <div class="step-view" id="step-2-view" style="display: none;">
+                                    <div class="panel-header-box">
+                                        <div class="panel-header-icon" style="border-color: #00e5ff; color: #00e5ff; background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 229, 255, 0.05) 70%);">
+                                            <i class="fa-solid fa-plane-arrival"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="panel-title">WHERE IN VIETNAM?</h2>
+                                            <p class="panel-subtitle">Chọn sân bay đến tại Việt Nam của bạn</p>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- Vietnam Destination Airports List -->
+                                    <div class="airport-section">
+                                        <div class="airport-header">
+                                            <i class="fa-solid fa-map-pin" style="color: var(--gold);"></i> Sân Bay Đích Đến Tại Việt Nam
+                                        </div>
+                                        <div class="destination-list" id="destination-airport-list"></div>
+                                    </div>
+                    
+                                    <!-- Itinerary Summary Box -->
+                                    <div class="itinerary-summary-card" id="itinerary-summary-card">
+                                        <div class="itinerary-summary-header">
+                                            <span>TÓM TẮT HÀNH TRÌNH BAY</span>
+                                            <span style="color: #69f0ae;"><i class="fa-solid fa-circle-check"></i> ĐÃ KẾT NỐI</span>
+                                        </div>
+                                        <div class="itinerary-route-display">
+                                            <div class="route-node">
+                                                <span class="node-code" id="summary-orig-code">FRA</span>
+                                                <span class="node-city" id="summary-orig-city">Frankfurt (Đức)</span>
+                                            </div>
+                                            <div class="route-arrow">
+                                                <i class="fa-solid fa-plane"></i>
+                                                <span class="flight-tag">BAY THẲNG</span>
+                                            </div>
+                                            <div class="route-node" style="text-align: right;">
+                                                <span class="node-code" id="summary-dest-code" style="color: var(--gold);">UIH</span>
+                                                <span class="node-city" id="summary-dest-city">Quy Nhơn (Việt Nam)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- Action Button Row -->
+                                    <div class="btn-row">
+                                        <button class="back-btn" id="btn-back-to-step-1" title="Quay lại chọn điểm khởi hành">
+                                            <i class="fa-solid fa-arrow-left"></i>
+                                            <span>ĐỔI ĐIỂM ĐI</span>
+                                        </button>
+                                        <button class="confirm-btn" id="btn-confirm-final">
+                                            <span>XÁC NHẬN HÀNH TRÌNH</span>
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                    
+                                <!-- STEP 3 VIEW: CẤU HÌNH NGÂN SÁCH & PHI CƠ 3D -->
+                                <div class="step-view" id="step-3-view" style="display: none;">
+                                    <div class="panel-header-box">
+                                        <div class="panel-header-icon" style="background: rgba(255, 215, 0, 0.15); color: var(--gold); border-color: rgba(255, 215, 0, 0.4);">
+                                            <i class="fa-solid fa-coins"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="panel-title">BUDGET & PIGGY BANK EXPERIENCE</h2>
+                                            <p class="panel-subtitle">Điều chỉnh ngân sách chuyến đi và tích lũy heo đất 3D thời gian thực</p>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- MODULE 1: MAIN BUDGET (MASTER BUDGET HUB) -->
+                                    <div class="dashboard-module-card" id="module-main-budget">
+                                        <div class="module-header-row">
+                                            <span class="module-title-badge">
+                                                <i class="fa-solid fa-vault" style="color: var(--gold);"></i>
+                                                <span>1. NGÂN SÁCH CHỦ ĐẠO</span>
+                                            </span>
+                                            <span class="module-piggy-hint"><i class="fa-solid fa-piggy-bank"></i> Tích lũy Heo Đất 3D</span>
+                                        </div>
+                    
+                                        <!-- Currency Selector Chips -->
+                                        <div class="budget-subgroup">
+                                            <label class="budget-section-label">
+                                                <i class="fa-solid fa-money-bill-transfer" style="color: var(--cyan);"></i>
+                                                <span>ĐƠN VỊ TIỀN TỆ HIỂN THỊ</span>
+                                            </label>
+                                            <div class="currency-chips-grid" id="currency-chips-grid"></div>
+                                            <div class="currency-note-text" id="currency-note-text">
+                                                * Tỷ giá tham khảo (Cập nhật Q4/2026) • Đơn vị tiền tệ cơ sở: USD
+                                            </div>
+                                        </div>
+                    
+                                        <!-- Budget Numeric Input & Range Slider -->
+                                        <div class="budget-subgroup">
+                                            <div class="budget-label-row">
+                                                <label class="budget-section-label" for="budget-number-input">
+                                                    <i class="fa-solid fa-wallet" style="color: var(--gold);"></i>
+                                                    <span>TỔNG NGÂN SÁCH CHUYẾN ĐI</span>
+                                                </label>
+                                                <span class="budget-usd-pill" id="budget-usd-pill">≈ $2,500 USD</span>
+                                            </div>
+                    
+                                            <div class="budget-input-wrapper">
+                                                <span class="budget-currency-symbol" id="budget-cur-symbol">$</span>
+                                                <input type="text" inputmode="numeric" id="budget-number-input" class="budget-number-input" value="2,500" placeholder="2,500" autocomplete="off" />
+                                                <span class="budget-currency-badge" id="budget-cur-code">USD</span>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- Range Slider -->
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="budget-range-slider" class="budget-range-slider" min="500" max="50000" step="100" value="2500" />
+                                            <div class="slider-extremes-row">
+                                                <span id="slider-min-label">$500</span>
+                                                <span id="slider-max-label">$50,000</span>
+                                            </div>
+                                        </div>
+                    
+                                        <!-- 5 Quick Presets Bar -->
+                                        <div class="budget-subgroup">
+                                            <label class="budget-section-label">
+                                                <i class="fa-solid fa-bolt" style="color: #ff9800;"></i>
+                                                <span>CHỌN NHANH CẤP ĐỘ NGÂN SÁCH</span>
+                                            </label>
+                                            <div class="preset-chips-row" id="preset-chips-row"></div>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- MODULE 2: TRIP CONFIGURATION & EXPERIENCE -->
+                                    <div class="dashboard-module-card" id="module-trip-config">
+                                        <div class="module-header-row">
+                                            <span class="module-title-badge">
+                                                <i class="fa-solid fa-sliders" style="color: #818cf8;"></i>
+                                                <span>2. THÔNG SỐ CHUYẾN ĐI & HẠNG DỊCH VỤ</span>
+                                            </span>
+                                        </div>
+                    
+                                        <!-- Trip Parameters: Guests & Duration Steppers -->
+                                        <div class="trip-params-grid">
+                                            <!-- Guests Stepper -->
+                                            <div class="param-card">
+                                                <span class="param-label"><i class="fa-solid fa-user-group"></i> Số khách:</span>
+                                                <div class="stepper-box">
+                                                    <button type="button" class="stepper-btn" id="btn-guest-minus" title="Giảm khách"><i class="fa-solid fa-minus"></i></button>
+                                                    <span class="stepper-value" id="val-guests">1 khách</span>
+                                                    <button type="button" class="stepper-btn" id="btn-guest-plus" title="Tăng khách"><i class="fa-solid fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                            <!-- Duration Stepper -->
+                                            <div class="param-card">
+                                                <span class="param-label"><i class="fa-solid fa-calendar-day"></i> Thời gian:</span>
+                                                <div class="stepper-box">
+                                                    <button type="button" class="stepper-btn" id="btn-days-minus" title="Giảm ngày"><i class="fa-solid fa-minus"></i></button>
+                                                    <span class="stepper-value" id="val-days">5 ngày</span>
+                                                    <button type="button" class="stepper-btn" id="btn-days-plus" title="Tăng ngày"><i class="fa-solid fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="param-hint-text">
+                                            * Tăng số khách sẽ tăng chi phí vé bay & ăn uống; tăng số ngày sẽ tăng chi phí lưu trú & trải nghiệm.
+                                        </div>
+                    
+                                        <!-- Experience Tier Card -->
+                                        <div class="exp-tier-card" id="exp-tier-card">
+                                            <div class="exp-tier-header">
+                                                <span class="exp-tier-badge" id="exp-tier-badge">TIER 2 • COMFORT VOYAGE</span>
+                                                <span class="exp-tier-usd" id="exp-tier-usd-range">$2,500 – $7,999 USD</span>
+                                            </div>
+                                            <p class="exp-tier-desc" id="exp-tier-desc">Khách sạn 3–4 sao ngắm trọn vịnh biển Quy Nhơn, xe đưa đón sân bay Phù Cát, tiệc hải sản tươi sống & cafe vịnh.</p>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- MODULE 3: BUDGET ALLOCATION BREAKDOWN -->
+                                    <div class="dashboard-module-card" id="module-budget-allocation">
+                                        <div class="module-header-row">
+                                            <span class="module-title-badge">
+                                                <i class="fa-solid fa-chart-pie" style="color: #34d399;"></i>
+                                                <span>3. PHÂN BỔ NGÂN SÁCH (6 HẠNG MỤC)</span>
+                                            </span>
+                                            <span class="alloc-check-pill" id="alloc-check-pill"><i class="fa-solid fa-check"></i> 100% Khép kín</span>
+                                        </div>
+                    
+                                        <!-- Multi-segment progress bar -->
+                                        <div class="allocation-progress-bar" id="alloc-progress-bar"></div>
+                    
+                                        <!-- Categories Grid -->
+                                        <div class="allocation-items-grid" id="alloc-items-grid"></div>
+                    
+                                        <div class="alloc-disclaimer">
+                                            * Ước tính phân bổ minh họa theo ngân sách chuyến đi. Tham khảo, không phải báo giá vé máy bay hoặc khách sạn cam kết.
+                                        </div>
+                                    </div>
+                    
+                                    <!-- Secondary Back Action -->
+                                    <div class="step3-secondary-actions">
+                                        <button class="back-btn" id="btn-back-to-step-2" title="Quay lại chọn điểm đến">
+                                            <i class="fa-solid fa-arrow-left"></i>
+                                            <span>ĐỔI ĐIỂM ĐẾN</span>
+                                        </button>
+                                    </div>
+                    
+                                    <!-- STICKY BOTTOM ACTION BAR (Casual Tycoon Console) -->
+                                    <div class="sticky-action-bar" id="sticky-action-bar">
+                                        <div class="sticky-bar-content">
+                                            <div class="sticky-budget-summary">
+                                                <span class="sticky-budget-label">TỔNG NGÂN SÁCH</span>
+                                                <div class="sticky-budget-value-row">
+                                                    <span class="sticky-budget-amount" id="sticky-budget-amount">$2,500</span>
+                                                    <span class="sticky-budget-currency" id="sticky-budget-currency">USD</span>
+                                                </div>
+                                            </div>
+                                            <button class="confirm-btn sticky-launch-btn" id="btn-launch-final-plan">
+                                                <span>XUẤT XƯỞNG AI</span>
+                                                <i class="fa-solid fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </main>
+                        <!-- Toast Notification -->
+                        <div class="toast-notification" id="toast-notify">
+                            <i class="fa-solid fa-circle-info" style="color: #64b5f6;"></i>
+                            <span id="toast-text">Tuyến bay từ quốc gia này đang được cập nhật lịch trình.</span>
+                        </div>
+
+                        <!-- Journey Confirmed Modal Dialog -->
+                        <div class="modal-overlay" id="confirm-modal">
+                            <div class="modal-card">
+                                <div class="modal-icon"><i class="fa-solid fa-route"></i></div>
+                                <h3 class="modal-title">HÀNH TRÌNH ĐÃ XÁC NHẬN!</h3>
+                                <p class="modal-desc">Sân bay khởi hành và sân bay đến tại Việt Nam đã sẵn sàng. Toàn bộ lộ trình đã được kết nối mượt mà trên bản đồ 2.5D.</p>
+                                <div class="modal-route-box" id="modal-route-text">
+                                    FRA (Frankfurt) ➔ UIH (Quy Nhơn)
+                                </div>
+                                <button class="modal-close-btn" id="btn-close-modal">TIẾP TỤC BƯỚC TIẾP THEO</button>
+                            </div>
+                        </div>
+                </div>
+
+                </div>
 
                 <div class="planner-header-group" style="display: none;">
                     <h3 class="section-title" data-i18n="plannerTitle">AI Journey Planner</h3>
@@ -868,9 +1240,14 @@
     <script src="js/aiSimulator.js"></script>
     <script src="js/app.js"></script>
     <!-- Three.js 3D Engine (Local, Offline) -->
+    <!-- 2.5D PixiJS & 3D Three.js Engines (Local, Offline) -->
+    <script src="js/lib/pixi.min.js"></script>
     <script src="js/lib/three.min.js"></script>
     <script src="js/worldMapData.js"></script>
     <script src="js/worldRegions.js"></script>
+    <script src="js/vietnamDetailedData.js"></script>
+    <script src="js/prototypeMap25D.js"></script>
+    <script src="js/prototypeBudgetShowroom.js"></script>
     <script src="js/gameWizard.js"></script>
 </body>
 </html>

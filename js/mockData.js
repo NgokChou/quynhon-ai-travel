@@ -1909,7 +1909,12 @@ function generateAISummary(options = {}) {
         routeType = 'fastest',
         preferences = ['beaches', 'food', 'culture'],
         lang = 'en',
-        destinationId = 'quynhon'
+        destinationId = 'quynhon',
+        originIso = null,
+        originAirport = null,
+        originCountryName = null,
+        originCountryVi = null,
+        isFallback = false
     } = options;
 
     const numBudget = Number(String(budget).replace(/,/g, '')) || 2000;
@@ -1917,20 +1922,44 @@ function generateAISummary(options = {}) {
     const isVi = lang === 'vi';
 
     // 1. Lời chào cá nhân hóa theo từng quốc gia
-    const greetings = {
-        belgium: { en: "Welcome from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
-        france: { en: "Bonjour from France!", vi: "Bonjour từ nước Pháp!" },
-        germany: { en: "Guten Tag from Germany!", vi: "Guten Tag từ nước Đức!" },
-        usa: { en: "Welcome from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
-        australia: { en: "G'day from Australia!", vi: "G'day từ nước Úc!" },
-        japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" },
-        vietnam: { en: "Welcome to Quy Nhon!", vi: "Chào mừng quý khách đến với Quy Nhơn!" }
-    };
-    const greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách!" : "Welcome traveler!");
+    let greetingText = "";
+    if (originIso === 'VNM' || countryId === 'vietnam') {
+        greetingText = isVi ? "Chào mừng quý khách đến với hành trình khám phá Quy Nhơn!" : "Welcome to your Quy Nhon journey!";
+    } else if (originIso === 'GBR') {
+        greetingText = isVi ? "Chào mừng quý khách từ Vương Quốc Anh!" : "Welcome traveler from the United Kingdom!";
+    } else if (originIso === 'KOR') {
+        greetingText = isVi ? "Chào mừng quý khách từ Hàn Quốc!" : "Welcome traveler from South Korea!";
+    } else if (originIso === 'SGP') {
+        greetingText = isVi ? "Chào mừng quý khách từ Singapore!" : "Welcome traveler from Singapore!";
+    } else if (originIso === 'CHN') {
+        greetingText = isVi ? "Chào mừng quý khách từ Trung Quốc!" : "Welcome traveler from China!";
+    } else {
+        const greetings = {
+            belgium: { en: "Welcome from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
+            france: { en: "Bonjour from France!", vi: "Bonjour từ nước Pháp!" },
+            germany: { en: "Guten Tag from Germany!", vi: "Guten Tag từ nước Đức!" },
+            usa: { en: "Welcome from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
+            australia: { en: "G'day from Australia!", vi: "G'day từ nước Úc!" },
+            japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" },
+            vietnam: { en: "Welcome to Quy Nhon!", vi: "Chào mừng quý khách đến với Quy Nhơn!" }
+        };
+        greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách!" : "Welcome traveler!");
+    }
 
     // 2. Phân tích tuyến đường kèm ước lượng thời gian Sân bay Phù Cát -> Quy Nhơn (40-45 phút, ~35 km)
     let routeAnalysis = "";
-    if (routeType === 'fastest') {
+    if (originIso === 'VNM' || countryId === 'vietnam') {
+        const origCode = (originAirport && originAirport.code) ? originAirport.code : 'HAN';
+        const origCity = (originAirport && originAirport.city) ? originAirport.city : (isVi ? 'Hà Nội' : 'Hanoi');
+        routeAnalysis = isVi
+            ? `Lộ trình nội địa (Kịch bản minh họa): Chuyến bay thẳng từ ${origCity} (${origCode}) đến Sân bay Phù Cát (UIH), sau đó di chuyển về trung tâm Quy Nhơn. (Lưu ý: Dữ liệu lịch trình đang ở chế độ minh họa khu vực).`
+            : `Domestic route (Illustrative scenario): Direct flight from ${origCity} (${origCode}) to Phu Cat Airport (UIH), followed by ground transfer to Quy Nhon city center. (Note: Route schedule is in regional illustrative mode).`;
+    } else if (isFallback && ['GBR', 'KOR', 'SGP', 'CHN'].includes(originIso)) {
+        const countryDisplayName = isVi ? (originCountryVi || originIso) : (originCountryName || originIso);
+        routeAnalysis = isVi
+            ? `Lộ trình đề xuất (Kịch bản minh họa khu vực): Tuyến kết nối từ ${countryDisplayName} đến Sân bay Phù Cát (UIH) kết hợp xe đưa đón về trung tâm Quy Nhơn. Lịch trình chi tiết đang hiển thị theo kịch bản minh họa khu vực.`
+            : `Recommended route (Regional illustrative scenario): Transit connection from ${countryDisplayName} to Phu Cat Airport (UIH) paired with transfer into Quy Nhon. Detailed transit stages are displayed under a regional illustrative scenario.`;
+    } else if (routeType === 'fastest') {
         if (countryId === 'france') {
             routeAnalysis = isVi
                 ? "Lộ trình nhanh nhất: Bay từ Paris đến Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó đi xe đưa đón khoảng 40-45 phút (~35 km) về trung tâm Quy Nhơn."
@@ -1951,7 +1980,7 @@ function generateAISummary(options = {}) {
             routeAnalysis = isVi
                 ? "Lộ trình nhanh nhất: Bay thẳng 5.5 giờ đến Hà Nội (HAN) nối chuyến về Sân bay Phù Cát (UIH), sau đó đi xe 40-45 phút (~35 km) về trung tâm Quy Nhơn."
                 : "Fastest route: Direct 5.5h flight to Hanoi (HAN) connecting to Phu Cat Airport (UIH), followed by a 40-45 min transfer (~35 km) into Quy Nhon.";
-        } else { // Belgium, Vietnam & default
+        } else { // Belgium & default
             routeAnalysis = isVi
                 ? "Lộ trình nhanh nhất: Bay qua Hà Nội (HAN) nối chuyến thẳng đến Sân bay Phù Cát (UIH), sau đó đi xe đưa đón khoảng 40-45 phút (~35 km) về trung tâm Quy Nhơn."
                 : "Fastest route: Fly via Hanoi (HAN) with a direct flight to Phu Cat Airport (UIH), followed by a 40-45 min transfer (~35 km) to downtown Quy Nhon.";

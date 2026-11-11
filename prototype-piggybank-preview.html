@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Quy Nhon AI Travel – Piggy Bank Growth Game Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0c0a1d;
+            --bg-card: rgba(18, 15, 40, 0.84);
+            --bg-card-border: rgba(255, 255, 255, 0.14);
+            --pink-base: #ff8fab;
+            --pink-deep: #f43f5e;
+            --gold-bright: #ffd700;
+            --gold-warm: #f59e0b;
+            --cyan-accent: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 3D Viewport Full Screen */
+        #viewport-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #piggy-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Soft Vignette Overlay */
+        .vignette-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background: radial-gradient(circle at 50% 40%, transparent 45%, rgba(12, 10, 29, 0.4) 80%, rgba(12, 10, 29, 0.9) 100%);
+        }
+
+        /* Top Floating HUD */
+        .top-hud {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .brand-badge {
+            pointer-events: auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--bg-card-border);
+            padding: 8px 16px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand-badge .icon {
+            font-size: 22px;
+            animation: gentle-bob 3s ease-in-out infinite;
+        }
+
+        .brand-badge .title {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-badge .sub {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--pink-base);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hud-actions {
+            pointer-events: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .hud-btn {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--bg-card-border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .hud-btn:hover {
+            border-color: var(--gold-bright);
+            transform: translateY(-1px);
+            background: rgba(30, 25, 60, 0.95);
+        }
+
+        .hud-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* 3D Floating Viewport Tools */
+        .viewport-float-tools {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .float-tool-btn {
+            background: rgba(18, 15, 40, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+            transition: all 0.2s;
+        }
+
+        .float-tool-btn:hover {
+            border-color: var(--gold-bright);
+            transform: scale(1.1);
+            box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
+        }
+
+        .float-tool-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Floating Score Popups */
+        .score-popup-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 15;
+            overflow: hidden;
+        }
+
+        .score-floater {
+            position: absolute;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--gold-bright);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85), 0 0 16px rgba(255, 215, 0, 0.6);
+            transform: translate(-50%, -50%);
+            animation: score-float 1.1s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes score-float {
+            0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+            20% { opacity: 1; transform: translate(-50%, -18px) scale(1.15); }
+            80% { opacity: 1; transform: translate(-50%, -50px) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -75px) scale(0.85); }
+        }
+
+        /* Bottom Command Deck */
+        .bottom-command-deck {
+            position: absolute;
+            bottom: 18px;
+            left: 20px;
+            right: 20px;
+            max-width: 860px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 24px;
+            padding: 14px 18px;
+            z-index: 10;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .deck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tier-indicator-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .tier-indicator-pill.tier-1 { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .tier-indicator-pill.tier-2 { border-color: #34d399; background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .tier-indicator-pill.tier-3 { border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tier-indicator-pill.tier-4 { border-color: #ec4899; background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+        .tier-indicator-pill.tier-5 { border-color: #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(245, 158, 11, 0.25)); color: #ffd700; box-shadow: 0 0 16px rgba(255, 215, 0, 0.35); }
+
+        .budget-amount-display {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .budget-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 40%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .budget-sub {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Slider Row with Active Coin Hint */
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-wrap {
+            position: relative;
+            flex: 1;
+            height: 28px;
+            display: flex;
+            align-items: center;
+        }
+
+        .budget-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .budget-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff 10%, #ffd700 70%, #d97706 100%);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 14px rgba(255, 215, 0, 0.6), 0 2px 6px rgba(0,0,0,0.5);
+            cursor: grab;
+            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .budget-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.18);
+        }
+
+        .budget-slider::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.28);
+        }
+
+        .coin-hint-tag {
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            color: var(--gold-bright);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        /* Tier Quick Select Pills */
+        .tier-pills-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .tier-select-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-sub);
+            padding: 7px 5px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .tier-select-btn .pill-icon {
+            font-size: 14px;
+        }
+
+        .tier-select-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tier-select-btn.active {
+            background: linear-gradient(135deg, rgba(255, 143, 171, 0.25), rgba(244, 63, 94, 0.25));
+            border-color: var(--pink-base);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+        }
+
+        .tier-select-btn.active.tier-5 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(245, 158, 11, 0.3));
+            border-color: var(--gold-bright);
+            color: var(--gold-bright);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.35);
+        }
+
+        /* Travel Flavor Strip */
+        .travel-flavor-strip {
+            background: rgba(0, 0, 0, 0.28);
+            border-radius: 10px;
+            padding: 7px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            border-left: 3px solid var(--pink-base);
+        }
+
+        .travel-flavor-strip .icon {
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .travel-flavor-strip .text {
+            color: #cbd5e1;
+            line-height: 1.35;
+            flex: 1;
+        }
+
+        .travel-flavor-strip .text strong {
+            color: #fff;
+        }
+
+        /* Mobile Breakpoints (360x800, 390x844, 412x915) */
+        @media (max-width: 768px) {
+            .top-hud {
+                top: 10px;
+                left: 12px;
+                right: 12px;
+            }
+
+            .brand-badge {
+                padding: 6px 12px;
+                gap: 8px;
+            }
+
+            .brand-badge .icon {
+                font-size: 18px;
+            }
+
+            .brand-badge .title {
+                font-size: 11px;
+            }
+
+            .hud-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
+            .viewport-float-tools {
+                left: 10px;
+                top: 40%;
+            }
+
+            .float-tool-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+            }
+
+            .bottom-command-deck {
+                left: 10px;
+                right: 10px;
+                bottom: 12px;
+                padding: 10px 12px;
+                border-radius: 18px;
+                gap: 8px;
+            }
+
+            .budget-value {
+                font-size: 20px;
+            }
+
+            .budget-sub {
+                font-size: 10px;
+            }
+
+            .coin-hint-tag {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .tier-pills-row {
+                gap: 4px;
+            }
+
+            .tier-select-btn {
+                padding: 5px 3px;
+                font-size: 9.5px;
+                border-radius: 8px;
+            }
+
+            .tier-select-btn .pill-name {
+                display: none;
+            }
+
+            .travel-flavor-strip {
+                font-size: 10.5px;
+                padding: 5px 8px;
+            }
+        }
+
+        @keyframes gentle-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D Canvas Viewport -->
+    <div id="viewport-container">
+        <canvas id="piggy-canvas"></canvas>
+    </div>
+
+    <!-- Soft Vignette Filter -->
+    <div class="vignette-overlay"></div>
+
+    <!-- Floating Score Popups Container -->
+    <div id="score-popup-container" class="score-popup-container"></div>
+
+    <!-- Top Status HUD -->
+    <header class="top-hud">
+        <div class="brand-badge">
+            <span class="icon">🐷</span>
+            <div>
+                <div class="title">PIGGY BANK GROWTH GAME</div>
+                <div class="sub">Quy Nhon AI Travel Prototype</div>
+            </div>
+        </div>
+
+        <div class="hud-actions">
+            <button id="btn-motion-toggle" class="hud-btn" title="Bật/Tắt chuyển động mượt">
+                <span>✨</span> <span id="label-motion">Chuyển Động</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Floating 3D Navigation Controls -->
+    <div class="viewport-float-tools">
+        <button id="btn-reset-view" class="float-tool-btn" title="Đặt lại góc nhìn đẹp nhất">
+            🔄
+        </button>
+        <button id="btn-toggle-spin" class="float-tool-btn" title="Bật/Tắt tự động xoay 360">
+            💫
+        </button>
+    </div>
+
+    <!-- Bottom Interactive Control Deck -->
+    <main class="bottom-command-deck">
+        <!-- Deck Header: Current Tier & Budget Amount -->
+        <div class="deck-header">
+            <div class="tier-badge-container">
+                <div id="tier-indicator" class="tier-indicator-pill tier-2">
+                    <span id="tier-pill-icon">🧭</span>
+                    <span id="tier-pill-name">Tier 2 – Heo Nhỡ ($1.5K+)</span>
+                </div>
+            </div>
+
+            <div class="budget-amount-display">
+                <div id="val-budget-display" class="budget-value">$2,500</div>
+                <div id="val-currency-sub" class="budget-sub">≈ 61.250.000 ₫ (Tổng ngân sách chuyến đi)</div>
+            </div>
+        </div>
+
+        <!-- Slider & Continuous Coin Stream Indicator -->
+        <div class="slider-row">
+            <div class="slider-wrap">
+                <input type="range" id="budget-slider" class="budget-slider" min="500" max="50000" step="100" value="2500">
+            </div>
+            <div class="coin-hint-tag">
+                <span>🪙</span>
+                <span>Kéo để nạp xu</span>
+            </div>
+        </div>
+
+        <!-- 5 Quick-Jump Tier Pills -->
+        <div class="tier-pills-row">
+            <button class="tier-select-btn" data-tier="1" data-budget="800">
+                <span class="pill-icon">🌱</span>
+                <span class="pill-name">Nhỏ Xinh</span>
+                <span class="pill-tier">$500+</span>
+            </button>
+            <button class="tier-select-btn active" data-tier="2" data-budget="2500">
+                <span class="pill-icon">🧭</span>
+                <span class="pill-name">Tròn Trĩnh</span>
+                <span class="pill-tier">$1.5K+</span>
+            </button>
+            <button class="tier-select-btn" data-tier="3" data-budget="6000">
+                <span class="pill-icon">⚓</span>
+                <span class="pill-name">Mũm Mĩm</span>
+                <span class="pill-tier">$4K+</span>
+            </button>
+            <button class="tier-select-btn" data-tier="4" data-budget="15000">
+                <span class="pill-icon">👑</span>
+                <span class="pill-name">Khổng Lồ</span>
+                <span class="pill-tier">$10K+</span>
+            </button>
+            <button class="tier-select-btn tier-5" data-tier="5" data-budget="35000">
+                <span class="pill-icon">💎</span>
+                <span class="pill-name">Đại Phú Hào</span>
+                <span class="pill-tier">$25K+</span>
+            </button>
+        </div>
+
+        <!-- Dynamic Quy Nhon Travel Flavor Strip -->
+        <div id="travel-flavor-strip" class="travel-flavor-strip">
+            <span class="icon">🌴</span>
+            <div id="travel-flavor-text" class="text">
+                <strong>Trải nghiệm Quy Nhơn:</strong> Tour cano lặn ngắm san hô Bãi Dứa, cắm trại đón bình minh khu dã ngoại Trung Lương.
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts: Three.js local + Piggy Bank Prototype Logic -->
+    <script src="js/lib/three.min.js"></script>
+    <script src="js/prototypePiggybankPreview.js"></script>
+</body>
+</html>

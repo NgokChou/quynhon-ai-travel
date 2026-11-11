@@ -12,7 +12,12 @@ const App = (function() {
         selectedRouteType: 'fastest', // 'fastest' | 'best-value' | 'smart-stopover'
         selectedInterests: ['beaches', 'food', 'culture'],
         isAnalyzing: false,
-        activeSpeechText: ''
+        activeSpeechText: '',
+        originIso: null,
+        originAirport: null,
+        originCountryName: null,
+        originCountryVi: null,
+        isFallback: false
     };
 
     // DOM Elements cache
@@ -369,7 +374,7 @@ const App = (function() {
      */
     function onParametersChanged() {
         if (state.isAnalyzing) return;
-        const countryData = MOCK_COUNTRIES[state.currentCountryKey];
+        const countryData = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
         if (!countryData) return;
 
         // Sinh lại câu tóm tắt bằng JavaScript thuần
@@ -379,7 +384,12 @@ const App = (function() {
             routeType: state.selectedRouteType,
             preferences: state.selectedInterests,
             lang: state.currentLang,
-            destinationId: state.currentDestination || 'quynhon'
+            destinationId: state.currentDestination || 'quynhon',
+            originIso: state.originIso,
+            originAirport: state.originAirport,
+            originCountryName: state.originCountryName,
+            originCountryVi: state.originCountryVi,
+            isFallback: state.isFallback
         });
 
         if (elements.aiOutputContent) {
@@ -433,7 +443,7 @@ const App = (function() {
         renderHotels();
 
         // Cập nhật tóm tắt AI và bản đồ
-        const countryData = MOCK_COUNTRIES[state.currentCountryKey];
+        const countryData = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
         if (countryData) {
             state.activeSpeechText = generateAISummary({
                 countryId: state.currentCountryKey,
@@ -441,7 +451,12 @@ const App = (function() {
                 routeType: state.selectedRouteType,
                 preferences: state.selectedInterests,
                 lang: newLang,
-                destinationId: state.currentDestination || 'quynhon'
+                destinationId: state.currentDestination || 'quynhon',
+                originIso: state.originIso,
+                originAirport: state.originAirport,
+                originCountryName: state.originCountryName,
+                originCountryVi: state.originCountryVi,
+                isFallback: state.isFallback
             });
 
             if (!state.isAnalyzing && elements.aiOutputContent) {
@@ -537,7 +552,12 @@ const App = (function() {
                     routeType: state.selectedRouteType,
                     preferences: state.selectedInterests,
                     lang: lang,
-                    destinationId: state.currentDestination || 'quynhon'
+                    destinationId: state.currentDestination || 'quynhon',
+                    originIso: state.originIso,
+                    originAirport: state.originAirport,
+                    originCountryName: state.originCountryName,
+                    originCountryVi: state.originCountryVi,
+                    isFallback: state.isFallback
                 });
 
                 // Hiệu ứng gõ chữ Typewriter
@@ -625,7 +645,7 @@ const App = (function() {
                 <div class="route-card-metrics">
                     <div class="route-metric-pill">
                         <i class="fa-regular fa-clock"></i>
-                        <span>${data.totalDuration}</span>
+                        <span>${state.originIso === 'VNM' ? (isVi ? 'Minh họa' : 'Illustrative') : data.totalDuration}</span>
                     </div>
                     <div class="route-card-fare">
                         <small>${isVi ? 'Ước tính' : 'Est.'}</small>
@@ -653,7 +673,12 @@ const App = (function() {
                     routeType: state.selectedRouteType,
                     preferences: state.selectedInterests,
                     lang: lang,
-                    destinationId: state.currentDestination || 'quynhon'
+                    destinationId: state.currentDestination || 'quynhon',
+                    originIso: state.originIso,
+                    originAirport: state.originAirport,
+                    originCountryName: state.originCountryName,
+                    originCountryVi: state.originCountryVi,
+                    isFallback: state.isFallback
                 });
 
                 if (elements.aiOutputContent) {
@@ -685,11 +710,24 @@ const App = (function() {
         };
 
         // Xây dựng liên kết tìm chuyến bay trực tiếp trên Google Flights
-        const originAirportCode = countryData.airport ? (countryData.airport.match(/\(([A-Z]{3})/)?.[1] || 'CDG') : 'CDG';
+        const isFallbackMode = Boolean(state.isFallback || ['GBR', 'KOR', 'SGP', 'CHN', 'VNM'].includes(state.originIso));
+        const originAirportCode = (state.originAirport && state.originAirport.code)
+            ? state.originAirport.code
+            : (countryData.airport ? (countryData.airport.match(/\(([A-Z]{3})/)?.[1] || 'CDG') : 'CDG');
         const destAirportCode = (state.selectedRouteType === 'fastest') ? 'UIH' : (activeRouteData.steps?.[0]?.to?.match(/\(([A-Z]{3})\)/)?.[1] || 'UIH');
         const googleFlightsUrl = `https://www.google.com/travel/flights?q=flights+from+${originAirportCode}+to+${destAirportCode}`;
 
+        const scenarioNotice = isFallbackMode ? `
+            <div class="illustrative-scenario-banner" style="display:flex;align-items:center;gap:8px;padding:9px 14px;margin-bottom:14px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:8px;font-size:12px;color:#fcd34d;line-height:1.4;">
+                <i class="fa-solid fa-circle-info" style="font-size:14px;"></i>
+                <span>${isVi 
+                    ? `Lộ trình minh họa khu vực (Regional illustrative scenario) cho ${state.originCountryVi || state.originCountryName || 'quốc gia đã chọn'}. Dữ liệu chưa xác minh thương mại.` 
+                    : `Regional illustrative scenario for ${state.originCountryName || 'selected country'}. Transit stages are modeled for preview.`}</span>
+            </div>
+        ` : '';
+
         board.innerHTML = `
+            ${scenarioNotice}
             <div class="route-board-header">
                 <div class="board-header-left">
                     <span class="board-eyebrow">
@@ -701,7 +739,7 @@ const App = (function() {
                 <div class="board-header-right">
                     <div class="board-stat-pill">
                         <i class="fa-regular fa-clock"></i>
-                        <span>${isVi ? 'Thời gian' : 'Duration'}: <strong>${activeRouteData.totalDuration}</strong></span>
+                        <span>${isVi ? 'Thời gian' : 'Duration'}: <strong>${state.originIso === 'VNM' ? (isVi ? 'Lịch trình minh họa' : 'Illustrative schedule') : activeRouteData.totalDuration}</strong></span>
                     </div>
                     <div class="board-stat-pill price">
                         <i class="fa-solid fa-receipt"></i>
@@ -758,13 +796,59 @@ const App = (function() {
         pipeline.className = 'transit-pipeline';
         board.appendChild(pipeline);
 
-        if (activeRouteData.steps && Array.isArray(activeRouteData.steps)) {
-            activeRouteData.steps.forEach((step, idx) => {
+        let routeSteps = activeRouteData.steps;
+        if (state.originIso === 'VNM') {
+            const depCode = (state.originAirport && state.originAirport.code) ? state.originAirport.code : 'HAN';
+            const depCity = (state.originAirport && state.originAirport.city) ? state.originAirport.city : (isVi ? 'Hà Nội' : 'Hanoi');
+            routeSteps = [
+                {
+                    type: 'flight',
+                    icon: 'plane-departure',
+                    title: { en: 'Direct Domestic Flight', vi: 'Chuyến bay nội địa thẳng' },
+                    from: `${depCity} (${depCode})`,
+                    to: 'Phu Cat Airport (UIH)',
+                    subInfo: {
+                        en: 'Direct domestic flight connection • Regional illustrative scenario',
+                        vi: 'Đường bay thẳng nội địa • Lịch trình minh họa khu vực'
+                    },
+                    highlight: {
+                        en: 'Direct domestic connection to Binh Dinh',
+                        vi: 'Đường bay nội địa kết nối trực tiếp Bình Định'
+                    },
+                    duration: ''
+                },
+                {
+                    type: 'transfer',
+                    icon: 'car',
+                    title: { en: 'Airport Transfer / Private Car', vi: 'Xe đưa đón sân bay / Xe riêng' },
+                    from: 'Phu Cat Airport (UIH)',
+                    to: 'Quy Nhon City Center',
+                    subInfo: {
+                        en: 'Ground transfer to city center • Regional illustrative scenario',
+                        vi: 'Tuyến đường nối sân bay về trung tâm • Lịch trình minh họa khu vực'
+                    },
+                    highlight: {
+                        en: 'Direct drop-off at hotel / resort',
+                        vi: 'Đưa đón tận nơi sảnh khách sạn / resort'
+                    },
+                    duration: ''
+                }
+            ];
+        }
+
+        if (routeSteps && Array.isArray(routeSteps)) {
+            routeSteps.forEach((step, idx) => {
                 let stageName = '';
-                if (step.type === 'flight') stageName = isVi ? 'Chặng 1: Bay quốc tế' : 'Leg 1: International Flight';
-                else if (step.type === 'domestic-flight') stageName = isVi ? 'Chặng 2: Nối chuyến' : 'Leg 2: Domestic Flight';
-                else if (step.type === 'transfer') stageName = isVi ? `Chặng ${idx + 1}: Chuyển tiếp` : `Leg ${idx + 1}: Transfer`;
-                else stageName = isVi ? `Chặng ${idx + 1}` : `Leg ${idx + 1}`;
+                if (state.originIso === 'VNM') {
+                    if (step.type === 'flight') stageName = isVi ? 'Chặng 1: Bay nội địa' : 'Leg 1: Domestic Flight';
+                    else if (step.type === 'transfer') stageName = isVi ? `Chặng ${idx + 1}: Chuyển tiếp` : `Leg ${idx + 1}: Transfer`;
+                    else stageName = isVi ? `Chặng ${idx + 1}` : `Leg ${idx + 1}`;
+                } else {
+                    if (step.type === 'flight') stageName = isVi ? 'Chặng 1: Bay quốc tế' : 'Leg 1: International Flight';
+                    else if (step.type === 'domestic-flight') stageName = isVi ? 'Chặng 2: Nối chuyến' : 'Leg 2: Domestic Flight';
+                    else if (step.type === 'transfer') stageName = isVi ? `Chặng ${idx + 1}: Chuyển tiếp` : `Leg ${idx + 1}: Transfer`;
+                    else stageName = isVi ? `Chặng ${idx + 1}` : `Leg ${idx + 1}`;
+                }
 
                 let subDetails = step.subInfo ? step.subInfo[lang] : '';
                 let highlightText = step.highlight ? step.highlight[lang] : '';
@@ -1935,10 +2019,18 @@ const App = (function() {
         renderBudgetAllocation: renderBudgetAllocation,
         fetchQuyNhonWeather: fetchQuyNhonWeather,
         generateJourneyPlan: generateJourneyPlan,
-        setPlannerData: function(countryKey, budget, destKey, airportCode) {
+        setPlannerData: function(countryKey, budget, destKey, airportCode, extraMeta) {
+            console.log('[App.setPlannerData CALLED]', countryKey, budget, destKey, airportCode, extraMeta);
             if (countryKey) {
                 state.currentCountryKey = countryKey;
                 if (elements.countrySelect) elements.countrySelect.value = countryKey;
+            }
+            if (extraMeta) {
+                state.originIso = extraMeta.originIso || null;
+                state.originAirport = extraMeta.originAirport || null;
+                state.originCountryName = extraMeta.originCountryName || null;
+                state.originCountryVi = extraMeta.originCountryVi || null;
+                state.isFallback = Boolean(extraMeta.isFallback);
             }
             if (budget) {
                 const cleanBudget = Number(String(budget).replace(/[^0-9]/g, '')) || 2000;
@@ -1963,3 +2055,8 @@ const App = (function() {
         getState: function() { return state; }
     };
 })();
+
+// Export App globally
+if (typeof window !== 'undefined') {
+    window.App = App;
+}

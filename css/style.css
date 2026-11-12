@@ -4,7 +4,8 @@
    =================================================================== */
 
 :root {
-    --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: light;
+    --font-main: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
     /* Color Palette - Bright, clean & user-friendly */
     --bg-dark: #edf4fa;
@@ -12,7 +13,8 @@
     --bg-card: #ffffff;
     --bg-card-hover: #f8fafc;
     --border-color: #e2e8f0;
-    --border-highlight: #38bdf8;
+    --border-subtle: #cbd5e1;
+    --border-highlight: #0284c7;
     
     /* Brand Accents */
     --primary: #0284c7;
@@ -47,6 +49,7 @@
 }
 
 html {
+    color-scheme: light;
     scroll-behavior: smooth;
     font-size: 16px;
 }
@@ -253,8 +256,8 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     padding: 0.35rem 0.65rem;
     border-radius: var(--radius-sm);
     color: var(--text-muted);
@@ -273,8 +276,8 @@ body {
 }
 
 .lang-selector-box select option {
-    background: #ffffff;
-    color: #0f172a;
+    background: var(--bg-surface);
+    color: var(--text-main);
 }
 
 /* ===================================================================
@@ -384,20 +387,21 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.9rem 1.6rem;
-    background: #ffffff;
+    background: var(--bg-surface);
     color: var(--text-main);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
     border-radius: var(--radius-full);
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
     transition: var(--transition);
 }
 
 .btn-secondary:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
+    background: var(--bg-card-hover);
+    border-color: var(--border-highlight);
+    color: var(--primary);
 }
 
 /* Feature Highlights Bar */
@@ -442,7 +446,7 @@ body {
 }
 
 .planner-card-inner {
-    padding: 2.25rem;
+    padding: 1.25rem 1.5rem 1.5rem;
 }
 
 .planner-header-group {
@@ -826,3 +830,5 @@ body {
         padding: 1rem !important;
     }
 }
+
+

@@ -65,12 +65,36 @@
                     tooltip.style.top = (rect.top + y) + 'px';
                     tooltip.style.display = 'block';
 
+                    const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
                     if (isSupported) {
                         const sup = window.SUPPORTED_COUNTRIES[country.id];
-                        tooltip.innerHTML = `<strong>${sup.flag} ${sup.vi} (${sup.name})</strong><br><span style="color:#ffd700;font-size:11px;">✈ Hỗ trợ ${sup.airports.length} sân bay quốc tế</span>`;
+                        const countryTitle = isVi ? `${sup.vi} (${sup.name})` : sup.name;
+                        const aptText = isVi ? `✈ Hỗ trợ ${sup.airports.length} sân bay quốc tế` : `✈ ${sup.airports.length} international airport${sup.airports.length > 1 ? 's' : ''}`;
+                        tooltip.innerHTML = `<strong>${sup.flag} ${countryTitle}</strong><br><span style="color:#ffd700;font-size:11px;">${aptText}</span>`;
                     } else {
-                        tooltip.innerHTML = `<strong>${country.name} (${country.vi || country.id})</strong><br><span style="color:#8ea2b9;font-size:11px;">Chưa có tuyến bay trực tiếp</span>`;
+                        const countryTitle = isVi ? `${country.name} (${country.vi || country.id})` : country.name;
+                        const noRouteText = isVi ? 'Chưa có tuyến bay trực tiếp' : 'No direct flight routes available';
+                        tooltip.innerHTML = `<strong>${countryTitle}</strong><br><span style="color:#8ea2b9;font-size:11px;">${noRouteText}</span>`;
                     }
+                },
+                onDestinationHover: (dest, event) => {
+                    if (currentStep !== 2) return;
+                    const rect = container.getBoundingClientRect();
+                    const x = event && event.data ? event.data.global.x : null;
+                    const y = event && event.data ? event.data.global.y : null;
+                    if (x !== null && y !== null) {
+                        tooltip.style.left = (rect.left + x) + 'px';
+                        tooltip.style.top = (rect.top + y) + 'px';
+                        tooltip.style.display = 'block';
+                    }
+                    const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                    const destName = typeof dest.name === 'object' ? (isVi ? dest.name.vi : dest.name.en) : dest.name;
+                    const destCity = typeof dest.city === 'object' ? (isVi ? dest.city.vi : dest.city.en) : dest.city;
+                    const destDesc = typeof dest.desc === 'object' ? (isVi ? dest.desc.vi : dest.desc.en) : dest.desc;
+                    tooltip.innerHTML = `<strong>✈ ${destName} (${dest.code})</strong><br><span style="color:#00e5ff;font-size:11px;">📍 ${destCity} • ${destDesc}</span>`;
+                },
+                onDestinationHoverOut: () => {
+                    tooltip.style.display = 'none';
                 },
                 onHoverOut: () => {
                     tooltip.style.display = 'none';
@@ -78,17 +102,32 @@
                 onSelect: (countryInfo) => {
                     currentCountry = countryInfo;
                     currentDepartureAirport = countryInfo.airports[0];
+
+                    // Auto-select currency & dynamic minimum budget based on origin country
+                    const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryInfo.code]) || { minUSD: 500, currency: 'USD' };
+                    currentCurrency = countryLimits.currency;
+                    if (currentBudgetUSD < countryLimits.minUSD) {
+                        currentBudgetUSD = countryLimits.minUSD;
+                    }
+
+                    renderCurrencyChips();
                     updateActiveChip(countryInfo.code);
                     renderDepartureAirports(countryInfo);
                     updateTelemetryAndSummary();
+                    syncBudgetUI();
+                    notifyAppState();
                 },
                 onDestinationSelect: (destInfo) => {
                     currentDestination = destInfo;
                     updateDestinationCardsUI();
                     updateTelemetryAndSummary();
+                    notifyAppState();
                 },
                 onNonSupportedClick: (country) => {
-                    showToast(`Tuyến bay từ ${country.name} (${country.vi || country.id}) hiện đang được cập nhật lịch trình.`);
+                    const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                    showToast(isVi 
+                        ? `Tuyến bay từ ${country.name} (${country.vi || country.id}) hiện đang được cập nhật lịch trình.`
+                        : `Flight routes from ${country.name} are currently being updated.`);
                 },
                 onFpsUpdate: (fps, scale) => {
                     valFps.textContent = fps;
@@ -96,16 +135,68 @@
                 }
             });
 
+            
+            function notifyAppState() {
+                if (!currentCountry) return;
+                const countryKey = (window.COUNTRY_MAP_KEY && window.COUNTRY_MAP_KEY[currentCountry.code]) || 'germany';
+                const meta = {
+                    originIso: currentCountry.code,
+                    originAirport: currentDepartureAirport,
+                    originCountryName: currentCountry.name,
+                    originCountryVi: currentCountry.vi,
+                    isFallback: ['GBR', 'KOR', 'SGP', 'CHN', 'VNM'].includes(currentCountry.code)
+                };
+                if (window.App && typeof window.App.setPlannerData === 'function') {
+                    const arrCode = currentDestination ? currentDestination.code : 'UIH';
+                    window.App.setPlannerData(countryKey, currentBudgetUSD, arrCode, currentDepartureAirport ? currentDepartureAirport.code : null, meta);
+                }
+            }
+
+            function updateGenerateButtonLabels(days, lang) {
+                const isVi = (lang === 'vi');
+                const d = days || currentDays || 5;
+                const launchBtn = document.getElementById('btn-launch-final-plan');
+                if (launchBtn && !launchBtn.disabled) {
+                    const text = isVi ? `KHỞI TẠO KẾ HOẠCH ${d} NGÀY` : `GENERATE MY ${d}-DAY PLAN`;
+                    launchBtn.innerHTML = `<span>${text}</span> <i class="fa-solid fa-paper-plane"></i>`;
+                }
+                const btnGenText = document.getElementById('btn-generate-itinerary-text');
+                if (btnGenText) {
+                    btnGenText.textContent = isVi
+                        ? (`Khởi Tạo Kế Hoạch ${d} Ngày Bằng AI`)
+                        : (`Generate My ${d}-Day Plan`);
+                }
+            }
+
+            function updateDaysItinerary() {
+                if (window.App && typeof window.App.getState === 'function') {
+                    window.App.getState().durationDays = currentDays;
+                }
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                const itinSubtitle = document.getElementById('itinerary-pref-subtitle');
+                if (itinSubtitle) {
+                    itinSubtitle.textContent = isVi 
+                        ? ('Chọn những trải nghiệm bạn yêu thích để AI tạo hành trình ' + currentDays + ' ngày tại Quy Nhơn.')
+                        : ('Tell us what you enjoy and we\'ll create a personalized ' + currentDays + '-day journey in Quy Nhon.');
+                }
+                updateGenerateButtonLabels(currentDays, isVi ? 'vi' : 'en');
+                if (window.App && typeof window.App.markPlanStale === 'function') {
+                    window.App.markPlanStale();
+                }
+            }
+
             // 1. Render 11 Supported Departure Country Chips
             function renderCountryChips() {
                 chipsGrid.innerHTML = '';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
                 Object.values(window.SUPPORTED_COUNTRIES).forEach(c => {
                     const chip = document.createElement('div');
                     chip.className = 'country-chip' + (c.code === currentCountry.code ? ' selected' : '');
                     chip.dataset.code = c.code;
+                    const countryName = isVi ? (c.vi || c.name) : c.name;
                     chip.innerHTML = `
                         <span class="flag">${c.flag}</span>
-                        <span class="name">${c.name}</span>
+                        <span class="name">${countryName}</span>
                     `;
                     chip.addEventListener('click', () => {
                         mapInstance.selectCountry(c.code, true);
@@ -128,17 +219,21 @@
             function renderDepartureAirports(countryInfo) {
                 if (!countryInfo) return;
                 departureAirportList.innerHTML = '';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
 
                 countryInfo.airports.forEach((apt, idx) => {
                     const card = document.createElement('div');
                     const isSelected = (apt.code === currentDepartureAirport.code);
                     card.className = 'airport-card' + (isSelected ? ' selected' : '');
+                    const aptName = typeof apt.name === 'object' ? (isVi ? apt.name.vi : apt.name.en) : apt.name;
+                    const aptCity = typeof apt.city === 'object' ? (isVi ? apt.city.vi : apt.city.en) : apt.city;
+                    const aptDesc = typeof apt.desc === 'object' ? (isVi ? apt.desc.vi : apt.desc.en) : (apt.desc || aptCity);
                     card.innerHTML = `
                         <div class="airport-info-left">
                             <div class="airport-code-badge">${apt.code}</div>
                             <div class="airport-details">
-                                <div class="name">${apt.name}</div>
-                                <div class="desc">${apt.desc || apt.city}</div>
+                                <div class="name">${aptName}</div>
+                                <div class="desc">${aptDesc}</div>
                             </div>
                         </div>
                         <div class="airport-radio"></div>
@@ -152,8 +247,8 @@
                         // Short visual feedback before automatic transition
                         card.style.borderColor = '#ffd700';
                         card.style.boxShadow = '0 0 16px rgba(255, 215, 0, 0.45)';
-                        showToast(`✈ Đã chọn ${apt.code} (${apt.city}) – Đang tự động chuyển đến Việt Nam...`);
-
+                        showToast(isVi ? `✈ Đã chọn ${apt.code} (${aptCity}) – Đang tự động chuyển đến Việt Nam...` : `✈ Selected ${apt.code} (${aptCity}) – Advancing to Vietnam...`);
+                        notifyAppState();
                         // Auto-advance to Vietnam Step 2 without needing extra button click
                         setTimeout(() => {
                             goToStep2();
@@ -166,17 +261,22 @@
             // 3. Render Vietnam Destination Airport Cards
             function renderDestinationAirports() {
                 destinationAirportList.innerHTML = '';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+
                 Object.values(window.VIETNAM_DESTINATIONS).forEach(dest => {
                     const card = document.createElement('div');
                     const isSelected = (dest.code === currentDestination.code);
                     card.className = 'destination-card' + (isSelected ? ' selected' : '') + (dest.isHero ? ' is-hero' : '');
                     card.dataset.code = dest.code;
+                    const destName = typeof dest.name === 'object' ? (isVi ? dest.name.vi : dest.name.en) : dest.name;
+                    const destCity = typeof dest.city === 'object' ? (isVi ? dest.city.vi : dest.city.en) : dest.city;
+                    const destDesc = typeof dest.desc === 'object' ? (isVi ? dest.desc.vi : dest.desc.en) : dest.desc;
                     card.innerHTML = `
                         <div class="airport-info-left">
                             <div class="airport-code-badge dest-badge">${dest.code}</div>
                             <div class="airport-details">
-                                <div class="name">${dest.name} (${dest.city})</div>
-                                <div class="desc">${dest.desc}</div>
+                                <div class="name">${destName} (${destCity})</div>
+                                <div class="desc">${destDesc}</div>
                             </div>
                         </div>
                         <div class="airport-radio"></div>
@@ -186,6 +286,7 @@
                         mapInstance.selectDestination(dest.code);
                         updateDestinationCardsUI();
                         updateTelemetryAndSummary();
+                        notifyAppState();
                     });
                     destinationAirportList.appendChild(card);
                 });
@@ -203,16 +304,20 @@
 
             // 4. Update Telemetry Pill & Itinerary Summary
             function updateTelemetryAndSummary() {
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
                 const origCode = currentDepartureAirport ? currentDepartureAirport.code : 'FRA';
-                const origCity = currentDepartureAirport ? (currentDepartureAirport.city || currentCountry.name) : 'Frankfurt';
+                const rawOrigCity = currentDepartureAirport ? (currentDepartureAirport.city || currentCountry.name) : 'Frankfurt';
+                const origCity = typeof rawOrigCity === 'object' ? (isVi ? rawOrigCity.vi : rawOrigCity.en) : rawOrigCity;
                 const destCode = currentDestination ? currentDestination.code : 'UIH';
-                const destCity = currentDestination ? currentDestination.city : 'Quy Nhơn';
+                const rawDestCity = currentDestination ? (currentDestination.city || 'Quy Nhon') : 'Quy Nhon';
+                const destCity = typeof rawDestCity === 'object' ? (isVi ? rawDestCity.vi : rawDestCity.en) : (isVi ? 'Quy Nhơn' : 'Quy Nhon');
 
                 valRoute.textContent = `${origCode} → ${destCode}`;
                 summaryOrigCode.textContent = origCode;
-                summaryOrigCity.textContent = `${origCity} (${currentCountry.flag})`;
+                const origCountryName = isVi ? (currentCountry.vi || currentCountry.name) : currentCountry.name;
+                summaryOrigCity.textContent = `${origCity} (${origCountryName})`;
                 summaryDestCode.textContent = destCode;
-                summaryDestCity.textContent = `${destCity} (🇻🇳)`;
+                summaryDestCity.textContent = `${destCity} (${isVi ? 'Việt Nam' : 'Vietnam'})`;
 
                 // Update Showroom Route Pill
                 if (showroomRouteText) {
@@ -286,14 +391,13 @@
             window.addEventListener('touchstart', unlockAudio, { passive: true });
             window.addEventListener('keydown', unlockAudio, { passive: true });
 
-            // Render Static Controls on Init
-            function initStep3Controls() {
-                // Currency Chips
+                        function renderCurrencyChips() {
+                if (!currencyChipsGrid) return;
                 currencyChipsGrid.innerHTML = '';
                 Object.keys(window.CURRENCIES).forEach(cKey => {
                     const c = window.CURRENCIES[cKey];
                     const chip = document.createElement('div');
-                    chip.className = `cur-chip ${cKey === currentCurrency ? 'active' : ''}`;
+                    chip.className = 'cur-chip' + (cKey === currentCurrency ? ' active' : '');
                     chip.dataset.currency = cKey;
                     chip.innerHTML = c.label;
                     chip.addEventListener('click', () => {
@@ -304,6 +408,12 @@
                     });
                     currencyChipsGrid.appendChild(chip);
                 });
+            }
+
+            // Render Static Controls on Init
+            function initStep3Controls() {
+                // Currency Chips
+                renderCurrencyChips();
 
                 // Preset Chips ($500, $2500, $8000, $20000, $50000)
                 presetChipsRow.innerHTML = '';
@@ -321,6 +431,7 @@
                             showroomViewport.controller.setBudgetUSD(currentBudgetUSD, true);
                         }
                         syncBudgetUI();
+                        notifyAppState();
                     });
                     presetChipsRow.appendChild(chip);
                 });
@@ -330,26 +441,32 @@
                     if (currentGuests > window.BUDGET_CONFIG.minGuests) {
                         currentGuests--;
                         syncBudgetUI();
+                        notifyAppState();
                     }
                 });
                 btnGuestPlus.addEventListener('click', () => {
                     if (currentGuests < window.BUDGET_CONFIG.maxGuests) {
                         currentGuests++;
                         syncBudgetUI();
+                        notifyAppState();
                     }
                 });
 
-                // Steppers: Days
+                // Steppers: Days (clamped strictly between 1 and 7 days)
                 btnDaysMinus.addEventListener('click', () => {
-                    if (currentDays > window.BUDGET_CONFIG.minDays) {
+                    if (currentDays > 1) {
                         currentDays--;
                         syncBudgetUI();
+                        updateDaysItinerary();
+                        notifyAppState();
                     }
                 });
                 btnDaysPlus.addEventListener('click', () => {
-                    if (currentDays < window.BUDGET_CONFIG.maxDays) {
+                    if (currentDays < 7) {
                         currentDays++;
                         syncBudgetUI();
+                        updateDaysItinerary();
+                        notifyAppState();
                     }
                 });
 
@@ -357,13 +474,17 @@
                 budgetRangeSlider.addEventListener('input', (e) => {
                     const rawVal = parseFloat(e.target.value) || 2500;
                     const cur = window.CURRENCIES[currentCurrency] || window.CURRENCIES.USD;
+                    const countryCode = currentCountry ? currentCountry.code : 'DEU';
+                    const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500 };
+                    const minUSD = countryLimits.minUSD;
                     currentBudgetUSD = Math.round(rawVal / cur.rate);
-                    currentBudgetUSD = Math.max(500, Math.min(50000, currentBudgetUSD));
+                    currentBudgetUSD = Math.max(minUSD, Math.min(50000, currentBudgetUSD));
 
                     if (showroomViewport && showroomViewport.controller) {
                         showroomViewport.controller.setBudgetUSD(currentBudgetUSD, true);
                     }
-                    syncBudgetUI(false); // don't mutate slider value while dragging
+                    syncBudgetUI(false);
+                    notifyAppState();
                 });
 
                 // Numeric Input Handler
@@ -372,15 +493,19 @@
                     if (!cleanStr) return;
                     let val = parseFloat(cleanStr) || 0;
                     const cur = window.CURRENCIES[currentCurrency] || window.CURRENCIES.USD;
+                    const countryCode = currentCountry ? currentCountry.code : 'DEU';
+                    const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500 };
+                    const minUSD = countryLimits.minUSD;
                     let targetUSD = Math.round(val / cur.rate);
                     if (targetUSD > 50000) targetUSD = 50000;
-                    if (targetUSD < 500) targetUSD = 500;
+                    if (targetUSD < minUSD) targetUSD = minUSD;
                     currentBudgetUSD = targetUSD;
 
                     if (showroomViewport && showroomViewport.controller) {
                         showroomViewport.controller.setBudgetUSD(currentBudgetUSD, true);
                     }
-                    syncBudgetUI(true, false); // sync slider, don't reformat text input cursor while typing
+                    syncBudgetUI(true, false);
+                    notifyAppState();
                 });
 
                 budgetNumberInput.addEventListener('blur', () => {
@@ -409,26 +534,45 @@
                             if (isEnabled) {
                                 btnSoundToggle.classList.remove('muted');
                                 if (soundIcon) soundIcon.className = 'fa-solid fa-volume-high';
-                                if (soundLabel) soundLabel.textContent = 'ÂM THANH';
+                                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                                if (soundLabel) soundLabel.textContent = isVi ? 'ÂM THANH' : 'SOUND';
                             } else {
                                 btnSoundToggle.classList.add('muted');
                                 if (soundIcon) soundIcon.className = 'fa-solid fa-volume-xmark';
-                                if (soundLabel) soundLabel.textContent = 'TẮT';
+                                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                                if (soundLabel) soundLabel.textContent = isVi ? 'TẮT' : 'MUTED';
                             }
                         }
                     });
                 }
 
                 btnLaunchFinalPlan.addEventListener('click', () => {
-                    const curTier = (typeof window !== 'undefined' && window.getTierForUSD) ? window.getTierForUSD(currentBudgetUSD) : { name: 'Tier', level: 2 };
-                    const formatted = (typeof window !== 'undefined' && window.formatCurrency) ? window.formatCurrency(currentBudgetUSD, currentCurrency) : ('$' + currentBudgetUSD);
-                    
+                    if (btnLaunchFinalPlan.disabled) return;
+
+                    const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+
+                    // 1. Validate inputs
+                    if (!currentCountry) {
+                        showToast(isVi ? 'Vui lòng chọn quốc gia khởi hành.' : 'Please select a departure country.');
+                        goToStep1();
+                        return;
+                    }
+                    if (!currentDepartureAirport) {
+                        showToast(isVi ? 'Vui lòng chọn sân bay khởi hành.' : 'Please select a departure airport.');
+                        goToStep1();
+                        return;
+                    }
+                    if (!currentDestination) {
+                        showToast(isVi ? 'Vui lòng chọn điểm đến tại Việt Nam.' : 'Please select an arrival destination in Vietnam.');
+                        goToStep2();
+                        return;
+                    }
+
                     if (showroomViewport && showroomViewport.audio) {
                         try { showroomViewport.audio.playCoinDrop(); } catch (_) {}
                     }
 
-                    const isoCode = (currentCountry && currentCountry.code) ? currentCountry.code : 'JPN';
-                    // Map 11 Supported Departure Countries to rich itinerary profiles in MOCK_COUNTRIES
+                    const isoCode = (currentCountry && currentCountry.code) ? currentCountry.code : 'DEU';
                     const isoToKeyMap = {
                         'JPN': 'japan',
                         'DEU': 'germany',
@@ -436,13 +580,13 @@
                         'FRA': 'france',
                         'BEL': 'belgium',
                         'AUS': 'australia',
-                        'GBR': 'germany',  // European hub fallback until custom UK route configured
-                        'KOR': 'japan',    // East Asia hub fallback until custom Korea route configured
-                        'SGP': 'japan',    // Southeast Asia hub fallback until custom Singapore route configured
-                        'CHN': 'japan',    // East Asia hub fallback until custom China route configured
-                        'VNM': 'japan'     // Regional hub fallback until custom Vietnam domestic route configured
+                        'GBR': 'germany',
+                        'KOR': 'japan',
+                        'SGP': 'japan',
+                        'CHN': 'japan',
+                        'VNM': 'japan'
                     };
-                    const countryKey = isoToKeyMap[isoCode] || 'japan';
+                    const countryKey = isoToKeyMap[isoCode] || 'germany';
                     const arrCode = (currentDestination && currentDestination.code) ? currentDestination.code : 'UIH';
                     const isFallbackCountry = ['GBR', 'KOR', 'SGP', 'CHN', 'VNM'].includes(isoCode);
                     const meta = {
@@ -453,11 +597,8 @@
                         isFallback: isFallbackCountry
                     };
 
-                    const app = (typeof window !== 'undefined' && window.App) || (typeof App !== 'undefined' ? App : null);
+                    const app = window.App;
                     if (app) {
-                        if (typeof app.setPlannerData === 'function') {
-                            app.setPlannerData(countryKey, currentBudgetUSD, 'quynhon', arrCode, meta);
-                        }
                         const appState = typeof app.getState === 'function' ? app.getState() : null;
                         if (appState) {
                             appState.currentCountryKey = countryKey;
@@ -469,6 +610,7 @@
                             appState.originCountryName = currentCountry ? currentCountry.name : isoCode;
                             appState.originCountryVi = currentCountry ? currentCountry.vi : isoCode;
                             appState.isFallback = isFallbackCountry;
+                            appState.currentDestination = arrCode;
                         }
                         const cSelect = document.getElementById('country-select');
                         if (cSelect) cSelect.value = countryKey;
@@ -485,22 +627,11 @@
                                 if (grp) grp.style.display = 'block';
                             }
                         }
-                    }
 
-                    showToast(`🎉 Xuất xưởng ${curTier.name} (${formatted}) thành công! Đang lập kế hoạch du lịch Quy Nhơn...`);
-
-                    if (app && typeof app.generateJourneyPlan === 'function') {
-                        app.generateJourneyPlan(true);
-                    } else {
-                        const form = document.getElementById('journey-planner-form');
-                        if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
-                    }
-
-                    const resultsTarget = document.getElementById('ai-assistant-card') || document.getElementById('results-container') || document.getElementById('generated-itinerary-section');
-                    if (resultsTarget) {
-                        setTimeout(() => {
-                            resultsTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 250);
+                        // Trigger Plan Generation with loading state
+                        if (typeof app.generateJourneyPlan === 'function') {
+                            app.generateJourneyPlan(true);
+                        }
                     }
                 });
             }
@@ -509,7 +640,8 @@
             function syncBudgetUI(updateSlider = true, updateInput = true) {
                 const cur = window.CURRENCIES[currentCurrency] || window.CURRENCIES.USD;
                 const converted = currentBudgetUSD * cur.rate;
-                const curTier = window.getTierForUSD(currentBudgetUSD);
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                const curTier = window.getTierForUSD(currentBudgetUSD, isVi ? 'vi' : 'en');
 
                 // Currency symbol & code
                 budgetCurSymbol.textContent = cur.symbol;
@@ -522,22 +654,27 @@
 
                 // Equivalent USD Pill
                 if (currentCurrency === 'USD') {
-                    budgetUsdPill.textContent = 'Đơn vị cơ sở';
+                    budgetUsdPill.textContent = isVi ? 'Đơn vị cơ sở' : 'Base currency';
                 } else {
                     budgetUsdPill.textContent = `≈ $${currentBudgetUSD.toLocaleString()} USD`;
                 }
 
+                // Dynamic country minimum budget bounds
+                const countryCode = currentCountry ? currentCountry.code : 'DEU';
+                const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500, currency: 'USD' };
+                const countryMinUSD = countryLimits.minUSD;
+
                 // Range slider bounds and value
-                const minSlider = Math.round(window.BUDGET_CONFIG.minUSD * cur.rate);
-                const maxSlider = Math.round(window.BUDGET_CONFIG.maxUSD * cur.rate);
+                const minSlider = Math.round(countryMinUSD * cur.rate);
+                const maxSlider = Math.round(50000 * cur.rate);
                 budgetRangeSlider.min = minSlider;
                 budgetRangeSlider.max = maxSlider;
                 budgetRangeSlider.step = cur.rate > 100 ? 50000 : 100;
                 if (updateSlider) {
                     budgetRangeSlider.value = Math.round(converted);
                 }
-                sliderMinLabel.textContent = window.formatCurrency(window.BUDGET_CONFIG.minUSD, currentCurrency);
-                sliderMaxLabel.textContent = window.formatCurrency(window.BUDGET_CONFIG.maxUSD, currentCurrency);
+                sliderMinLabel.textContent = window.formatCurrency(countryMinUSD, currentCurrency);
+                sliderMaxLabel.textContent = window.formatCurrency(50000, currentCurrency);
 
                 // Update Preset Chips Active State
                 document.querySelectorAll('.preset-chip').forEach(chip => {
@@ -546,36 +683,47 @@
                 });
 
                 // Steppers UI
-                valGuests.textContent = `${currentGuests} khách`;
-                valDays.textContent = `${currentDays} ngày`;
+                valGuests.textContent = isVi ? (currentGuests + ' khách') : (currentGuests + (currentGuests > 1 ? ' guests' : ' guest'));
+                valDays.textContent = isVi ? (currentDays + ' ngày') : (currentDays + (currentDays > 1 ? ' days' : ' day'));
 
                 // Tier Experience Card
                 expTierBadge.textContent = curTier.badge;
-                expTierBadge.style.color = `#${curTier.colorHex.toString(16).padStart(6, '0')}`;
-                expTierUsdRange.textContent = `$${curTier.minUSD.toLocaleString()} – $${curTier.maxUSD.toLocaleString()} USD`;
+                expTierBadge.style.color = '#' + curTier.colorHex.toString(16).padStart(6, '0');
+                expTierUsdRange.textContent = '$' + curTier.minUSD.toLocaleString() + ' – $' + curTier.maxUSD.toLocaleString() + ' USD';
                 expTierDesc.textContent = curTier.experience;
-                expTierCard.style.borderColor = `#${curTier.colorHex.toString(16).padStart(6, '0')}55`;
+                expTierCard.style.borderColor = '#' + curTier.colorHex.toString(16).padStart(6, '0') + '55';
 
-                // Calculate 6-Category Allocation (100% closed)
-                const allocResult = window.BudgetTripCalculator.calculateAllocation(currentBudgetUSD, currentGuests, currentDays);
+                // Calculate 6-Category Allocation with country airfare factor & exact 100% closure
+                const allocResult = window.BudgetTripCalculator.calculateAllocation(currentBudgetUSD, currentGuests, currentDays, countryCode);
+
+                const catNames = {
+                    flight: isVi ? 'Vé Máy Bay' : 'Airfare',
+                    stay: isVi ? 'Lưu Trú (Khách sạn/Resort)' : 'Accommodation',
+                    food: isVi ? 'Ăn Uống & Ẩm Thực' : 'Food & Dining',
+                    transit: isVi ? 'Di Chuyển Nội Địa' : 'Local Transit',
+                    activities: isVi ? 'Hoạt Động & Trải Nghiệm' : 'Activities & Tours',
+                    buffer: isVi ? 'Quỹ Dự Phòng' : 'Contingency'
+                };
 
                 // Multi-segment progress bar
-                allocProgressBar.innerHTML = allocResult.categories.map(c => `
-                    <div class="alloc-seg" style="width: ${c.pct}%; background: ${c.color};" title="${c.name}: ${window.formatCurrency(c.amountUSD, currentCurrency)} (${c.pct}%)"></div>
-                `).join('');
+                allocProgressBar.innerHTML = allocResult.categories.map(c => {
+                    const localizedName = catNames[c.id] || c.name;
+                    return '<div class="alloc-seg" style="width: ' + c.pct + '%; background: ' + c.color + ';" title="' + localizedName + ': ' + window.formatCurrency(c.amountUSD, currentCurrency) + ' (' + c.pct + '%)"></div>';
+                }).join('');
 
                 // Categories list cards
-                allocItemsGrid.innerHTML = allocResult.categories.map(c => `
-                    <div class="alloc-item-card">
-                        <div class="alloc-item-top">
-                            <span><i class="fa-solid ${c.icon}" style="color: ${c.color};"></i> ${c.name}</span>
-                            <small>${c.pct}%</small>
-                        </div>
-                        <div class="alloc-item-amount">${window.formatCurrency(c.amountUSD, currentCurrency)}</div>
-                    </div>
-                `).join('');
+                allocItemsGrid.innerHTML = allocResult.categories.map(c => {
+                    const localizedName = catNames[c.id] || c.name;
+                    return '<div class="alloc-item-card">' +
+                        '<div class="alloc-item-top">' +
+                            '<span><i class="fa-solid ' + c.icon + '" style="color: ' + c.color + ';"></i> ' + localizedName + '</span>' +
+                            '<small>' + c.pct + '%</small>' +
+                        '</div>' +
+                        '<div class="alloc-item-amount">' + window.formatCurrency(c.amountUSD, currentCurrency) + '</div>' +
+                    '</div>';
+                }).join('');
 
-                allocCheckPill.innerHTML = `<i class="fa-solid fa-check"></i> 100% Khép kín ($${allocResult.totalUSD.toLocaleString()} USD)`;
+                allocCheckPill.innerHTML = '<i class="fa-solid fa-check"></i> ' + (isVi ? '100% Khép kín' : '100% Balanced') + ' ($' + allocResult.totalUSD.toLocaleString() + ' USD)';
 
                 // 3D Showroom HUD Overlay
                 if (hudTierTag) {
@@ -586,12 +734,7 @@
                     hudModelName.textContent = curTier.modelName;
                 }
                 if (hudSpecPill) {
-                    let specDesc = '16 xu vàng • 3 tờ USD • Homestay ven biển';
-                    if (curTier.level === 2) specDesc = '48 xu vàng • 8 tờ USD & cọc tiền • Khách sạn 3–4 sao biển';
-                    if (curTier.level === 3) specDesc = '110 xu vàng • 18 tờ USD & cọc tiền • Resort 5 sao Maia/FLC';
-                    if (curTier.level === 4) specDesc = '230 xu vàng • 32 cọc tiền USD • Biệt thự hồ bơi vô cực';
-                    if (curTier.level === 5) specDesc = '400 xu vàng • 50 cọc tiền USD • Dinh thự Tổng Thống & Trực thăng VIP';
-                    hudSpecPill.textContent = specDesc;
+                    hudSpecPill.textContent = curTier.specDesc || curTier.experience;
                 }
 
                 // Sticky Bottom Action Bar Sync (Casual Tycoon Console)
@@ -613,7 +756,8 @@
             function goToStep3() {
                 currentStep = 3;
                 stepNumberBadge.textContent = '3';
-                stepTitleText.textContent = 'Cấu Hình Ngân Sách & Phi Cơ 3D';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                stepTitleText.textContent = isVi ? 'Cấu Hình Ngân Sách & Phi Cơ 3D' : 'Configure Budget & 3D Aircraft';
 
                 crumbStep1.className = 'crumb-item completed';
                 crumbStep2.className = 'crumb-item completed';
@@ -654,7 +798,8 @@
             function goToStep2() {
                 currentStep = 2;
                 stepNumberBadge.textContent = '2';
-                stepTitleText.textContent = 'Chọn Sân Bay Đến Tại Việt Nam';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                stepTitleText.textContent = isVi ? 'Chọn Sân Bay Đến Tại Việt Nam' : 'Select Arrival Airport in Vietnam';
 
                 crumbStep1.className = 'crumb-item completed';
                 crumbStep2.className = 'crumb-item active';
@@ -683,7 +828,8 @@
             function goToStep1() {
                 currentStep = 1;
                 stepNumberBadge.textContent = '1';
-                stepTitleText.textContent = 'Chọn Điểm Khởi Hành';
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+                stepTitleText.textContent = isVi ? 'Chọn Điểm Khởi Hành' : 'Select Departure Location';
 
                 crumbStep1.className = 'crumb-item active';
                 crumbStep2.className = 'crumb-item';
@@ -728,6 +874,7 @@
 
             // Autocomplete Search Logic
             searchInput.addEventListener('input', (e) => {
+                const isVi = (window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
                 const query = e.target.value.trim().toLowerCase();
                 if (!query) {
                     searchDropdown.style.display = 'none';
@@ -742,7 +889,7 @@
                 );
 
                 if (matches.length === 0) {
-                    searchDropdown.innerHTML = `<div style="padding:12px;font-size:12px;color:#8ea2b9;">Không tìm thấy quốc gia phù hợp trong 11 nước hỗ trợ.</div>`;
+                    searchDropdown.innerHTML = `<div style="padding:12px;font-size:12px;color:#64748b;">${isVi ? 'Không tìm thấy quốc gia phù hợp trong 11 nước hỗ trợ.' : 'No matching country found among the 11 supported countries.'}</div>`;
                     searchDropdown.style.display = 'block';
                     return;
                 }
@@ -751,12 +898,13 @@
                 matches.forEach(m => {
                     const item = document.createElement('div');
                     item.className = 'search-item';
+                    const countryDisplay = isVi ? `<strong>${m.vi}</strong> (${m.name})` : `<strong>${m.name}</strong> (${m.code})`;
                     item.innerHTML = `
-                        <div>${m.flag} <strong>${m.name}</strong> (${m.vi})</div>
-                        <span class="tag">${m.airports.length} sân bay</span>
+                        <div>${m.flag} ${countryDisplay}</div>
+                        <span class="tag">${m.airports.length} ${isVi ? 'sân bay' : 'airports'}</span>
                     `;
                     item.addEventListener('click', () => {
-                        searchInput.value = m.name;
+                        searchInput.value = isVi ? m.vi : m.name;
                         searchDropdown.style.display = 'none';
                         searchInput.blur(); // Dismiss mobile on-screen keyboard
                         mapInstance.selectCountry(m.code, true);
@@ -790,6 +938,57 @@
                     }
                 }
             });
+
+            // Multi-Language Synchronization
+            function updateWizardLanguage(lang) {
+                const isVi = (lang === 'vi');
+                if (currentStep === 1) {
+                    stepTitleText.textContent = isVi ? 'Chọn Điểm Khởi Hành' : 'Select Departure Location';
+                } else if (currentStep === 2) {
+                    stepTitleText.textContent = isVi ? 'Chọn Sân Bay Đến Tại Việt Nam' : 'Select Arrival Airport in Vietnam';
+                } else if (currentStep === 3) {
+                    stepTitleText.textContent = isVi ? 'Cấu Hình Ngân Sách & Phi Cơ 3D' : 'Configure Budget & 3D Aircraft';
+                }
+
+                if (crumbStep1) crumbStep1.innerHTML = '<i class="fa-solid fa-plane-departure"></i> ' + (isVi ? '1. Khởi hành' : '1. Departure');
+                if (crumbStep2) crumbStep2.innerHTML = '<i class="fa-solid fa-location-dot"></i> ' + (isVi ? '2. Điểm đến (VN)' : '2. Destination (VN)');
+                if (crumbStep3) crumbStep3.innerHTML = '<i class="fa-solid fa-coins"></i> ' + (isVi ? '3. Ngân sách' : '3. Budget');
+
+                if (btnToStep2) btnToStep2.innerHTML = '<span>' + (isVi ? 'Tiếp tục: Chọn sân bay đến' : 'Continue: Select Destination') + '</span> <i class="fa-solid fa-arrow-right"></i>';
+                if (btnBackToStep1) btnBackToStep1.innerHTML = '<i class="fa-solid fa-arrow-left"></i> <span>' + (isVi ? 'Quay lại' : 'Change Origin') + '</span>';
+                if (btnBackToStep2) btnBackToStep2.innerHTML = '<i class="fa-solid fa-arrow-left"></i> <span>' + (isVi ? 'Quay lại' : 'Change Destination') + '</span>';
+                if (btnConfirmFinal) btnConfirmFinal.innerHTML = '<span>' + (isVi ? 'Xác nhận tuyến bay' : 'Confirm Route') + '</span> <i class="fa-solid fa-check"></i>';
+                updateGenerateButtonLabels(currentDays, lang);
+
+                const searchInput = document.getElementById('country-search-input');
+                if (searchInput) {
+                    searchInput.placeholder = isVi ? 'Nhập tên nước (ví dụ: Germany, Japan, Bỉ, Đức...)' : 'Enter country name (e.g., Germany, Japan, Belgium, France...)';
+                }
+
+                const soundBtn = document.getElementById('btn-sound-toggle');
+                const sLabel = document.getElementById('sound-label');
+                if (soundBtn && sLabel) {
+                    const isMuted = soundBtn.classList.contains('muted');
+                    sLabel.textContent = isMuted ? (isVi ? 'TẮT' : 'MUTED') : (isVi ? 'ÂM THANH' : 'SOUND');
+                }
+
+                renderCountryChips();
+                renderDepartureAirports(currentCountry);
+                renderDestinationAirports();
+                updateTelemetryAndSummary();
+                syncBudgetUI();
+            }
+
+            window.addEventListener('appLanguageChanged', (e) => {
+                if (e.detail && e.detail.lang) {
+                    updateWizardLanguage(e.detail.lang);
+                }
+            });
+            window.updateWizardLanguage = updateWizardLanguage;
+
+            // Trigger initial language sync
+            const initialLang = (window.App && window.App.getState) ? window.App.getState().currentLang : ((typeof localStorage !== 'undefined' && localStorage.getItem('quynhon_language')) || 'en');
+            updateWizardLanguage(initialLang);
 
             // Toast helper
             function showToast(msg) {

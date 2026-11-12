@@ -24,15 +24,30 @@
     // =========================================================================
 
     const BUDGET_CONFIG = {
-        minUSD: 500,
+        minUSD: 150,
         defaultUSD: 2500,
         maxUSD: 50000,
         defaultGuests: 1,
         minGuests: 1,
         maxGuests: 8,
         defaultDays: 5,
-        minDays: 2,
-        maxDays: 30
+        minDays: 1,
+        maxDays: 7
+    };
+
+    // Country-specific minimum budget and currency mappings
+    const COUNTRY_BUDGET_LIMITS = {
+        VNM: { minUSD: 150, currency: 'VND', baseFlightWeight: 0.18 },
+        SGP: { minUSD: 350, currency: 'SGD', baseFlightWeight: 0.25 },
+        CHN: { minUSD: 400, currency: 'CNY', baseFlightWeight: 0.28 },
+        KOR: { minUSD: 500, currency: 'KRW', baseFlightWeight: 0.32 },
+        JPN: { minUSD: 600, currency: 'JPY', baseFlightWeight: 0.34 },
+        AUS: { minUSD: 900, currency: 'AUD', baseFlightWeight: 0.38 },
+        BEL: { minUSD: 1100, currency: 'EUR', baseFlightWeight: 0.42 },
+        FRA: { minUSD: 1100, currency: 'EUR', baseFlightWeight: 0.42 },
+        DEU: { minUSD: 1100, currency: 'EUR', baseFlightWeight: 0.42 },
+        GBR: { minUSD: 1100, currency: 'GBP', baseFlightWeight: 0.42 },
+        USA: { minUSD: 1200, currency: 'USD', baseFlightWeight: 0.45 }
     };
 
     // Reference exchange rates (Q4/2026 Reference Data)
@@ -42,7 +57,10 @@
         EUR: { symbol: '€', rate: 0.92, prefix: '€', suffix: '', decimals: 0, label: 'EUR (€)', note: '1 USD ≈ 0.92 €' },
         JPY: { symbol: '¥', rate: 152.0, prefix: '¥', suffix: '', decimals: 0, label: 'JPY (¥)', note: '1 USD ≈ 152 ¥' },
         GBP: { symbol: '£', rate: 0.78, prefix: '£', suffix: '', decimals: 0, label: 'GBP (£)', note: '1 USD ≈ 0.78 £' },
-        AUD: { symbol: 'A$', rate: 1.52, prefix: 'A$', suffix: '', decimals: 0, label: 'AUD (A$)', note: '1 USD ≈ 1.52 A$' }
+        AUD: { symbol: 'A$', rate: 1.52, prefix: 'A$', suffix: '', decimals: 0, label: 'AUD (A$)', note: '1 USD ≈ 1.52 A$' },
+        KRW: { symbol: '₩', rate: 1380.0, prefix: '₩', suffix: '', decimals: 0, label: 'KRW (₩)', note: '1 USD ≈ 1,380 ₩' },
+        SGD: { symbol: 'S$', rate: 1.35, prefix: 'S$', suffix: '', decimals: 0, label: 'SGD (S$)', note: '1 USD ≈ 1.35 S$' },
+        CNY: { symbol: '¥', rate: 7.25, prefix: '¥', suffix: '', decimals: 0, label: 'CNY (¥)', note: '1 USD ≈ 7.25 ¥' }
     };
 
     // 5 Progressive Budget & Piggy Bank Growth Tiers
@@ -51,23 +69,42 @@
             level: 1,
             id: 'tier-1',
             name: 'Economy Explorer',
-            modelName: 'Heo Đất Nhỏ Xinh (Tiết Kiệm)',
-            badge: 'TIER 1 • ECONOMY EXPLORER',
-            minUSD: 500,
+            modelName: {
+                en: 'Petite Piggy Bank (Economy)',
+                vi: 'Heo Đất Nhỏ Xinh (Tiết Kiệm)'
+            },
+            badge: {
+                en: 'TIER 1 • ECONOMY EXPLORER',
+                vi: 'TIER 1 • TRẢI NGHIỆM TIẾT KIỆM'
+            },
+            minUSD: 150,
             maxUSD: 2499,
             presetUSD: 500,
             scale: 0.70,
             coinCount: 16,
             usdCount: 3,
             colorHex: 0x38bdf8,
-            experience: '16 xu vàng • 3 tờ USD • Homestay ven biển Nhơn Lý, ẩm thực hải sản đường phố bản địa.'
+            experience: {
+                en: 'Essential travel budget designed for backpackers and flexible independent explorers.',
+                vi: 'Ngân sách du lịch cơ bản, phù hợp cho du khách tự túc và khám phá tự do.'
+            },
+            specDesc: {
+                en: 'Essential travel budget for independent explorers',
+                vi: 'Ngân sách du lịch cơ bản cho du khách tự do'
+            }
         },
         {
             level: 2,
             id: 'tier-2',
             name: 'Comfort Voyage',
-            modelName: 'Heo Đất Tròn Trĩnh (Tiện Nghi)',
-            badge: 'TIER 2 • COMFORT VOYAGE',
+            modelName: {
+                en: 'Chubby Piggy Bank (Comfort)',
+                vi: 'Heo Đất Tròn Trĩnh (Tiện Nghi)'
+            },
+            badge: {
+                en: 'TIER 2 • COMFORT VOYAGE',
+                vi: 'TIER 2 • NGHỈ DƯỠNG TIỆN NGHI'
+            },
             minUSD: 2500,
             maxUSD: 7999,
             presetUSD: 2500,
@@ -75,14 +112,27 @@
             coinCount: 48,
             usdCount: 8,
             colorHex: 0x00e5ff,
-            experience: '48 xu vàng • 8 tờ USD & cọc tiền • Khách sạn 3–4 sao ngắm trọn vịnh biển Quy Nhơn, xe đưa đón Phù Cát.'
+            experience: {
+                en: 'Balanced comfort budget ensuring quality amenities, standard dining, and essential activities.',
+                vi: 'Ngân sách tiện nghi cân bằng, đáp ứng chất lượng lưu trú tốt, ẩm thực tiêu chuẩn và hoạt động trải nghiệm.'
+            },
+            specDesc: {
+                en: 'Balanced comfort budget with standard amenities',
+                vi: 'Ngân sách tiện nghi tiêu chuẩn cân bằng'
+            }
         },
         {
             level: 3,
             id: 'tier-3',
             name: 'Business Executive',
-            modelName: 'Heo Đất Mũm Mĩm (Thương Gia)',
-            badge: 'TIER 3 • BUSINESS EXECUTIVE',
+            modelName: {
+                en: 'Plump Piggy Bank (Business)',
+                vi: 'Heo Đất Mũm Mĩm (Thương Gia)'
+            },
+            badge: {
+                en: 'TIER 3 • BUSINESS EXECUTIVE',
+                vi: 'TIER 3 • DOANH NHÂN THƯƠNG GIA'
+            },
             minUSD: 8000,
             maxUSD: 19999,
             presetUSD: 8000,
@@ -90,14 +140,27 @@
             coinCount: 110,
             usdCount: 18,
             colorHex: 0x10b981,
-            experience: '110 xu vàng • 18 tờ USD & cọc tiền • Resort 5 sao Maia/FLC Quy Nhơn, tiệc tôm hùm hoàng hôn.'
+            experience: {
+                en: 'Executive travel tier featuring premium services, fine dining, and curated excursions.',
+                vi: 'Cấp độ thương gia với chất lượng dịch vụ cao cấp, ẩm thực tinh hoa và các hoạt động trải nghiệm chọn lọc.'
+            },
+            specDesc: {
+                en: 'Executive service tier with curated experiences',
+                vi: 'Cấp độ thương gia với trải nghiệm chọn lọc'
+            }
         },
         {
             level: 4,
             id: 'tier-4',
             name: 'Premium Flagship',
-            modelName: 'Heo Đất Khổng Lồ (Cao Cấp)',
-            badge: 'TIER 4 • PREMIUM FLAGSHIP',
+            modelName: {
+                en: 'Giant Piggy Bank (Premium)',
+                vi: 'Heo Đất Khổng Lồ (Cao Cấp)'
+            },
+            badge: {
+                en: 'TIER 4 • PREMIUM FLAGSHIP',
+                vi: 'TIER 4 • CAO CẤP NGHỈ DƯỠNG'
+            },
             minUSD: 20000,
             maxUSD: 34999,
             presetUSD: 20000,
@@ -105,14 +168,27 @@
             coinCount: 230,
             usdCount: 32,
             colorHex: 0xf59e0b,
-            experience: '230 xu vàng • 32 cọc tiền USD • Biệt thự hồ bơi vô cực vách đá riêng biệt, du thuyền dạo vịnh.'
+            experience: {
+                en: 'Flagship luxury tier offering bespoke private arrangements, exclusive itineraries, and top amenities.',
+                vi: 'Cấp độ sang trọng đặc quyền với dịch vụ riêng tư, lịch trình thiết kế riêng và tiện ích hàng đầu.'
+            },
+            specDesc: {
+                en: 'Bespoke private arrangements and luxury amenities',
+                vi: 'Dịch vụ riêng tư và tiêu chuẩn sang trọng'
+            }
         },
         {
             level: 5,
             id: 'tier-5',
             name: 'Luxury Presidential',
-            modelName: 'Heo Đất Đại Phú Hào (Thượng Lưu)',
-            badge: 'TIER 5 • LUXURY PRESIDENTIAL',
+            modelName: {
+                en: 'Magnate Piggy Bank (Ultra-Luxury)',
+                vi: 'Heo Đất Đại Phú Hào (Thượng Lưu)'
+            },
+            badge: {
+                en: 'TIER 5 • LUXURY PRESIDENTIAL',
+                vi: 'TIER 5 • THƯỢNG LƯU TỔNG THỐNG'
+            },
             minUSD: 35000,
             maxUSD: 50000,
             presetUSD: 50000,
@@ -120,18 +196,25 @@
             coinCount: 400,
             usdCount: 50,
             colorHex: 0xffd700,
-            experience: '400 xu vàng • 50 cọc tiền USD • Dinh thự Tổng Thống cao cấp nhất, trực thăng ngắm Ghềnh Ráng 24/7.'
+            experience: {
+                en: 'Ultra-luxury presidential tier with customized VIP itinerary and dedicated concierge services.',
+                vi: 'Cấp độ thượng lưu đỉnh cao với dịch vụ quản gia riêng và lịch trình VIP thiết kế độc bản.'
+            },
+            specDesc: {
+                en: 'Ultra-luxury VIP tier with dedicated concierge',
+                vi: 'Cấp độ thượng lưu đỉnh cao với quản gia riêng'
+            }
         }
     ];
 
     // 6-Category Allocation Baseline Weights (at 1 Guest, 5 Days)
     const ALLOCATION_CATEGORIES = [
-        { id: 'flight', name: 'Vé Máy Bay', icon: 'fa-plane-departure', color: '#38bdf8', baseWeight: 0.35 },
-        { id: 'stay', name: 'Lưu Trú (Khách sạn/Resort)', icon: 'fa-hotel', color: '#818cf8', baseWeight: 0.28 },
-        { id: 'food', name: 'Ăn Uống & Ẩm Thực', icon: 'fa-utensils', color: '#fb923c', baseWeight: 0.14 },
-        { id: 'transit', name: 'Di Chuyển Nội Địa', icon: 'fa-car-side', color: '#34d399', baseWeight: 0.08 },
-        { id: 'activities', name: 'Hoạt Động & Trải Nghiệm', icon: 'fa-compass', color: '#f43f5e', baseWeight: 0.10 },
-        { id: 'buffer', name: 'Quỹ Dự Phòng', icon: 'fa-shield-halved', color: '#fbbf24', baseWeight: 0.05 }
+        { id: 'flight', name: { en: 'Airfare', vi: 'Vé Máy Bay' }, icon: 'fa-plane-departure', color: '#38bdf8', baseWeight: 0.35 },
+        { id: 'stay', name: { en: 'Accommodation (Hotel/Resort)', vi: 'Lưu Trú (Khách sạn/Resort)' }, icon: 'fa-hotel', color: '#818cf8', baseWeight: 0.28 },
+        { id: 'food', name: { en: 'Food & Dining', vi: 'Ăn Uống & Ẩm Thực' }, icon: 'fa-utensils', color: '#fb923c', baseWeight: 0.14 },
+        { id: 'transit', name: { en: 'Local Transit', vi: 'Di Chuyển Nội Địa' }, icon: 'fa-car-side', color: '#34d399', baseWeight: 0.08 },
+        { id: 'activities', name: { en: 'Activities & Tours', vi: 'Hoạt Động & Trải Nghiệm' }, icon: 'fa-compass', color: '#f43f5e', baseWeight: 0.10 },
+        { id: 'buffer', name: { en: 'Contingency Fund', vi: 'Quỹ Dự Phòng' }, icon: 'fa-shield-halved', color: '#fbbf24', baseWeight: 0.05 }
     ];
 
     // =========================================================================
@@ -147,11 +230,23 @@
         return x * x * (3 - 2 * x);
     }
 
-    function getTierForUSD(usd) {
+    function getTierForUSD(usd, lang) {
+        let baseTier = TIERS[0];
         for (let i = TIERS.length - 1; i >= 0; i--) {
-            if (usd >= TIERS[i].minUSD) return TIERS[i];
+            if (usd >= TIERS[i].minUSD) {
+                baseTier = TIERS[i];
+                break;
+            }
         }
-        return TIERS[0];
+        const currentLang = lang || ((typeof window !== 'undefined' && window.App && window.App.getState) ? window.App.getState().currentLang : (typeof localStorage !== 'undefined' && localStorage.getItem('quynhon_language')) || 'en') || 'en';
+        const isVi = (currentLang === 'vi');
+        return {
+            ...baseTier,
+            modelName: typeof baseTier.modelName === 'object' ? (isVi ? baseTier.modelName.vi : baseTier.modelName.en) : baseTier.modelName,
+            badge: typeof baseTier.badge === 'object' ? (isVi ? baseTier.badge.vi : baseTier.badge.en) : baseTier.badge,
+            experience: typeof baseTier.experience === 'object' ? (isVi ? baseTier.experience.vi : baseTier.experience.en) : baseTier.experience,
+            specDesc: typeof baseTier.specDesc === 'object' ? (isVi ? baseTier.specDesc.vi : baseTier.specDesc.en) : (baseTier.specDesc || baseTier.experience)
+        };
     }
 
     function formatNumber(val, decimals = 0) {
@@ -167,8 +262,8 @@
         if (curKey === 'VND') {
             return Math.round(converted).toLocaleString('vi-VN') + cur.suffix;
         }
-        if (curKey === 'JPY') {
-            return cur.prefix + Math.round(converted).toLocaleString('ja-JP');
+        if (curKey === 'JPY' || curKey === 'KRW') {
+            return cur.prefix + Math.round(converted).toLocaleString('en-US');
         }
         return cur.prefix + formatNumber(converted, cur.decimals);
     }
@@ -268,16 +363,20 @@
     // =========================================================================
 
     class BudgetTripCalculator {
-        static calculateAllocation(totalBudgetUSD, guests = 1, days = 5) {
-            const B = clamp(totalBudgetUSD, BUDGET_CONFIG.minUSD, BUDGET_CONFIG.maxUSD);
+        static calculateAllocation(totalBudgetUSD, guests = 1, days = 5, originCountryCode = 'DEU') {
+            const countryCfg = COUNTRY_BUDGET_LIMITS[originCountryCode] || COUNTRY_BUDGET_LIMITS['DEU'];
+            const minUSD = countryCfg ? countryCfg.minUSD : BUDGET_CONFIG.minUSD;
+            const B = clamp(totalBudgetUSD, minUSD, BUDGET_CONFIG.maxUSD);
             const g = clamp(guests, BUDGET_CONFIG.minGuests, BUDGET_CONFIG.maxGuests);
             const d = clamp(days, BUDGET_CONFIG.minDays, BUDGET_CONFIG.maxDays);
 
-            let wFlight = 0.35 * Math.pow(g, 0.45) / Math.pow(d / 5, 0.35);
-            let wStay = 0.28 * Math.pow(d / 5, 0.60) * Math.pow(g, 0.25);
-            let wFood = 0.14 * (g * 0.7 + 0.3) * Math.pow(d / 5, 0.50);
+            // Flight weight varies by origin country and scales with guests
+            const flightBase = countryCfg ? countryCfg.baseFlightWeight : 0.35;
+            let wFlight = flightBase * Math.pow(g, 0.75) / Math.pow(d / 5, 0.25);
+            let wStay = 0.28 * Math.pow(d / 5, 0.65) * Math.pow(g, 0.30);
+            let wFood = 0.15 * (g * 0.7 + 0.3) * Math.pow(d / 5, 0.55);
             let wTransit = 0.08 * (1 + 0.15 * (g - 1)) * Math.pow(d / 5, 0.20);
-            let wActivities = 0.10 * Math.pow(g, 0.40) * Math.pow(d / 5, 0.30);
+            let wActivities = 0.10 * Math.pow(g, 0.45) * Math.pow(d / 5, 0.35);
             let wBuffer = 0.05;
 
             const sumW = wFlight + wStay + wFood + wTransit + wActivities + wBuffer;
@@ -302,13 +401,24 @@
                 baseAmounts[remainders[i % remainders.length].index] += 1;
             }
 
+            // Calculate percentages strictly closing to 100.0%
+            let rawPcts = baseAmounts.map(amountUSD => Math.round((amountUSD / B) * 1000) / 10);
+            let pctSum = Math.round(rawPcts.reduce((a, b) => a + b, 0) * 10) / 10;
+            let pctDiff = Math.round((100.0 - pctSum) * 10) / 10;
+            if (pctDiff !== 0) {
+                let maxIdx = 0;
+                for (let i = 1; i < rawPcts.length; i++) {
+                    if (rawPcts[i] > rawPcts[maxIdx]) maxIdx = i;
+                }
+                rawPcts[maxIdx] = Math.round((rawPcts[maxIdx] + pctDiff) * 10) / 10;
+            }
+
             const results = ALLOCATION_CATEGORIES.map((cat, idx) => {
                 const amountUSD = baseAmounts[idx];
-                const pct = (amountUSD / B) * 100;
                 return {
                     ...cat,
                     amountUSD,
-                    pct: Math.round(pct * 10) / 10
+                    pct: rawPcts[idx]
                 };
             });
 

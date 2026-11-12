@@ -183,11 +183,12 @@ const MapController = (function() {
                 'fa-plane-arrival',
                 'Phu Cat (UIH)'
             );
+            const destAptName = typeof destinationData.airportName === 'object' ? (isVi ? destinationData.airportName.vi : destinationData.airportName.en) : (isVi ? 'Sân bay Phù Cát' : 'Phu Cat Airport');
             const uihMarker = L.marker([uihCoords.lat, uihCoords.lng], { icon: uihIcon });
             uihMarker.bindPopup(`
                 <div class="map-popup-card">
                     <span class="popup-badge transit">${isVi ? 'Sân Bay Phù Cát (UIH)' : 'Phu Cat Airport (UIH)'}</span>
-                    <h4>${destinationData.airportName}</h4>
+                    <h4>${destAptName}</h4>
                     <p>${isVi ? 'Cách trung tâm Quy Nhơn 35km (~40 phút taxi)' : '35km from downtown (~40 min taxi)'}</p>
                 </div>
             `);
@@ -198,14 +199,16 @@ const MapController = (function() {
         const destIcon = createCustomMarkerIcon(
             'marker-destination',
             'fa-umbrella-beach',
-            'Quy Nhon'
+            isVi ? 'Quy Nhơn' : 'Quy Nhon'
         );
+        const finalDestName = typeof destinationData.name === 'object' ? (isVi ? destinationData.name.vi : destinationData.name.en) : (isVi ? 'Quy Nhơn' : 'Quy Nhon');
+        const finalAptName = typeof destinationData.airportName === 'object' ? (isVi ? destinationData.airportName.vi : destinationData.airportName.en) : (isVi ? 'Sân bay Phù Cát' : 'Phu Cat Airport');
         const destMarker = L.marker([destLat, destLng], { icon: destIcon });
         destMarker.bindPopup(`
             <div class="map-popup-card">
                 <span class="popup-badge dest">${isVi ? 'Điểm Đến Cuối Cùng' : 'Final Destination'}</span>
-                <h4>🌊 ${destinationData.name}</h4>
-                <p>${destinationData.airportName} (${destinationData.airportCode})</p>
+                <h4>🌊 ${finalDestName}</h4>
+                <p>${finalAptName} (${destinationData.airportCode})</p>
                 <small>${destinationData.description[langKey]}</small>
                 <div style="margin-top: 0.65rem;">
                     <button type="button" class="btn-popup-explore" onclick="App.openDestinationModal()">

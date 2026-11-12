@@ -1935,12 +1935,12 @@ function generateAISummary(options = {}) {
         greetingText = isVi ? "Chào mừng quý khách từ Trung Quốc!" : "Welcome traveler from China!";
     } else {
         const greetings = {
-            belgium: { en: "Welcome from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
-            france: { en: "Bonjour from France!", vi: "Bonjour từ nước Pháp!" },
-            germany: { en: "Guten Tag from Germany!", vi: "Guten Tag từ nước Đức!" },
-            usa: { en: "Welcome from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
-            australia: { en: "G'day from Australia!", vi: "G'day từ nước Úc!" },
-            japan: { en: "Konnichiwa from Japan!", vi: "Konnichiwa từ Nhật Bản!" },
+            belgium: { en: "Welcome traveler from Belgium!", vi: "Chào mừng quý khách từ Bỉ!" },
+            france: { en: "Welcome traveler from France!", vi: "Chào mừng quý khách từ nước Pháp!" },
+            germany: { en: "Welcome traveler from Germany!", vi: "Chào mừng quý khách từ nước Đức!" },
+            usa: { en: "Welcome traveler from the United States!", vi: "Chào mừng quý khách từ Hoa Kỳ!" },
+            australia: { en: "Welcome traveler from Australia!", vi: "Chào mừng quý khách từ nước Úc!" },
+            japan: { en: "Welcome traveler from Japan!", vi: "Chào mừng quý khách từ Nhật Bản!" },
             vietnam: { en: "Welcome to Quy Nhon!", vi: "Chào mừng quý khách đến với Quy Nhơn!" }
         };
         greetingText = (greetings[countryId] && greetings[countryId][lang]) || (isVi ? "Chào mừng quý du khách!" : "Welcome traveler!");
@@ -2038,26 +2038,90 @@ function generatePersonalizedItinerary(options = {}) {
         preferences = ['beaches', 'food', 'culture'],
         budget = 2000,
         lang = 'en',
-        destinationId = 'quynhon'
+        destinationId = 'quynhon',
+        durationDays = 5,
+        days = 5
     } = options;
 
     const isVi = lang === 'vi';
-    const numBudget = Number(String(budget).replace(/,/g, '')) || 2000;
+    const targetDays = Math.max(1, Math.min(7, Number(options.durationDays || options.days || durationDays || 5)));
 
-    // Lịch trình 3 ngày chuẩn mẫu không trùng lặp, đầy đủ:
-    // - Thời gian Sân bay Phù Cát -> Quy Nhơn (40-45 phút, ~35 km)
-    // - Explorascience Quy Nhơn (Tổ hợp không gian khoa học & Planetarium)
-    // - Nhà hát Nghệ thuật Truyền thống tỉnh (Tối Thứ 6 lúc 19h30 MIỄN PHÍ)
-    const itinerary = [
+    const extraActivities = {
+        honKho: {
+            time: "08:30",
+            category: "BEACH",
+            title: { en: "Hon Kho Island Coral Snorkeling & Wooden Sea Bridge", vi: "Đảo Hòn Khô - Cầu gỗ ven vách đá & Lặn san hô" },
+            desc: {
+                en: "Cross clear turquoise waters to stroll along the cliffside wooden walkway and snorkel over pristine coral reefs.",
+                vi: "Băng cano qua vịnh biển xanh ngọc, dạo bước trên cây cầu gỗ ven vách đá và lặn ngắm rạn san hô tự nhiên tuyệt đẹp."
+            }
+        },
+        baiXep: {
+            time: "14:30",
+            category: "CULTURE",
+            title: { en: "Bai Xep Peaceful Fishing Hamlet & Coconut Coves", vi: "Làng chài Bãi Xếp thanh bình & Vịnh cọ xanh" },
+            desc: {
+                en: "Experience an authentic peaceful fishing village praised by international travel magazines for its tranquil charm.",
+                vi: "Hòa mình vào nhịp sống chậm rãi của làng chài cổ tích từng được Business Insider vinh danh là viên ngọc bí ẩn châu Á."
+            }
+        },
+        trungLuong: {
+            time: "16:30",
+            category: "BEACH",
+            title: { en: "Trung Luong Beach Valley & Sunset Views", vi: "Thung lũng dã ngoại bãi biển Trung Lương" },
+            desc: {
+                en: "Wander through rocky valleys blooming with coastal flora and enjoy glorious sunset views over the turquoise bay.",
+                vi: "Dạo bước qua thung lũng đá nở hoa dại hướng biển và đón hoàng hôn rực rỡ bên bãi cát mịn hoang sơ."
+            }
+        },
+        ongNui: {
+            time: "09:00",
+            category: "CULTURE",
+            title: { en: "Ong Nui Pagoda & Southeast Asia's Tallest Seated Buddha", vi: "Chùa Ông Núi & Đại tượng Phật ngồi cao nhất Đông Nam Á" },
+            desc: {
+                en: "Ascend the scenic stone mountain stairway to the 69-meter grand white Buddha overlooking Cat Tien coastline.",
+                vi: "Chinh phục bậc thang đá viếng tượng đại Phật Thích Ca ngự trên đỉnh núi cao 69m ngắm trọn toàn cảnh vịnh biển Cát Tiến."
+            }
+        },
+        choDam: {
+            time: "11:30",
+            category: "FOOD",
+            title: { en: "Cho Dam Local Market & Coastal Souvenirs", vi: "Chợ Đầm Quy Nhơn & Mua sắm đặc sản làm quà" },
+            desc: {
+                en: "Browse authentic local delicacies: Bau Da wine, Tre fermented pork straws, and sun-dried squid directly from local artisans.",
+                vi: "Mua sắm đặc sản trứ danh Bình Định: rượu Bàu Đá, nem tré rơm, bánh ít lá gai và mực một nắng thơm ngon."
+            }
+        },
+        thiNaiLagoon: {
+            time: "15:30",
+            category: "ADVENTURE",
+            title: { en: "Thi Nai Mangrove Eco-Tour & Longest Sea Bridge", vi: "Khu sinh thái rừng ngập mặn đầm Thị Nại & Cầu vượt biển" },
+            desc: {
+                en: "Eco-boat cruise through lush mangrove forests and cross the historic 2.5-km sea bridge connecting the city to the peninsula.",
+                vi: "Chèo thuyền sinh thái luồn lách qua thảm rừng ngập mặn đầm Thị Nại và ngắm cầu vượt biển dài gần 2.5 km nối bán đảo Phương Mai."
+            }
+        },
+        airportDeparture: {
+            time: "15:00",
+            category: "TRANSIT",
+            title: { en: "Scenic Coastal Airport Transfer to Phu Cat (UIH)", vi: "Xe ngắm cảnh đưa đón về Sân bay Phù Cát (UIH)" },
+            desc: {
+                en: "Smooth private transfer along the coastal expressway to Phu Cat Airport for scheduled flight return.",
+                vi: "Hành trình xe riêng êm ái qua cung đường ven biển và cầu Thị Nại trở về Sân bay Phù Cát đáp chuyến bay trở về."
+            }
+        }
+    };
+
+    const fullItinerary = [
         {
             dayNumber: 1,
             label: isVi ? "Ngày 1" : "Day 1",
             title: isVi ? "Hạ cánh Sân bay Phù Cát (Ước tính 40–45 phút) & Vịnh biển Kỳ Co" : "Phu Cat Airport Arrival (~40-45 min transfer) & Coastal Welcome",
             activities: [
                 MOCK_ACTIVITIES_POOL.transit[0],
-                MOCK_ACTIVITIES_POOL.food[0], // Bánh xèo tôm nhảy (12:00)
-                MOCK_ACTIVITIES_POOL.beaches[1], // Cung đường Eo Gió (15:30)
-                MOCK_ACTIVITIES_POOL.food[3] // Phố ẩm thực Ngô Văn Sở (18:30)
+                MOCK_ACTIVITIES_POOL.food[0],
+                MOCK_ACTIVITIES_POOL.beaches[1],
+                MOCK_ACTIVITIES_POOL.food[3]
             ]
         },
         {
@@ -2065,10 +2129,10 @@ function generatePersonalizedItinerary(options = {}) {
             label: isVi ? "Ngày 2" : "Day 2",
             title: isVi ? "Biển Kỳ Co, Explorascience & Nhà Hát Nghệ Thuật (Tối Thứ 6 Miễn Phí)" : "Ky Co Waters, Explorascience & Traditional Theater (Friday Free Show)",
             activities: [
-                MOCK_ACTIVITIES_POOL.beaches[0], // Biển Kỳ Co & Hòn Sẹo (09:00)
-                MOCK_ACTIVITIES_POOL.food[1], // Hải sản Nhơn Lý (12:30)
-                MOCK_ACTIVITIES_POOL.science[0], // Explorascience Quy Nhơn (14:30)
-                MOCK_ACTIVITIES_POOL.culture[1] // Nhà hát Nghệ thuật Truyền thống (Tối Thứ 6 miễn phí - 19:30)
+                MOCK_ACTIVITIES_POOL.beaches[0],
+                MOCK_ACTIVITIES_POOL.food[1],
+                MOCK_ACTIVITIES_POOL.science[0],
+                MOCK_ACTIVITIES_POOL.culture[1]
             ]
         },
         {
@@ -2076,23 +2140,67 @@ function generatePersonalizedItinerary(options = {}) {
             label: isVi ? "Ngày 3" : "Day 3",
             title: isVi ? "Tháp Chăm ngàn năm, Đồi cát & Hoàng hôn biển" : "Ancient Cham Heritage, Dunes & Coastal Farewell",
             activities: [
-                MOCK_ACTIVITIES_POOL.culture[0], // Tháp Chăm Bánh Ít & Tháp Đôi (09:00)
-                MOCK_ACTIVITIES_POOL.food[2], // Bún chả cá & Bánh hỏi lòng heo (12:00)
-                MOCK_ACTIVITIES_POOL.adventure[0], // Trượt cát Phương Mai (15:00)
-                MOCK_ACTIVITIES_POOL.beaches[2], // Bãi Trứng Hoàng Hậu & Ghềnh Ráng (16:30)
-                MOCK_ACTIVITIES_POOL.nightlife[0] // Surf Bar (20:00)
+                MOCK_ACTIVITIES_POOL.culture[0],
+                MOCK_ACTIVITIES_POOL.food[2],
+                MOCK_ACTIVITIES_POOL.adventure[0],
+                MOCK_ACTIVITIES_POOL.beaches[2],
+                MOCK_ACTIVITIES_POOL.nightlife[0]
+            ]
+        },
+        {
+            dayNumber: 4,
+            label: isVi ? "Ngày 4" : "Day 4",
+            title: isVi ? "Khám Phá Đảo Cù Lao Xanh & Hải Đăng 130 Năm" : "Cu Lao Xanh Island Speedboat & 130-Year French Lighthouse",
+            activities: [
+                MOCK_ACTIVITIES_POOL.adventure[1],
+                MOCK_ACTIVITIES_POOL.food[1],
+                MOCK_ACTIVITIES_POOL.beaches[0],
+                MOCK_ACTIVITIES_POOL.nightlife[1]
+            ]
+        },
+        {
+            dayNumber: 5,
+            label: isVi ? "Ngày 5" : "Day 5",
+            title: isVi ? "Bảo Tàng Quang Trung, Nhạc Võ Tây Sơn & Đầm Thị Nại" : "Quang Trung Museum, Tay Son Martial Arts & Thi Nai Lagoon",
+            activities: [
+                MOCK_ACTIVITIES_POOL.culture[2],
+                MOCK_ACTIVITIES_POOL.food[2],
+                extraActivities.thiNaiLagoon,
+                MOCK_ACTIVITIES_POOL.nightlife[0]
+            ]
+        },
+        {
+            dayNumber: 6,
+            label: isVi ? "Ngày 6" : "Day 6",
+            title: isVi ? "Đảo Hòn Khô, Làng Chài Bãi Xếp & Dã Ngoại Trung Lương" : "Hon Kho Coral Island, Bai Xep Hamlet & Trung Luong Valley",
+            activities: [
+                extraActivities.honKho,
+                extraActivities.baiXep,
+                extraActivities.trungLuong,
+                MOCK_ACTIVITIES_POOL.food[3]
+            ]
+        },
+        {
+            dayNumber: 7,
+            label: isVi ? "Ngày 7" : "Day 7",
+            title: isVi ? "Chùa Ông Núi, Mua Sắm Đặc Sản & Tạm Biệt Quy Nhơn" : "Ong Nui Mountain Pagoda, Cho Dam Souvenirs & Departure",
+            activities: [
+                extraActivities.ongNui,
+                extraActivities.choDam,
+                extraActivities.airportDeparture
             ]
         }
     ];
 
-    // Đảm bảo các hoạt động luôn được xếp theo thứ tự thời gian tăng dần
-    itinerary.forEach(day => {
+    const sliced = fullItinerary.slice(0, targetDays);
+
+    sliced.forEach(day => {
         if (Array.isArray(day.activities)) {
             day.activities.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
         }
     });
 
-    return itinerary;
+    return sliced;
 }
 
 const MOCK_FUTURE_FEATURES = [

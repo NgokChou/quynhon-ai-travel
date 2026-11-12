@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome 6 (Free CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -41,7 +41,7 @@
             <ul class="nav-center-menu">
                 <li><a href="#planner-section" data-i18n="navPlanner">AI Planner</a></li>
                 <li><a href="#map-section" data-i18n="navMap">World Route</a></li>
-                <li><a href="#itinerary-section">My Journey</a></li>
+                <li><a href="#itinerary-section" data-i18n="navJourney">My Journey</a></li>
                 <li><a href="#hotels-section" data-i18n="navHotels">Hotels</a></li>
                 <li><a href="#roadmap-section" data-i18n="navRoadmap">Roadmap</a></li>
                 <li><a href="#team-section" data-i18n="navTeam">Founders</a></li>
@@ -124,45 +124,7 @@
         <div class="container">
             <div class="glass-card planner-card-inner">
 
-                <!-- Feature 2: Live Weather & Seasonal Intelligence Widget -->
-                <div id="quynhon-weather-widget" class="weather-advisor-card">
-                    <div class="weather-widget-header">
-                        <div class="weather-widget-title">
-                            <i class="fa-solid fa-cloud-sun-rain"></i>
-                            <span data-i18n="weatherWidgetTitle">Quy Nhon Live Weather & Seasonal Intelligence</span>
-                        </div>
-                        <div id="weather-data-status" class="weather-data-status live">
-                            <span class="status-pulse-dot"></span>
-                            <span id="weather-status-label" data-i18n="weatherLiveStatus">Live Open-Meteo Data</span>
-                        </div>
-                    </div>
-                    <div class="weather-widget-body">
-                        <div class="weather-metrics-col">
-                            <div class="weather-current-temp">
-                                <span id="weather-main-icon" class="weather-icon"><i class="fa-solid fa-sun"></i></span>
-                                <span id="weather-temp-val" class="temp-val">28°C</span>
-                            </div>
-                            <div class="weather-details-row">
-                                <span class="weather-detail-item">
-                                    <i class="fa-solid fa-wind"></i> <span data-i18n="weatherWind">Wind</span>: <strong id="weather-wind-val">12 km/h</strong>
-                                </span>
-                                <span class="weather-detail-item">
-                                    <i class="fa-solid fa-droplet"></i> <span data-i18n="weatherHumidity">Humidity</span>: <strong id="weather-humidity-val">78%</strong>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="weather-tip-col">
-                            <div class="seasonal-tip-badge">
-                                <i class="fa-solid fa-compass"></i> <span data-i18n="weatherSeasonalTip">Seasonal Advice</span>
-                            </div>
-                            <p id="weather-seasonal-tip" class="seasonal-tip-text">
-                                Quy Nhon coastal conditions loading...
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Feature 0: Kurzgesagt Interactive 2D Game Booking Wizard -->
+                                <!-- Feature 0: Kurzgesagt Interactive 2D Game Booking Wizard -->
                 <div id="game-booking-wizard-container">
 
                 <!-- Unified Tactical Explorer & 3D Budget Showroom (Sprint C.4 Integration) -->
@@ -170,13 +132,13 @@
                     <header class="top-navbar">
                             <div class="step-badge">
                                 <div class="step-number" id="step-number-badge">1</div>
-                                <h1 class="step-title" id="step-title-text">Chọn Điểm Khởi Hành</h1>
+                                <h1 class="step-title" id="step-title-text" data-i18n="wizardStep1Title">Select Departure Location</h1>
                             </div>
                     
                             <nav class="step-crumbs">
-                                <div class="crumb-item active" id="crumb-step-1"><i class="fa-solid fa-plane-departure"></i> 1. Khởi hành</div>
-                                <div class="crumb-item" id="crumb-step-2"><i class="fa-solid fa-location-dot"></i> 2. Điểm đến (VN)</div>
-                                <div class="crumb-item" id="crumb-step-3"><i class="fa-solid fa-coins"></i> 3. Ngân sách</div>
+                                <div class="crumb-item active" id="crumb-step-1"><i class="fa-solid fa-plane-departure"></i> 1. Departure</div>
+                                <div class="crumb-item" id="crumb-step-2"><i class="fa-solid fa-location-dot"></i> 2. Destination (VN)</div>
+                                <div class="crumb-item" id="crumb-step-3"><i class="fa-solid fa-coins"></i> 3. Budget</div>
                             </nav>
                     
                             <div class="brand-logo">
@@ -204,17 +166,17 @@
                     
                                 <!-- Map View Controls -->
                                 <div class="map-controls-box">
-                                    <button class="ctrl-btn" id="btn-zoom-in" title="Phóng to (Zoom In)"><i class="fa-solid fa-plus"></i></button>
-                                    <button class="ctrl-btn" id="btn-zoom-out" title="Thu nhỏ (Zoom Out)"><i class="fa-solid fa-minus"></i></button>
-                                    <button class="ctrl-btn" id="btn-reset-view" title="Đặt lại góc nhìn (Reset)"><i class="fa-solid fa-rotate-left"></i></button>
-                                    <button class="ctrl-btn" id="btn-fullscreen" title="Toàn màn hình"><i class="fa-solid fa-expand"></i></button>
+                                    <button class="ctrl-btn" id="btn-zoom-in" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                                    <button class="ctrl-btn" id="btn-zoom-out" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                                    <button class="ctrl-btn" id="btn-reset-view" title="Reset View"><i class="fa-solid fa-rotate-left"></i></button>
+                                    <button class="ctrl-btn" id="btn-fullscreen" title="Full Screen"><i class="fa-solid fa-expand"></i></button>
                                 </div>
                     
                                 <!-- Live Telemetry Pill -->
                                 <div class="telemetry-pill">
                                     <span>FPS: <strong id="val-fps">60</strong></span>
                                     <span>Zoom: <strong id="val-zoom">1.0x</strong></span>
-                                    <span>Tuyến: <strong id="val-route">FRA → UIH</strong></span>
+                                    <span><span data-i18n="wizardRouteLabel">Route</span>: <strong id="val-route">FRA → UIH</strong></span>
                                 </div>
                     
                                 <!-- Tooltip -->
@@ -228,15 +190,15 @@
                                 <!-- Showroom HUD Tier & Model Overlay -->
                                 <div class="showroom-hud-card">
                                     <div class="hud-tier-tag" id="hud-tier-tag">TIER 2 • COMFORT VOYAGE</div>
-                                    <div class="hud-model-name" id="hud-model-name">Heo Đất Tròn Trĩnh (Tiện Nghi)</div>
-                                    <div class="hud-spec-pill" id="hud-spec-pill">48 xu vàng • 8 tờ USD & cọc tiền • Khách sạn 3–4 sao</div>
+                                    <div class="hud-model-name" id="hud-model-name">Chubby Piggy Bank (Comfort)</div>
+                                    <div class="hud-spec-pill" id="hud-spec-pill">Balanced comfort budget with standard amenities</div>
                                 </div>
                     
                                 <!-- Showroom Top Right Controls (Sound Toggle + Route Badge) -->
                                 <div class="showroom-top-controls">
-                                    <button type="button" class="showroom-sound-btn" id="btn-sound-toggle" title="Bật/Tắt âm thanh xu rơi" aria-label="Bật/Tắt âm thanh">
+                                    <button type="button" class="showroom-sound-btn" id="btn-sound-toggle" title="Toggle coin sound" aria-label="Toggle coin sound">
                                         <i class="fa-solid fa-volume-high" id="sound-icon"></i>
-                                        <span id="sound-label">ÂM THANH</span>
+                                        <span id="sound-label">SOUND</span>
                                     </button>
                                     <div class="showroom-route-badge" id="showroom-route-badge">
                                         <i class="fa-solid fa-route"></i>
@@ -246,7 +208,7 @@
                     
                                 <!-- 3D Hint -->
                                 <div class="showroom-hint">
-                                    <i class="fa-solid fa-coins" style="color: var(--gold);"></i> Kéo thanh ngân sách để nạp tiền vàng & đô la vào heo đất
+                                    <i class="fa-solid fa-coins" style="color: var(--gold);"></i> <span data-i18n="wizardPiggyDragHint">Slide budget to load gold coins & dollars into your 3D Piggy Bank</span>
                                 </div>
                             </section>
                     
@@ -262,7 +224,7 @@
                                         </div>
                                         <div>
                                             <h2 class="panel-title">WHERE ARE YOU FLYING FROM?</h2>
-                                            <p class="panel-subtitle">Chọn quốc gia và sân bay khởi hành của bạn</p>
+                                            <p class="panel-subtitle" data-i18n="wizardStep1Sub">Select your departure country and airport</p>
                                         </div>
                                     </div>
                     
@@ -270,21 +232,21 @@
                                     <div class="search-box-container">
                                         <div class="search-input-wrapper">
                                             <i class="fa-solid fa-magnifying-glass"></i>
-                                            <input type="text" id="country-search-input" class="search-input" placeholder="Nhập tên nước (ví dụ: Germany, Japan, Bỉ, Đức...)" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+                                            <input type="text" id="country-search-input" class="search-input" placeholder="Enter country name (e.g., Germany, Japan, Belgium, France...)" data-i18n-placeholder="wizardSearchPlaceholder" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
                                         </div>
                                         <div class="search-dropdown" id="search-dropdown"></div>
                                     </div>
                     
                                     <!-- 11 Supported Departure Country Chips -->
                                     <div class="countries-grid-section-title">
-                                        <i class="fa-solid fa-plane-departure" style="color: var(--gold);"></i> 11 Quốc Gia Được Hỗ Trợ Bay Thẳng
+                                        <i class="fa-solid fa-plane-departure" style="color: var(--gold);"></i> <span data-i18n="wizard11Countries">11 Direct-Connect Supported Countries</span>
                                     </div>
                                     <div class="country-chips-grid" id="country-chips-grid"></div>
                     
                                     <!-- Select Departure Airport Section -->
                                     <div class="airport-section">
                                         <div class="airport-header">
-                                            <i class="fa-solid fa-plane-up" style="color: var(--gold);"></i> Chọn Sân Bay Khởi Hành <span style="font-size:10px;color:var(--gold-light);font-weight:600;margin-left:auto;">(Tự động bay đến VN khi chọn)</span>
+                                            <i class="fa-solid fa-plane-up" style="color: var(--gold);"></i> <span data-i18n="wizardDepartureAirportsTitle">Select Departure Airport</span> <span data-i18n="wizardAutoFlyNotice" style="font-size:10px;color:var(--gold-light);font-weight:600;margin-left:auto;">(Automatically flies to VN upon selection)</span>
                                         </div>
                                         <div class="airport-list" id="departure-airport-list"></div>
                                     </div>
@@ -292,7 +254,7 @@
                                     <!-- To Step 2 Button -->
                                     <div class="btn-row">
                                         <button class="confirm-btn" id="btn-to-step-2">
-                                            <span>TIẾP TỤC ĐẾN VIỆT NAM</span>
+                                            <span data-i18n="wizardBtnToStep2Text">CONTINUE TO VIETNAM</span>
                                             <i class="fa-solid fa-arrow-right"></i>
                                         </button>
                                     </div>
@@ -306,14 +268,14 @@
                                         </div>
                                         <div>
                                             <h2 class="panel-title">WHERE IN VIETNAM?</h2>
-                                            <p class="panel-subtitle">Chọn sân bay đến tại Việt Nam của bạn</p>
+                                            <p class="panel-subtitle" data-i18n="wizardStep2Sub">Select your arrival airport in Vietnam</p>
                                         </div>
                                     </div>
                     
                                     <!-- Vietnam Destination Airports List -->
                                     <div class="airport-section">
                                         <div class="airport-header">
-                                            <i class="fa-solid fa-map-pin" style="color: var(--gold);"></i> Sân Bay Đích Đến Tại Việt Nam
+                                            <i class="fa-solid fa-map-pin" style="color: var(--gold);"></i> <span data-i18n="wizardArrivalAirportsTitle">Destination Airport in Vietnam</span>
                                         </div>
                                         <div class="destination-list" id="destination-airport-list"></div>
                                     </div>
@@ -321,33 +283,33 @@
                                     <!-- Itinerary Summary Box -->
                                     <div class="itinerary-summary-card" id="itinerary-summary-card">
                                         <div class="itinerary-summary-header">
-                                            <span>TÓM TẮT HÀNH TRÌNH BAY</span>
-                                            <span style="color: #69f0ae;"><i class="fa-solid fa-circle-check"></i> ĐÃ KẾT NỐI</span>
+                                            <span data-i18n="wizardFlightSummaryTitle">FLIGHT ROUTE SUMMARY</span>
+                                            <span style="color: #0284c7;"><i class="fa-solid fa-circle-check"></i> <span data-i18n="wizardConnectedStatus">CONNECTED</span></span>
                                         </div>
                                         <div class="itinerary-route-display">
                                             <div class="route-node">
                                                 <span class="node-code" id="summary-orig-code">FRA</span>
-                                                <span class="node-city" id="summary-orig-city">Frankfurt (Đức)</span>
+                                                <span class="node-city" id="summary-orig-city">Frankfurt (Germany)</span>
                                             </div>
                                             <div class="route-arrow">
                                                 <i class="fa-solid fa-plane"></i>
-                                                <span class="flight-tag">BAY THẲNG</span>
+                                                <span class="flight-tag" data-i18n="wizardDirectFlightTag">DIRECT FLIGHT</span>
                                             </div>
                                             <div class="route-node" style="text-align: right;">
                                                 <span class="node-code" id="summary-dest-code" style="color: var(--gold);">UIH</span>
-                                                <span class="node-city" id="summary-dest-city">Quy Nhơn (Việt Nam)</span>
+                                                <span class="node-city" id="summary-dest-city">Quy Nhon (Vietnam)</span>
                                             </div>
                                         </div>
                                     </div>
                     
                                     <!-- Action Button Row -->
                                     <div class="btn-row">
-                                        <button class="back-btn" id="btn-back-to-step-1" title="Quay lại chọn điểm khởi hành">
+                                        <button class="back-btn" id="btn-back-to-step-1" title="Back to Departure">
                                             <i class="fa-solid fa-arrow-left"></i>
-                                            <span>ĐỔI ĐIỂM ĐI</span>
+                                            <span data-i18n="wizardBtnChangeOrig">CHANGE ORIGIN</span>
                                         </button>
                                         <button class="confirm-btn" id="btn-confirm-final">
-                                            <span>XÁC NHẬN HÀNH TRÌNH</span>
+                                            <span data-i18n="wizardBtnConfirmRoute">CONFIRM ROUTE</span>
                                             <i class="fa-solid fa-check"></i>
                                         </button>
                                     </div>
@@ -361,7 +323,7 @@
                                         </div>
                                         <div>
                                             <h2 class="panel-title">BUDGET & PIGGY BANK EXPERIENCE</h2>
-                                            <p class="panel-subtitle">Điều chỉnh ngân sách chuyến đi và tích lũy heo đất 3D thời gian thực</p>
+                                            <p class="panel-subtitle" data-i18n="wizardStep3Sub">Adjust travel budget and accumulate real-time 3D Piggy Bank</p>
                                         </div>
                                     </div>
                     
@@ -370,20 +332,20 @@
                                         <div class="module-header-row">
                                             <span class="module-title-badge">
                                                 <i class="fa-solid fa-vault" style="color: var(--gold);"></i>
-                                                <span>1. NGÂN SÁCH CHỦ ĐẠO</span>
+                                                <span data-i18n="wizardMainBudgetTitle">1. MAIN BUDGET HUB</span>
                                             </span>
-                                            <span class="module-piggy-hint"><i class="fa-solid fa-piggy-bank"></i> Tích lũy Heo Đất 3D</span>
+                                            <span class="module-piggy-hint"><i class="fa-solid fa-piggy-bank"></i> <span data-i18n="wizardPiggyHint">Real-time 3D Piggy Bank</span></span>
                                         </div>
                     
                                         <!-- Currency Selector Chips -->
                                         <div class="budget-subgroup">
                                             <label class="budget-section-label">
                                                 <i class="fa-solid fa-money-bill-transfer" style="color: var(--cyan);"></i>
-                                                <span>ĐƠN VỊ TIỀN TỆ HIỂN THỊ</span>
+                                                <span data-i18n="wizardCurrencyDisplayTitle">DISPLAY CURRENCY</span>
                                             </label>
                                             <div class="currency-chips-grid" id="currency-chips-grid"></div>
-                                            <div class="currency-note-text" id="currency-note-text">
-                                                * Tỷ giá tham khảo (Cập nhật Q4/2026) • Đơn vị tiền tệ cơ sở: USD
+                                            <div class="currency-note-text" id="currency-note-text" data-i18n="wizardCurrencyRateNote">
+                                                * Benchmark exchange rates (Updated Q4/2026) • Base currency: USD
                                             </div>
                                         </div>
                     
@@ -392,7 +354,7 @@
                                             <div class="budget-label-row">
                                                 <label class="budget-section-label" for="budget-number-input">
                                                     <i class="fa-solid fa-wallet" style="color: var(--gold);"></i>
-                                                    <span>TỔNG NGÂN SÁCH CHUYẾN ĐI</span>
+                                                    <span data-i18n="wizardTotalBudgetTitle">TOTAL TRIP BUDGET</span>
                                                 </label>
                                                 <span class="budget-usd-pill" id="budget-usd-pill">≈ $2,500 USD</span>
                                             </div>
@@ -417,7 +379,7 @@
                                         <div class="budget-subgroup">
                                             <label class="budget-section-label">
                                                 <i class="fa-solid fa-bolt" style="color: #ff9800;"></i>
-                                                <span>CHỌN NHANH CẤP ĐỘ NGÂN SÁCH</span>
+                                                <span data-i18n="wizardQuickPresetsTitle">QUICK BUDGET TIERS</span>
                                             </label>
                                             <div class="preset-chips-row" id="preset-chips-row"></div>
                                         </div>
@@ -428,7 +390,7 @@
                                         <div class="module-header-row">
                                             <span class="module-title-badge">
                                                 <i class="fa-solid fa-sliders" style="color: #818cf8;"></i>
-                                                <span>2. THÔNG SỐ CHUYẾN ĐI & HẠNG DỊCH VỤ</span>
+                                                <span data-i18n="wizardTripConfigTitle">2. TRIP PARAMETERS & SERVICE TIER</span>
                                             </span>
                                         </div>
                     
@@ -436,25 +398,25 @@
                                         <div class="trip-params-grid">
                                             <!-- Guests Stepper -->
                                             <div class="param-card">
-                                                <span class="param-label"><i class="fa-solid fa-user-group"></i> Số khách:</span>
+                                                <span class="param-label"><i class="fa-solid fa-user-group"></i> <span data-i18n="wizardNumGuestsLabel">Guests:</span></span>
                                                 <div class="stepper-box">
-                                                    <button type="button" class="stepper-btn" id="btn-guest-minus" title="Giảm khách"><i class="fa-solid fa-minus"></i></button>
-                                                    <span class="stepper-value" id="val-guests">1 khách</span>
-                                                    <button type="button" class="stepper-btn" id="btn-guest-plus" title="Tăng khách"><i class="fa-solid fa-plus"></i></button>
+                                                    <button type="button" class="stepper-btn" id="btn-guest-minus" title="Decrease guests"><i class="fa-solid fa-minus"></i></button>
+                                                    <span class="stepper-value" id="val-guests">1 guest</span>
+                                                    <button type="button" class="stepper-btn" id="btn-guest-plus" title="Increase guests"><i class="fa-solid fa-plus"></i></button>
                                                 </div>
                                             </div>
                                             <!-- Duration Stepper -->
                                             <div class="param-card">
-                                                <span class="param-label"><i class="fa-solid fa-calendar-day"></i> Thời gian:</span>
+                                                <span class="param-label"><i class="fa-solid fa-calendar-day"></i> <span data-i18n="wizardDurationLabel">Duration:</span></span>
                                                 <div class="stepper-box">
-                                                    <button type="button" class="stepper-btn" id="btn-days-minus" title="Giảm ngày"><i class="fa-solid fa-minus"></i></button>
-                                                    <span class="stepper-value" id="val-days">5 ngày</span>
-                                                    <button type="button" class="stepper-btn" id="btn-days-plus" title="Tăng ngày"><i class="fa-solid fa-plus"></i></button>
+                                                    <button type="button" class="stepper-btn" id="btn-days-minus" title="Decrease days"><i class="fa-solid fa-minus"></i></button>
+                                                    <span class="stepper-value" id="val-days">5 days</span>
+                                                    <button type="button" class="stepper-btn" id="btn-days-plus" title="Increase days"><i class="fa-solid fa-plus"></i></button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="param-hint-text">
-                                            * Tăng số khách sẽ tăng chi phí vé bay & ăn uống; tăng số ngày sẽ tăng chi phí lưu trú & trải nghiệm.
+                                        <div class="param-hint-text" data-i18n="wizardParamHint">
+                                            * Increasing guests increases flight & dining costs; increasing days increases accommodation & activity costs.
                                         </div>
                     
                                         <!-- Experience Tier Card -->
@@ -463,7 +425,7 @@
                                                 <span class="exp-tier-badge" id="exp-tier-badge">TIER 2 • COMFORT VOYAGE</span>
                                                 <span class="exp-tier-usd" id="exp-tier-usd-range">$2,500 – $7,999 USD</span>
                                             </div>
-                                            <p class="exp-tier-desc" id="exp-tier-desc">Khách sạn 3–4 sao ngắm trọn vịnh biển Quy Nhơn, xe đưa đón sân bay Phù Cát, tiệc hải sản tươi sống & cafe vịnh.</p>
+                                            <p class="exp-tier-desc" id="exp-tier-desc">Balanced comfort budget ensuring quality amenities, standard dining, and essential activities.</p>
                                         </div>
                                     </div>
                     
@@ -472,9 +434,9 @@
                                         <div class="module-header-row">
                                             <span class="module-title-badge">
                                                 <i class="fa-solid fa-chart-pie" style="color: #34d399;"></i>
-                                                <span>3. PHÂN BỔ NGÂN SÁCH (6 HẠNG MỤC)</span>
+                                                <span data-i18n="wizardAllocationTitle">3. BUDGET ALLOCATION (6 CATEGORIES)</span>
                                             </span>
-                                            <span class="alloc-check-pill" id="alloc-check-pill"><i class="fa-solid fa-check"></i> 100% Khép kín</span>
+                                            <span class="alloc-check-pill" id="alloc-check-pill"><i class="fa-solid fa-check"></i> 100% Balanced</span>
                                         </div>
                     
                                         <!-- Multi-segment progress bar -->
@@ -483,16 +445,16 @@
                                         <!-- Categories Grid -->
                                         <div class="allocation-items-grid" id="alloc-items-grid"></div>
                     
-                                        <div class="alloc-disclaimer">
-                                            * Ước tính phân bổ minh họa theo ngân sách chuyến đi. Tham khảo, không phải báo giá vé máy bay hoặc khách sạn cam kết.
+                                        <div class="alloc-disclaimer" data-i18n="wizardAllocationDisclaimer">
+                                            * Illustrative budget allocation for trip planning. For reference only, not a guaranteed airline or hotel rate.
                                         </div>
                                     </div>
                     
                                     <!-- Secondary Back Action -->
                                     <div class="step3-secondary-actions">
-                                        <button class="back-btn" id="btn-back-to-step-2" title="Quay lại chọn điểm đến">
+                                        <button class="back-btn" id="btn-back-to-step-2" title="Back to Destination">
                                             <i class="fa-solid fa-arrow-left"></i>
-                                            <span>ĐỔI ĐIỂM ĐẾN</span>
+                                            <span data-i18n="wizardBtnChangeDest">CHANGE DESTINATION</span>
                                         </button>
                                     </div>
                     
@@ -500,14 +462,14 @@
                                     <div class="sticky-action-bar" id="sticky-action-bar">
                                         <div class="sticky-bar-content">
                                             <div class="sticky-budget-summary">
-                                                <span class="sticky-budget-label">TỔNG NGÂN SÁCH</span>
+                                                <span class="sticky-budget-label" data-i18n="wizardStickyTotalLabel">TOTAL BUDGET</span>
                                                 <div class="sticky-budget-value-row">
                                                     <span class="sticky-budget-amount" id="sticky-budget-amount">$2,500</span>
                                                     <span class="sticky-budget-currency" id="sticky-budget-currency">USD</span>
                                                 </div>
                                             </div>
                                             <button class="confirm-btn sticky-launch-btn" id="btn-launch-final-plan">
-                                                <span>XUẤT XƯỞNG AI</span>
+                                                <span data-i18n="wizardStickyLaunchBtn">GENERATE MY 5-DAY PLAN</span>
                                                 <i class="fa-solid fa-paper-plane"></i>
                                             </button>
                                         </div>
@@ -518,19 +480,19 @@
                         <!-- Toast Notification -->
                         <div class="toast-notification" id="toast-notify">
                             <i class="fa-solid fa-circle-info" style="color: #64b5f6;"></i>
-                            <span id="toast-text">Tuyến bay từ quốc gia này đang được cập nhật lịch trình.</span>
+                            <span id="toast-text">Flight route from this country is being updated.</span>
                         </div>
 
                         <!-- Journey Confirmed Modal Dialog -->
                         <div class="modal-overlay" id="confirm-modal">
                             <div class="modal-card">
                                 <div class="modal-icon"><i class="fa-solid fa-route"></i></div>
-                                <h3 class="modal-title">HÀNH TRÌNH ĐÃ XÁC NHẬN!</h3>
-                                <p class="modal-desc">Sân bay khởi hành và sân bay đến tại Việt Nam đã sẵn sàng. Toàn bộ lộ trình đã được kết nối mượt mà trên bản đồ 2.5D.</p>
+                                <h3 class="modal-title" data-i18n="wizardModalTitle">ROUTE CONFIRMED!</h3>
+                                <p class="modal-desc" data-i18n="wizardModalDesc">Departure and arrival airports in Vietnam are connected. The complete path is rendered smoothly on the interactive map.</p>
                                 <div class="modal-route-box" id="modal-route-text">
                                     FRA (Frankfurt) ➔ UIH (Quy Nhơn)
                                 </div>
-                                <button class="modal-close-btn" id="btn-close-modal">TIẾP TỤC BƯỚC TIẾP THEO</button>
+                                <button class="modal-close-btn" id="btn-close-modal" data-i18n="wizardModalContinueBtn">CONTINUE TO NEXT STEP</button>
                             </div>
                         </div>
                 </div>
@@ -661,13 +623,13 @@
                     <span>PERSONALIZED TRAVEL EXPERIENCE</span>
                 </div>
 
-                <h3 class="section-title">
+                <h3 class="section-title" data-i18n="itineraryWhatLove">
                     What Do You Love?
                 </h3>
 
-                <p class="section-subtitle">
+                <p id="itinerary-pref-subtitle" class="section-subtitle">
                     Tell us what you enjoy and we'll create a personalized
-                    3-day journey in Quy Nhon.
+                    5-day journey in Quy Nhon.
                 </p>
             </div>
 
@@ -689,8 +651,8 @@
             </span>
 
             <span class="interest-text">
-                <strong>Beaches</strong>
-                <small>Relax by the sea</small>
+                <strong data-i18n="interestBeaches">Beaches</strong>
+                <small data-i18n="interestBeachesSub">Relax by the sea</small>
             </span>
 
             <span class="interest-check">
@@ -717,8 +679,8 @@
             </span>
 
             <span class="interest-text">
-                <strong>Local Food</strong>
-                <small>Taste Quy Nhon's flavors</small>
+                <strong data-i18n="interestFood">Local Food</strong>
+                <small data-i18n="interestFoodSub">Taste Quy Nhon's flavors</small>
             </span>
 
             <span class="interest-check">
@@ -745,8 +707,8 @@
             </span>
 
             <span class="interest-text">
-                <strong>Culture</strong>
-                <small>History and heritage</small>
+                <strong data-i18n="interestCulture">Culture</strong>
+                <small data-i18n="interestCultureSub">History and heritage</small>
             </span>
 
             <span class="interest-check">
@@ -771,8 +733,8 @@
         </span>
 
         <span class="interest-text">
-            <strong>Adventure</strong>
-            <small>Explore and discover</small>
+            <strong data-i18n="interestAdventure">Adventure</strong>
+            <small data-i18n="interestAdventureSub">Explore and discover</small>
         </span>
 
         <span class="interest-check">
@@ -798,8 +760,8 @@
         </span>
 
         <span class="interest-text">
-            <strong>Nightlife</strong>
-            <small>Enjoy Quy Nhon at night</small>
+            <strong data-i18n="interestNightlife">Nightlife</strong>
+            <small data-i18n="interestNightlifeSub">Enjoy Quy Nhon at night</small>
         </span>
 
         <span class="interest-check">
@@ -827,7 +789,7 @@
                     class="btn-generate-plan"
                 >
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>Generate My 3-Day Journey</span>
+                    <span id="btn-generate-itinerary-text">Generate My 5-Day Journey</span>
                 </button>
 
                 <button
@@ -844,8 +806,11 @@
 
     </div>
 </section>
+
+
+
 <!-- ===================================================================
-     4.5 Generated 3-Day Itinerary
+     4.5 Generated Detailed Itinerary (Circular / Infinite Carousel)
      =================================================================== -->
 <section id="generated-itinerary-section" class="generated-itinerary-section" style="display: none;">
     <div class="container">
@@ -857,7 +822,7 @@
             </div>
 
             <h3 class="section-title" data-i18n="itineraryTitle">
-                3-Day Quy Nhon Experience
+                5-Day Quy Nhon Experience
             </h3>
 
             <p class="section-subtitle" data-i18n="itinerarySubtitle">
@@ -865,12 +830,33 @@
             </p>
         </div>
 
-        <div id="generated-itinerary" class="generated-itinerary">
-            <!-- JavaScript will render itinerary here -->
+        <!-- Infinite Circular Carousel Container -->
+        <div class="itinerary-carousel-container">
+            <button type="button" class="carousel-nav-btn carousel-prev-btn" id="btn-itinerary-prev" aria-label="Previous Day" title="Previous Day">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <div class="itinerary-carousel-viewport" id="itinerary-carousel-viewport">
+                <div id="generated-itinerary" class="itinerary-carousel-track">
+                    <!-- Day Cards injected dynamically via app.js -->
+                </div>
+            </div>
+
+            <button type="button" class="carousel-nav-btn carousel-next-btn" id="btn-itinerary-next" aria-label="Next Day" title="Next Day">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Carousel Pagination / Day Position Indicators -->
+        <div class="itinerary-carousel-pagination" id="itinerary-carousel-pagination">
+            <!-- Day indicators injected dynamically via app.js -->
         </div>
 
     </div>
 </section>
+
+
+
 
 <!-- ===================================================================
      5. Main Results & AI Assistant Section
@@ -878,11 +864,22 @@
     <!-- ===================================================================
          4. Main Results & AI Assistant Section
          =================================================================== -->
-    <main id="results-container" class="results-wrapper container">
+    <main id="results-container" class="results-wrapper container" style="display: none;">
+
+        <!-- Stale / Out of sync plan banner -->
+        <div id="plan-stale-banner" class="plan-stale-banner" style="display: none;">
+            <div class="stale-banner-content">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="plan-stale-text">Trip parameters have changed. Please click "GENERATE MY 5-DAY PLAN" to update your itinerary and recommendations.</span>
+            </div>
+            <button type="button" class="btn-stale-regenerate" id="btn-stale-regenerate" onclick="if(window.App && typeof window.App.generateJourneyPlan === 'function') window.App.generateJourneyPlan(true);">
+                <i class="fa-solid fa-rotate"></i> <span id="btn-stale-regen-text">UPDATE PLAN</span>
+            </button>
+        </div>
 
         <!-- AI Assistant Centerpiece Card -->
         <section id="ai-assistant-section">
-            <div id="ai-assistant-card" class="ai-assistant-card">
+<div id="ai-assistant-card" class="ai-assistant-card">
                 <div class="ai-card-header">
                     <div class="ai-identity">
                         <div class="ai-avatar-aura">
@@ -948,7 +945,8 @@
                     </div>
                 </div>
             </div>
-        </section>
+</section>
+
 
         <!-- World Route Map Section -->
         <section id="map-section" class="section-block">

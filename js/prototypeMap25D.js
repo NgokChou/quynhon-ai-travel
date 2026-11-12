@@ -22,91 +22,106 @@
         BEL: {
             id: "belgium", name: "Belgium", vi: "Bỉ", flag: "🇧🇪", code: "BEL",
             coords: [4.35, 50.85],
-            airports: [{ code: "BRU", name: "Brussels Airport", city: "Brussels", desc: "Cửa ngõ hàng không quốc tế thủ đô Brussels (BRU)" }]
+            airports: [{
+                code: "BRU",
+                name: "Brussels Airport",
+                city: "Brussels",
+                desc: { en: "International gateway to the capital of Brussels (BRU)", vi: "Cửa ngõ hàng không quốc tế thủ đô Brussels (BRU)" }
+            }]
         },
         FRA: {
             id: "france", name: "France", vi: "Pháp", flag: "🇫🇷", code: "FRA",
             coords: [2.35, 48.85],
             airports: [
-                { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", desc: "Cửa ngõ liên lục địa lớn nhất Pháp (CDG)" },
-                { code: "ORY", name: "Paris Orly Airport", city: "Paris", desc: "Sân bay quốc tế Paris Orly (ORY)" },
-                { code: "NCE", name: "Nice Côte d'Azur", city: "Nice", desc: "Cửa ngõ miền Nam Địa Trung Hải (NCE)" }
+                { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", desc: { en: "Largest intercontinental hub in France (CDG)", vi: "Cửa ngõ liên lục địa lớn nhất Pháp (CDG)" } },
+                { code: "ORY", name: "Paris Orly Airport", city: "Paris", desc: { en: "Paris Orly International Airport (ORY)", vi: "Sân bay quốc tế Paris Orly (ORY)" } },
+                { code: "NCE", name: "Nice Côte d'Azur", city: "Nice", desc: { en: "Southern Mediterranean coastal gateway (NCE)", vi: "Cửa ngõ miền Nam Địa Trung Hải (NCE)" } }
             ]
         },
         DEU: {
             id: "germany", name: "Germany", vi: "Đức", flag: "🇩🇪", code: "DEU",
             coords: [8.68, 50.11],
             airports: [
-                { code: "FRA", name: "Frankfurt Airport", city: "Frankfurt", desc: "Trung tâm trung chuyển hàng không Châu Âu (FRA)" },
-                { code: "MUC", name: "Munich Airport", city: "Munich", desc: "Sân bay 5 sao trung tâm Bayern (MUC)" },
-                { code: "BER", name: "Berlin Brandenburg", city: "Berlin", desc: "Sân bay quốc tế thủ đô Berlin (BER)" }
+                { code: "FRA", name: "Frankfurt Airport", city: "Frankfurt", desc: { en: "European aviation transit mega-hub (FRA)", vi: "Trung tâm trung chuyển hàng không Châu Âu (FRA)" } },
+                { code: "MUC", name: "Munich Airport", city: "Munich", desc: { en: "5-star Bavarian international hub (MUC)", vi: "Sân bay 5 sao trung tâm Bayern (MUC)" } },
+                { code: "BER", name: "Berlin Brandenburg", city: "Berlin", desc: { en: "Capital gateway airport of Germany (BER)", vi: "Sân bay quốc tế thủ đô Berlin (BER)" } }
             ]
         },
         USA: {
             id: "usa", name: "United States", vi: "Hoa Kỳ", flag: "🇺🇸", code: "USA",
             coords: [-98.57, 39.82],
             airports: [
-                { code: "SFO", name: "San Francisco International", city: "San Francisco", desc: "Cửa ngõ Bờ Tây kết nối Việt Nam (SFO)" },
-                { code: "LAX", name: "Los Angeles International", city: "Los Angeles", desc: "Trung tâm hàng không lớn nhất Nam California (LAX)" },
-                { code: "JFK", name: "New York John F. Kennedy", city: "New York", desc: "Cửa ngõ Bờ Đông quốc tế lớn nhất Mỹ (JFK)" },
-                { code: "ORD", name: "Chicago O'Hare", city: "Chicago", desc: "Trung tâm trung chuyển xuyên lục địa (ORD)" }
+                { code: "SFO", name: "San Francisco International", city: "San Francisco", desc: { en: "West Coast gateway connecting directly to Vietnam (SFO)", vi: "Cửa ngõ Bờ Tây kết nối Việt Nam (SFO)" } },
+                { code: "LAX", name: "Los Angeles International", city: "Los Angeles", desc: { en: "Southern California primary aviation hub (LAX)", vi: "Trung tâm hàng không lớn nhất Nam California (LAX)" } },
+                { code: "JFK", name: "New York John F. Kennedy", city: "New York", desc: { en: "Largest East Coast international gateway (JFK)", vi: "Cửa ngõ Bờ Đông quốc tế lớn nhất Mỹ (JFK)" } },
+                { code: "ORD", name: "Chicago O'Hare", city: "Chicago", desc: { en: "Major Midwest cross-continental hub (ORD)", vi: "Trung tâm trung chuyển xuyên lục địa (ORD)" } }
             ]
         },
         JPN: {
             id: "japan", name: "Japan", vi: "Nhật Bản", flag: "🇯🇵", code: "JPN",
             coords: [139.69, 35.68],
             airports: [
-                { code: "HND", name: "Tokyo Haneda Airport", city: "Tokyo", desc: "Sân bay nội đô Tokyo 5 sao quốc tế (HND)" },
-                { code: "NRT", name: "Tokyo Narita Airport", city: "Tokyo", desc: "Cửa ngõ liên lục địa lớn nhất Nhật Bản (NRT)" },
-                { code: "KIX", name: "Osaka Kansai Airport", city: "Osaka", desc: "Sân bay quốc tế trên đảo nhân tạo Kansai (KIX)" }
+                { code: "HND", name: "Tokyo Haneda Airport", city: "Tokyo", desc: { en: "Downtown Tokyo 5-star international hub (HND)", vi: "Sân bay nội đô Tokyo 5 sao quốc tế (HND)" } },
+                { code: "NRT", name: "Tokyo Narita Airport", city: "Tokyo", desc: { en: "Major intercontinental hub of Japan (NRT)", vi: "Cửa ngõ liên lục địa lớn nhất Nhật Bản (NRT)" } },
+                { code: "KIX", name: "Osaka Kansai Airport", city: "Osaka", desc: { en: "Offshore Kansai international airport (KIX)", vi: "Sân bay quốc tế trên đảo nhân tạo Kansai (KIX)" } }
             ]
         },
         AUS: {
             id: "australia", name: "Australia", vi: "Úc", flag: "🇦🇺", code: "AUS",
             coords: [133.77, -25.27],
             airports: [
-                { code: "SYD", name: "Sydney Kingsford Smith", city: "Sydney", desc: "Cửa ngõ bay thẳng kết nối Việt Nam (SYD)" },
-                { code: "MEL", name: "Melbourne Airport", city: "Melbourne", desc: "Trung tâm văn hóa nghệ thuật Victoria (MEL)" },
-                { code: "BNE", name: "Brisbane Airport", city: "Brisbane", desc: "Sân bay bờ Đông bang Queensland (BNE)" }
+                { code: "SYD", name: "Sydney Kingsford Smith", city: "Sydney", desc: { en: "Direct corridor connecting Australia to Vietnam (SYD)", vi: "Cửa ngõ bay thẳng kết nối Việt Nam (SYD)" } },
+                { code: "MEL", name: "Melbourne Airport", city: "Melbourne", desc: { en: "Cultural hub airport of Victoria (MEL)", vi: "Trung tâm văn hóa nghệ thuật Victoria (MEL)" } },
+                { code: "BNE", name: "Brisbane Airport", city: "Brisbane", desc: { en: "Queensland East Coast gateway (BNE)", vi: "Sân bay bờ Đông bang Queensland (BNE)" } }
             ]
         },
         GBR: {
             id: "uk", name: "United Kingdom", vi: "Vương Quốc Anh", flag: "🇬🇧", code: "GBR",
             coords: [-1.17, 52.35],
             airports: [
-                { code: "LHR", name: "London Heathrow", city: "London", desc: "Trung tâm bay thẳng London - Hà Nội (LHR)" },
-                { code: "MAN", name: "Manchester Airport", city: "Manchester", desc: "Cửa ngõ miền Bắc nước Anh (MAN)" }
+                { code: "LHR", name: "London Heathrow", city: "London", desc: { en: "Direct connection hub London - Hanoi (LHR)", vi: "Trung tâm bay thẳng London - Hà Nội (LHR)" } },
+                { code: "MAN", name: "Manchester Airport", city: "Manchester", desc: { en: "Northern England international gateway (MAN)", vi: "Cửa ngõ miền Bắc nước Anh (MAN)" } }
             ]
         },
         KOR: {
             id: "korea", name: "South Korea", vi: "Hàn Quốc", flag: "🇰🇷", code: "KOR",
             coords: [127.76, 35.90],
             airports: [
-                { code: "ICN", name: "Seoul Incheon Airport", city: "Seoul", desc: "Sân bay 5 sao Incheon - Bay thẳng tới Việt Nam (ICN)" },
-                { code: "PUS", name: "Busan Gimhae Airport", city: "Busan", desc: "Sân bay quốc tế thành phố cảng Busan (PUS)" }
+                { code: "ICN", name: "Seoul Incheon Airport", city: "Seoul", desc: { en: "5-star Incheon hub with direct flights to Vietnam (ICN)", vi: "Sân bay 5 sao Incheon - Bay thẳng tới Việt Nam (ICN)" } },
+                { code: "PUS", name: "Busan Gimhae Airport", city: "Busan", desc: { en: "Port city international gateway of Busan (PUS)", vi: "Sân bay quốc tế thành phố cảng Busan (PUS)" } }
             ]
         },
         SGP: {
             id: "singapore", name: "Singapore", vi: "Singapore", flag: "🇸🇬", code: "SGP",
             coords: [103.81, 1.35],
             airports: [
-                { code: "SIN", name: "Singapore Changi Airport", city: "Singapore", desc: "Sân bay tốt nhất thế giới Changi (SIN)" }
+                { code: "SIN", name: "Singapore Changi Airport", city: "Singapore", desc: { en: "World-leading Singapore Changi hub (SIN)", vi: "Sân bay tốt nhất thế giới Changi (SIN)" } }
             ]
         },
         CHN: {
             id: "china", name: "China", vi: "Trung Quốc", flag: "🇨🇳", code: "CHN",
             coords: [104.19, 35.86],
             airports: [
-                { code: "PVG", name: "Shanghai Pudong Airport", city: "Shanghai", desc: "Cửa ngõ quốc tế Thượng Hải (PVG)" },
-                { code: "PEK", name: "Beijing Capital Airport", city: "Beijing", desc: "Sân bay thủ đô Bắc Kinh (PEK)" }
+                { code: "PVG", name: "Shanghai Pudong Airport", city: "Shanghai", desc: { en: "Shanghai international gateway (PVG)", vi: "Cửa ngõ quốc tế Thượng Hải (PVG)" } },
+                { code: "PEK", name: "Beijing Capital Airport", city: "Beijing", desc: { en: "Beijing Capital International Airport (PEK)", vi: "Sân bay thủ đô Bắc Kinh (PEK)" } }
             ]
         },
         VNM: {
             id: "vietnam", name: "Vietnam", vi: "Việt Nam (Nội địa)", flag: "🇻🇳", code: "VNM",
             coords: [105.85, 21.02],
             airports: [
-                { code: "HAN", name: "Noi Bai International Airport", city: "Hà Nội", desc: "Đường bay thẳng tới Sân bay Phù Cát (UIH)" },
-                { code: "SGN", name: "Tan Son Nhat International Airport", city: "TP. Hồ Chí Minh", desc: "Đường bay thẳng tới Sân bay Phù Cát (UIH)" }
+                { 
+                    code: "HAN", 
+                    name: { en: "Noi Bai International Airport", vi: "Sân bay Quốc tế Nội Bài" }, 
+                    city: { en: "Hanoi", vi: "Hà Nội" }, 
+                    desc: { en: "Direct connection to Phu Cat Airport (UIH)", vi: "Đường bay thẳng tới Sân bay Phù Cát (UIH)" } 
+                },
+                { 
+                    code: "SGN", 
+                    name: { en: "Tan Son Nhat International Airport", vi: "Sân bay Quốc tế Tân Sơn Nhất" }, 
+                    city: { en: "Ho Chi Minh City", vi: "TP. Hồ Chí Minh" }, 
+                    desc: { en: "Direct connection to Phu Cat Airport (UIH)", vi: "Đường bay thẳng tới Sân bay Phù Cát (UIH)" } 
+                }
             ]
         }
     };
@@ -115,53 +130,53 @@
     const VIETNAM_DESTINATIONS = {
         UIH: {
             code: "UIH",
-            name: "Phù Cát Airport",
-            city: "Quy Nhơn",
-            title: "Quy Nhơn – Biển Ngọc Miền Trung",
-            badge: "HERO BEACON • MAIN QUEST",
+            name: { en: "Phu Cat Airport", vi: "Sân bay Phù Cát" },
+            city: { en: "Quy Nhon", vi: "Quy Nhơn" },
+            title: { en: "Quy Nhon – Emerald Coastal Pearl", vi: "Quy Nhơn – Biển Ngọc Miền Trung" },
+            badge: { en: "HERO BEACON • MAIN QUEST", vi: "ĐIỂM ĐẾN TRỌNG TÂM" },
             coords: [109.0433, 13.9556],
             isHero: true,
-            desc: "Cửa ngõ trực tiếp tới biển Kỳ Co, Eo Gió & tháp Chàm Bình Định"
+            desc: { en: "Direct gateway to Ky Co beach, Eo Gio & Cham towers", vi: "Cửa ngõ trực tiếp tới biển Kỳ Co, Eo Gió & tháp Chàm Bình Định" }
         },
         PXU: {
             code: "PXU",
-            name: "Pleiku Airport",
-            city: "Gia Lai",
-            title: "Gia Lai – Đại Ngàn Tây Nguyên",
-            badge: "HIGHLANDS EXPLORATION",
+            name: { en: "Pleiku Airport", vi: "Sân bay Pleiku" },
+            city: { en: "Gia Lai", vi: "Gia Lai" },
+            title: { en: "Gia Lai – Central Highlands Pine Forests", vi: "Gia Lai – Đại Ngàn Tây Nguyên" },
+            badge: { en: "HIGHLANDS EXPLORATION", vi: "KHÁM PHÁ TÂY NGUYÊN" },
             coords: [108.0167, 13.9833],
             isHero: false,
-            desc: "Khám phá Biển Hồ T'nưng và rừng thông đại ngàn Tây Nguyên"
+            desc: { en: "Explore T'Nung volcanic crater lake and vast pine forests", vi: "Khám phá Biển Hồ T'nưng và rừng thông đại ngàn Tây Nguyên" }
         },
         HAN: {
             code: "HAN",
-            name: "Noi Bai International Airport",
-            city: "Hà Nội",
-            title: "Hà Nội – Kinh Đô Di Sản",
-            badge: "CAPITAL HERITAGE",
+            name: { en: "Noi Bai International Airport", vi: "Sân bay Quốc tế Nội Bài" },
+            city: { en: "Hanoi", vi: "Hà Nội" },
+            title: { en: "Hanoi – Millennium Heritage Capital", vi: "Hà Nội – Kinh Đô Di Sản" },
+            badge: { en: "CAPITAL HERITAGE", vi: "KINH ĐÔ DI SẢN" },
             coords: [105.8072, 21.2212],
             isHero: false,
-            desc: "Kinh đô nghìn năm văn hiến, 36 phố phường & di sản Tràng An"
+            desc: { en: "Thousand-year heritage capital, 36 old streets & Trang An gateway", vi: "Kinh đô nghìn năm văn hiến, 36 phố phường & di sản Tràng An" }
         },
         DAD: {
             code: "DAD",
-            name: "Da Nang International Airport",
-            city: "Đà Nẵng",
-            title: "Đà Nẵng – Cửa Ngõ Miền Trung",
-            badge: "CENTRAL GATEWAY",
+            name: { en: "Da Nang International Airport", vi: "Sân bay Quốc tế Đà Nẵng" },
+            city: { en: "Da Nang", vi: "Đà Nẵng" },
+            title: { en: "Da Nang – Central Coast Tourism Hub", vi: "Đà Nẵng – Cửa Ngõ Miền Trung" },
+            badge: { en: "CENTRAL GATEWAY", vi: "CỬA NGÕ MIỀN TRUNG" },
             coords: [108.2022, 16.0544],
             isHero: false,
-            desc: "Trung tâm du lịch biển miền Trung, kết nối tàu The Vietage đến Quy Nhơn"
+            desc: { en: "Central coast coastal resort gateway, connection to Quy Nhon via luxury rail", vi: "Trung tâm du lịch biển miền Trung, kết nối tàu The Vietage đến Quy Nhơn" }
         },
         SGN: {
             code: "SGN",
-            name: "Tan Son Nhat International Airport",
-            city: "TP. Hồ Chí Minh",
-            title: "TP. Hồ Chí Minh – Đô Thị Phồn Hoa",
-            badge: "SOUTHERN GATEWAY",
+            name: { en: "Tan Son Nhat International Airport", vi: "Sân bay Quốc tế Tân Sơn Nhất" },
+            city: { en: "Ho Chi Minh City", vi: "TP. Hồ Chí Minh" },
+            title: { en: "Ho Chi Minh City – Southern Metropolis", vi: "TP. Hồ Chí Minh – Đô Thị Phồn Hoa" },
+            badge: { en: "SOUTHERN GATEWAY", vi: "CỬA NGÕ MIỀN NAM" },
             coords: [106.6297, 10.8231],
             isHero: false,
-            desc: "Cửa ngõ quốc tế lớn nhất miền Nam, kết nối bay thẳng tới Quy Nhơn"
+            desc: { en: "Largest international hub in Southern Vietnam with direct flights to Quy Nhon", vi: "Cửa ngõ quốc tế lớn nhất miền Nam, kết nối bay thẳng tới Quy Nhơn" }
         }
     };
 
@@ -451,10 +466,21 @@
                     this.options.onDestinationSelect(VIETNAM_DESTINATIONS['UIH']);
                 }
             });
+            core.on('pointerover', (e) => {
+                if (this.options.onDestinationHover) {
+                    this.options.onDestinationHover(VIETNAM_DESTINATIONS['UIH'], e);
+                }
+            });
+            core.on('pointerout', () => {
+                if (this.options.onDestinationHoverOut) {
+                    this.options.onDestinationHoverOut();
+                }
+            });
             this.beaconsLayer.addChild(core);
 
             // Text Label
-            const text = new PIXI.Text('⭐ QUY NHƠN (UIH)', {
+            const isVi = (typeof window !== 'undefined' && window.App && window.App.getState) ? window.App.getState().currentLang === 'vi' : false;
+            const text = new PIXI.Text(isVi ? '⭐ QUY NHƠN (UIH)' : '⭐ QUY NHON (UIH)', {
                 fontFamily: 'Inter, sans-serif',
                 fontSize: 13,
                 fontWeight: 'bold',
@@ -509,6 +535,16 @@
                     this.selectDestination(dest.code);
                     if (this.options.onDestinationSelect) {
                         this.options.onDestinationSelect(dest);
+                    }
+                });
+                container.on('pointerover', (e) => {
+                    if (this.options.onDestinationHover) {
+                        this.options.onDestinationHover(dest, e);
+                    }
+                });
+                container.on('pointerout', () => {
+                    if (this.options.onDestinationHoverOut) {
+                        this.options.onDestinationHoverOut();
                     }
                 });
 

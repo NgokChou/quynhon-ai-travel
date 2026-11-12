@@ -9,6 +9,8 @@ const App = (function() {
         currentLang: 'en',
         currentCountryKey: 'belgium',
         currentBudget: 2000,
+        travelers: 1,
+        durationDays: 5,
         selectedRouteType: 'fastest', // 'fastest' | 'best-value' | 'smart-stopover'
         selectedInterests: ['beaches', 'food', 'culture'],
         isAnalyzing: false,
@@ -17,7 +19,10 @@ const App = (function() {
         originAirport: null,
         originCountryName: null,
         originCountryVi: null,
-        isFallback: false
+        isFallback: false,
+        hasGeneratedPlan: false,
+        planIsStale: false,
+        planInputsSnapshot: null
     };
 
     // DOM Elements cache
@@ -133,8 +138,8 @@ const App = (function() {
         // 7. Đồng bộ ngôn ngữ ban đầu
         updateLanguage(state.currentLang);
 
-        // 8. Tạo kế hoạch lộ trình mặc định ban đầu
-        generateJourneyPlan(false);
+        // 8. Kết quả ban đầu được ẩn cho đến khi người dùng khởi tạo từ Personalized Itinerary
+        // generateJourneyPlan(false);
 
         // 9. Lấy dữ liệu thời tiết trực tiếp từ Open-Meteo (Feature 2)
         fetchQuyNhonWeather();
@@ -147,6 +152,14 @@ const App = (function() {
 
         // 12. Đồng bộ URL ban đầu (Feature 4A)
         syncUrlState();
+
+        // 13. Nút cập nhật kế hoạch khi thay đổi thông số
+        const btnStaleRegen = document.getElementById('btn-stale-regenerate');
+        if (btnStaleRegen) {
+            btnStaleRegen.addEventListener('click', () => {
+                generateJourneyPlan(true);
+            });
+        }
     }
 
     /**
@@ -406,6 +419,46 @@ const App = (function() {
         syncUrlState();
     }
 
+
+    /**
+     * Kiểm tra và đánh dấu khi các tham số đầu vào bị thay đổi so với kết quả AI đã sinh
+     */
+    function markPlanStale() {
+        if (!state.hasGeneratedPlan) return;
+        const snap = state.planInputsSnapshot;
+        if (!snap) return;
+
+        const isStale = (
+            snap.countryKey !== state.currentCountryKey ||
+            snap.budget !== state.currentBudget ||
+            snap.travelers !== state.travelers ||
+            snap.durationDays !== state.durationDays ||
+            snap.originIso !== state.originIso ||
+            snap.destination !== state.currentDestination ||
+            snap.airportCode !== (state.originAirport ? state.originAirport.code : null)
+        );
+
+        state.planIsStale = isStale;
+        const banner = document.getElementById('plan-stale-banner');
+        if (banner) {
+            banner.style.display = isStale ? 'flex' : 'none';
+            if (isStale) {
+                const isVi = state.currentLang === 'vi';
+                const duration = Math.max(1, Math.min(7, state.durationDays || 5));
+                const textEl = document.getElementById('plan-stale-text');
+                if (textEl) {
+                    textEl.textContent = isVi
+                        ? (`Thông tin chuyến đi đã thay đổi. Vui lòng nhấn "KHỞI TẠO KẾ HOẠCH ${duration} NGÀY" để cập nhật lại kế hoạch.`)
+                        : (`Trip parameters have changed. Please click "GENERATE MY ${duration}-DAY PLAN" to update your itinerary and recommendations.`);
+                }
+                const regenBtnText = document.getElementById('btn-stale-regen-text');
+                if (regenBtnText) {
+                    regenBtnText.textContent = isVi ? 'CẬP NHẬT KẾ HOẠCH' : 'UPDATE PLAN';
+                }
+            }
+        }
+    }
+
     /**
      * Chuyển đổi ngôn ngữ giao diện (EN / VI)
      */
@@ -438,43 +491,46 @@ const App = (function() {
         // Cập nhật select quốc gia theo ngôn ngữ mới
         renderCountryOptions();
 
-        // Cập nhật lại roadmap và hotels
-        renderRoadmap();
-        renderHotels();
+        // Chỉ cập nhật kết quả nếu đã khởi tạo kế hoạch
+        if (state.hasGeneratedPlan) {
+            renderRoadmap();
+            renderHotels();
 
-        // Cập nhật tóm tắt AI và bản đồ
-        const countryData = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
-        if (countryData) {
-            state.activeSpeechText = generateAISummary({
-                countryId: state.currentCountryKey,
-                budget: state.currentBudget,
-                routeType: state.selectedRouteType,
-                preferences: state.selectedInterests,
-                lang: newLang,
-                destinationId: state.currentDestination || 'quynhon',
-                originIso: state.originIso,
-                originAirport: state.originAirport,
-                originCountryName: state.originCountryName,
-                originCountryVi: state.originCountryVi,
-                isFallback: state.isFallback
-            });
+            const countryData = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
+            if (countryData) {
+                state.activeSpeechText = generateAISummary({
+                    countryId: state.currentCountryKey,
+                    budget: state.currentBudget,
+                    routeType: state.selectedRouteType,
+                    preferences: state.selectedInterests,
+                    lang: newLang,
+                    destinationId: state.currentDestination || 'quynhon',
+                    originIso: state.originIso,
+                    originAirport: state.originAirport,
+                    originCountryName: state.originCountryName,
+                    originCountryVi: state.originCountryVi,
+                    isFallback: state.isFallback
+                });
 
-            if (!state.isAnalyzing && elements.aiOutputContent) {
-                elements.aiOutputContent.textContent = state.activeSpeechText;
+                if (!state.isAnalyzing && elements.aiOutputContent) {
+                    elements.aiOutputContent.textContent = state.activeSpeechText;
+                }
+
+                renderTimeline(countryData);
+                MapController.updateRoute(countryData, MOCK_DESTINATION, state.selectedRouteType, newLang);
             }
 
-            renderTimeline(countryData);
-            MapController.updateRoute(countryData, MOCK_DESTINATION, state.selectedRouteType, newLang);
-        }
+            const section = document.getElementById('generated-itinerary-section');
+            if (section && section.style.display !== 'none') {
+                renderItineraryContent();
+            }
 
-        // Cập nhật lại lịch trình 3 ngày nếu đang hiển thị
-        const section = document.getElementById('generated-itinerary-section');
-        if (section && section.style.display !== 'none') {
-            renderItineraryContent();
-        }
+            renderBudgetAllocation();
 
-        // Cập nhật phân bổ ngân sách (Feature 1C)
-        renderBudgetAllocation();
+            if (state.planIsStale) {
+                markPlanStale();
+            }
+        }
 
         // Cập nhật lại widget thời tiết theo ngôn ngữ mới (Feature 2)
         fetchQuyNhonWeather();
@@ -491,6 +547,28 @@ const App = (function() {
         VoiceController.stop();
         resetVoiceUI();
 
+        // Đồng bộ subtitle và nút bấm trong Personalized Itinerary
+        const duration = Math.max(1, Math.min(7, state.durationDays || 5));
+        const itinSubtitle = document.getElementById('itinerary-pref-subtitle');
+        if (itinSubtitle) {
+            itinSubtitle.textContent = newLang === 'vi' 
+                ? (`Chọn những trải nghiệm bạn yêu thích để AI tạo hành trình ${duration} ngày tại Quy Nhơn.`)
+                : (`Tell us what you enjoy and we'll create a personalized ${duration}-day journey in Quy Nhon.`);
+        }
+        const btnGenText = document.getElementById('btn-generate-itinerary-text');
+        if (btnGenText) {
+            btnGenText.textContent = newLang === 'vi'
+                ? (`Khởi Tạo Kế Hoạch ${duration} Ngày Bằng AI`)
+                : (`Generate My ${duration}-Day Plan`);
+        }
+        const btnLaunch = document.getElementById('btn-launch-final-plan');
+        if (btnLaunch && !state.isAnalyzing) {
+            btnLaunch.innerHTML = `<span>${newLang === 'vi' ? `KHỞI TẠO KẾ HOẠCH ${duration} NGÀY` : `GENERATE MY ${duration}-DAY PLAN`}</span> <i class="fa-solid fa-paper-plane"></i>`;
+        }
+
+        if (typeof window.updateWizardLanguage === 'function') {
+            window.updateWizardLanguage(newLang);
+        }
         window.dispatchEvent(new CustomEvent('appLanguageChanged', { detail: { lang: newLang } }));
     }
 
@@ -505,7 +583,7 @@ const App = (function() {
         state.currentCountryKey = countryKey;
 
         // Ensure state.currentBudget is strictly synced from form inputs
-        if (elements.budgetSelect) {
+        if (elements.budgetSelect && !state.hasGeneratedPlan && !state.currentBudget) {
             if (elements.budgetSelect.value === 'custom' && elements.customBudgetInput) {
                 const cleanStr = String(elements.customBudgetInput.value).replace(/[^0-9]/g, '');
                 const customVal = Number(cleanStr);
@@ -518,9 +596,38 @@ const App = (function() {
         const countryData = MOCK_COUNTRIES[countryKey] || MOCK_COUNTRIES.belgium;
         const lang = state.currentLang;
 
-        // 1. Cập nhật trạng thái UI
-        elements.planBtn.disabled = true;
-        elements.planBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>${t('btnPlanning', lang)}</span>`;
+        // Snapshot input parameters for this plan run
+        state.planInputsSnapshot = {
+            countryKey: state.currentCountryKey,
+            budget: state.currentBudget,
+            travelers: state.travelers,
+            durationDays: state.durationDays,
+            originIso: state.originIso,
+            destination: state.currentDestination,
+            airportCode: state.originAirport ? state.originAirport.code : null
+        };
+
+        const duration = Math.max(1, Math.min(7, state.durationDays || 5));
+        const isVi = (lang === 'vi');
+
+        // 1. Cập nhật trạng thái UI sang Loading / Generating
+        if (elements.planBtn) {
+            elements.planBtn.disabled = true;
+            elements.planBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>${t('btnPlanning', lang)}</span>`;
+        }
+        const btnLaunch = document.getElementById('btn-launch-final-plan');
+        if (btnLaunch) {
+            btnLaunch.disabled = true;
+            btnLaunch.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>${isVi ? `ĐANG TẠO KẾ HOẠCH ${duration} NGÀY...` : `GENERATING ${duration}-DAY PLAN...`}</span>`;
+        }
+        if (elements.btnGenerateItinerary) {
+            elements.btnGenerateItinerary.disabled = true;
+            const btnGenText = document.getElementById('btn-generate-itinerary-text');
+            if (btnGenText) {
+                btnGenText.textContent = isVi ? `Đang Tạo Kế Hoạch ${duration} Ngày...` : `Generating ${duration}-Day Plan...`;
+            }
+        }
+
         elements.aiProgressBar.style.display = 'block';
         elements.aiProgressFill.style.width = '15%';
         elements.aiOutputContent.innerHTML = `<span class="ai-typing-placeholder">${t('aiThinkingStep1', lang)}</span>`;
@@ -541,9 +648,48 @@ const App = (function() {
             },
             () => {
                 state.isAnalyzing = false;
-                elements.planBtn.disabled = false;
-                elements.planBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>${t('btnPlan', lang)}</span>`;
+                state.hasGeneratedPlan = true;
+                state.planIsStale = false;
+                state.planInputsSnapshot = {
+                    countryKey: state.currentCountryKey,
+                    budget: state.currentBudget,
+                    travelers: state.travelers,
+                    durationDays: state.durationDays,
+                    originIso: state.originIso,
+                    destination: state.currentDestination,
+                    airportCode: state.originAirport ? state.originAirport.code : null
+                };
+
+                const staleBanner = document.getElementById('plan-stale-banner');
+                if (staleBanner) staleBanner.style.display = 'none';
+
+                if (btnLaunch) {
+                    btnLaunch.disabled = false;
+                    btnLaunch.innerHTML = `<span>${isVi ? `KHỞI TẠO KẾ HOẠCH ${duration} NGÀY` : `GENERATE MY ${duration}-DAY PLAN`}</span> <i class="fa-solid fa-paper-plane"></i>`;
+                }
+                if (elements.btnGenerateItinerary) {
+                    elements.btnGenerateItinerary.disabled = false;
+                    const btnGenText = document.getElementById('btn-generate-itinerary-text');
+                    if (btnGenText) {
+                        btnGenText.textContent = isVi ? `Khởi Tạo Kế Hoạch ${duration} Ngày Bằng AI` : `Generate My ${duration}-Day Plan`;
+                    }
+                }
+                if (elements.planBtn) {
+                    elements.planBtn.disabled = false;
+                    elements.planBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>${t('btnPlan', lang)}</span>`;
+                }
                 elements.aiProgressBar.style.display = 'none';
+
+                // Hiển thị chính thức container kết quả & section lịch trình
+                if (elements.resultsContainer) {
+                    elements.resultsContainer.style.display = 'block';
+                    elements.resultsContainer.classList.remove('hidden');
+                }
+                const itinerarySection = document.getElementById('generated-itinerary-section');
+                if (itinerarySection) {
+                    itinerarySection.style.display = 'block';
+                    renderItineraryContent();
+                }
 
                 // Sinh nội dung tóm tắt động theo lựa chọn của người dùng
                 state.activeSpeechText = generateAISummary({
@@ -572,16 +718,14 @@ const App = (function() {
                 syncUrlState();
                 MapController.updateRoute(countryData, MOCK_DESTINATION, state.selectedRouteType, lang);
 
-                // Hiển thị container kết quả
-                if (elements.resultsContainer) {
-                    elements.resultsContainer.classList.remove('hidden');
-                }
-
-                // Tự động hiển thị và đồng bộ Lịch trình 3 ngày (3-Day Quy Nhon Experience)
-                const itinerarySection = document.getElementById('generated-itinerary-section');
-                if (itinerarySection) {
-                    itinerarySection.style.display = 'block';
-                    renderItineraryContent();
+                // Cuộn mượt mà tới phần kết quả
+                if (shouldScroll) {
+                    setTimeout(() => {
+                        const target = document.getElementById('ai-assistant-card') || elements.resultsContainer;
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 120);
                 }
             }
         );
@@ -718,8 +862,8 @@ const App = (function() {
         const googleFlightsUrl = `https://www.google.com/travel/flights?q=flights+from+${originAirportCode}+to+${destAirportCode}`;
 
         const scenarioNotice = isFallbackMode ? `
-            <div class="illustrative-scenario-banner" style="display:flex;align-items:center;gap:8px;padding:9px 14px;margin-bottom:14px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:8px;font-size:12px;color:#fcd34d;line-height:1.4;">
-                <i class="fa-solid fa-circle-info" style="font-size:14px;"></i>
+            <div class="illustrative-scenario-banner">
+                <i class="fa-solid fa-circle-info"></i>
                 <span>${isVi 
                     ? `Lộ trình minh họa khu vực (Regional illustrative scenario) cho ${state.originCountryVi || state.originCountryName || 'quốc gia đã chọn'}. Dữ liệu chưa xác minh thương mại.` 
                     : `Regional illustrative scenario for ${state.originCountryName || 'selected country'}. Transit stages are modeled for preview.`}</span>
@@ -968,29 +1112,34 @@ const App = (function() {
     }
 
     /**
-     * Sinh lịch trình 3 ngày cá nhân hóa theo các sở thích thực tế (Personalized Itinerary)
+     * Sinh lịch trình cá nhân hóa theo các sở thích thực tế (Personalized Itinerary)
      */
+        // =========================================================================
+    // INFINITE / CIRCULAR CAROUSEL: X-DAY QUY NHON EXPERIENCE
+    // =========================================================================
+    let carouselState = {
+        currentIndex: 0,
+        totalDays: 0,
+        daysData: [],
+        isTransitioning: false,
+        isDragging: false,
+        startX: 0
+    };
+
+    function getVisibleCardsCount() {
+        const w = window.innerWidth;
+        if (w >= 1024) return Math.min(3, carouselState.totalDays);
+        if (w >= 768) return Math.min(2, carouselState.totalDays);
+        return 1;
+    }
+
     function generateItinerary() {
-        const button = elements.btnGenerateItinerary;
-        if (button) {
-            button.disabled = true;
-            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>${state.currentLang === 'vi' ? 'Đang tạo lịch trình...' : 'Creating Your Journey...'}</span>`;
+        state.selectedInterests = getSelectedPreferences();
+        const aiSec = document.getElementById('ai-assistant-section');
+        if (aiSec) {
+            aiSec.style.display = 'block';
         }
-
-        setTimeout(() => {
-            renderItineraryContent();
-
-            if (button) {
-                button.disabled = false;
-                button.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>${state.currentLang === 'vi' ? 'Làm mới lịch trình 3 ngày' : 'Refresh 3-Day Journey'}</span>`;
-            }
-
-            const section = document.getElementById('generated-itinerary-section');
-            if (section) {
-                section.style.display = 'block';
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }, 400);
+        generateJourneyPlan(true);
     }
 
     function renderItineraryContent() {
@@ -999,36 +1148,266 @@ const App = (function() {
         if (!section || !container) return;
 
         const lang = state.currentLang;
+        const duration = Math.max(1, Math.min(7, state.durationDays || 5));
         const days = generatePersonalizedItinerary({
             preferences: state.selectedInterests,
             budget: state.currentBudget,
-            lang: lang
+            lang: lang,
+            durationDays: duration,
+            days: duration
         });
 
-        container.innerHTML = days.map(day => `
-            <div class="itinerary-day-card">
-                <div class="itinerary-day-header">
-                    <div class="itinerary-day-number">
-                        ${day.label.toUpperCase()}
-                    </div>
-                    <div class="itinerary-day-heading">
-                        <span class="itinerary-day-label">${day.label}</span>
-                        <h4 class="itinerary-day-title">${day.title}</h4>
-                    </div>
-                </div>
+        carouselState.daysData = days;
+        carouselState.totalDays = days.length;
+        if (carouselState.currentIndex >= days.length) {
+            carouselState.currentIndex = 0;
+        }
 
-                <div class="itinerary-activities">
-                    ${day.activities.map(act => `
-                        <div class="itinerary-activity">
-                            <div class="itinerary-activity-time">${act.time}</div>
-                            <div class="itinerary-activity-title">${act.title[lang]}</div>
-                            <div class="itinerary-activity-description">${act.desc[lang]}</div>
-                            <span class="itinerary-activity-category">${act.category}</span>
+        // Update section title and subtitle
+        const titleEl = section.querySelector('[data-i18n="itineraryTitle"]');
+        if (titleEl) {
+            titleEl.textContent = lang === 'vi' ? (`Trải Nghiệm Quy Nhơn ${days.length} Ngày`) : (`${days.length}-Day Quy Nhon Experience`);
+        }
+        const subEl = section.querySelector('[data-i18n="itinerarySubtitle"]');
+        if (subEl) {
+            subEl.textContent = lang === 'vi' 
+                ? (`Lộ trình ${days.length} ngày được thiết kế tối ưu theo sở thích của bạn.`)
+                : (`A ${days.length}-day journey tailored around your interests.`);
+        }
+
+        function renderDayCard(day, idx) {
+            return `
+                <div class="itinerary-day-card" data-day-index="${idx}">
+                    <div class="itinerary-day-header">
+                        <div class="itinerary-day-number">
+                            ${day.label.toUpperCase()}
                         </div>
-                    `).join('')}
+                        <div class="itinerary-day-heading">
+                            <span class="itinerary-day-label">${day.label}</span>
+                            <h4 class="itinerary-day-title">${day.title}</h4>
+                        </div>
+                    </div>
+
+                    <div class="itinerary-activities">
+                        ${day.activities.map(act => `
+                            <div class="itinerary-activity">
+                                <div class="itinerary-activity-time">${act.time}</div>
+                                <div class="itinerary-activity-title">${act.title[lang]}</div>
+                                <div class="itinerary-activity-description">${act.desc[lang]}</div>
+                                <span class="itinerary-activity-category">${act.category}</span>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }
+
+        // Build track HTML: original cards + buffer clones for seamless circular wrapping
+        let cardsHtml = days.map((day, idx) => renderDayCard(day, idx)).join('');
+        if (days.length > 1) {
+            // Append 3 clones at the end for wrap-around
+            const clones = days.slice(0, 3).map((day, idx) => renderDayCard(day, idx)).join('');
+            cardsHtml += clones;
+        }
+
+        container.innerHTML = cardsHtml;
+
+        // Render pagination indicator pills
+        renderCarouselPagination();
+
+        // Setup carousel controls and positioning
+        setupItineraryCarousel();
+    }
+
+    function renderCarouselPagination() {
+        const pagination = document.getElementById('itinerary-carousel-pagination');
+        if (!pagination) return;
+        const total = carouselState.totalDays;
+        const lang = state.currentLang;
+        const isVi = (lang === 'vi');
+
+        if (total <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+
+        pagination.innerHTML = carouselState.daysData.map((day, idx) => {
+            const isActive = (idx === (carouselState.currentIndex % total));
+            const dayText = isVi ? `Ngày ${idx + 1}` : `Day ${idx + 1}`;
+            return `<button type="button" class="carousel-pagination-pill ${isActive ? 'is-active' : ''}" data-day="${idx}">${dayText}</button>`;
+        }).join('');
+
+        pagination.querySelectorAll('.carousel-pagination-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dayIdx = parseInt(btn.dataset.day, 10);
+                slideCarouselTo(dayIdx);
+            });
+        });
+    }
+
+    function updateCarouselPosition(animate = true) {
+        const track = document.getElementById('generated-itinerary');
+        const viewport = document.getElementById('itinerary-carousel-viewport');
+        if (!track || !viewport) return;
+
+        const firstCard = track.querySelector('.itinerary-day-card');
+        if (!firstCard) return;
+
+        const cardWidth = firstCard.offsetWidth;
+        const gap = 20; // 1.25rem
+        const step = cardWidth + gap;
+        const targetX = -(carouselState.currentIndex * step);
+
+        if (animate) {
+            track.style.transition = 'transform 0.38s cubic-bezier(0.25, 1, 0.5, 1)';
+        } else {
+            track.style.transition = 'none';
+        }
+        track.style.transform = `translateX(${targetX}px)`;
+
+        // Update active class on pagination pills
+        const pagination = document.getElementById('itinerary-carousel-pagination');
+        if (pagination && carouselState.totalDays > 0) {
+            const activeIdx = carouselState.currentIndex % carouselState.totalDays;
+            pagination.querySelectorAll('.carousel-pagination-pill').forEach((btn, idx) => {
+                btn.classList.toggle('is-active', idx === activeIdx);
+            });
+        }
+    }
+
+    function slideCarouselNext() {
+        if (carouselState.isTransitioning || carouselState.totalDays <= 1) return;
+        const track = document.getElementById('generated-itinerary');
+        if (!track) return;
+
+        carouselState.isTransitioning = true;
+        const total = carouselState.totalDays;
+
+        if (carouselState.currentIndex === total - 1) {
+            // Animate to clone of Day 1 at index total
+            carouselState.currentIndex = total;
+            updateCarouselPosition(true);
+
+            // Snap back to index 0 seamlessly on animation completion
+            setTimeout(() => {
+                carouselState.currentIndex = 0;
+                updateCarouselPosition(false);
+                track.offsetHeight; // Force reflow
+                carouselState.isTransitioning = false;
+            }, 390);
+        } else {
+            carouselState.currentIndex = (carouselState.currentIndex + 1) % total;
+            updateCarouselPosition(true);
+            setTimeout(() => {
+                carouselState.isTransitioning = false;
+            }, 390);
+        }
+    }
+
+    function slideCarouselPrev() {
+        if (carouselState.isTransitioning || carouselState.totalDays <= 1) return;
+        const track = document.getElementById('generated-itinerary');
+        if (!track) return;
+
+        carouselState.isTransitioning = true;
+        const total = carouselState.totalDays;
+
+        if (carouselState.currentIndex === 0) {
+            // Jump to clone position instantly, then slide backwards into total - 1
+            carouselState.currentIndex = total;
+            updateCarouselPosition(false);
+            track.offsetHeight; // Force reflow
+
+            setTimeout(() => {
+                carouselState.currentIndex = total - 1;
+                updateCarouselPosition(true);
+                setTimeout(() => {
+                    carouselState.isTransitioning = false;
+                }, 390);
+            }, 25);
+        } else {
+            carouselState.currentIndex = (carouselState.currentIndex - 1 + total) % total;
+            updateCarouselPosition(true);
+            setTimeout(() => {
+                carouselState.isTransitioning = false;
+            }, 390);
+        }
+    }
+
+    function slideCarouselTo(index) {
+        if (carouselState.isTransitioning || carouselState.totalDays <= 0) return;
+        carouselState.currentIndex = index % carouselState.totalDays;
+        updateCarouselPosition(true);
+    }
+
+    let carouselEventsBound = false;
+    function setupItineraryCarousel() {
+        const btnPrev = document.getElementById('btn-itinerary-prev');
+        const btnNext = document.getElementById('btn-itinerary-next');
+        const viewport = document.getElementById('itinerary-carousel-viewport');
+
+        if (btnPrev) {
+            btnPrev.onclick = slideCarouselPrev;
+        }
+        if (btnNext) {
+            btnNext.onclick = slideCarouselNext;
+        }
+
+        // Show/hide buttons depending on card count
+        if (btnPrev && btnNext) {
+            const showBtns = carouselState.totalDays > 1;
+            btnPrev.style.display = showBtns ? 'flex' : 'none';
+            btnNext.style.display = showBtns ? 'flex' : 'none';
+        }
+
+        updateCarouselPosition(false);
+
+        if (!carouselEventsBound && viewport) {
+            carouselEventsBound = true;
+
+            // Touch events for mobile swiping
+            let touchStartX = 0;
+            let touchStartY = 0;
+            viewport.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', (e) => {
+                if (e.changedTouches.length > 0) {
+                    const diffX = touchStartX - e.changedTouches[0].clientX;
+                    const diffY = touchStartY - e.changedTouches[0].clientY;
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                        if (diffX > 0) slideCarouselNext();
+                        else slideCarouselPrev();
+                    }
+                }
+            }, { passive: true });
+
+            // Mouse dragging for desktop
+            let isMouseDown = false;
+            let mouseStartX = 0;
+            viewport.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                mouseStartX = e.clientX;
+            });
+            window.addEventListener('mouseup', (e) => {
+                if (!isMouseDown) return;
+                isMouseDown = false;
+                const diffX = mouseStartX - e.clientX;
+                if (Math.abs(diffX) > 40) {
+                    if (diffX > 0) slideCarouselNext();
+                    else slideCarouselPrev();
+                }
+            });
+
+            // Re-align on resize
+            window.addEventListener('resize', () => {
+                updateCarouselPosition(false);
+            });
+        }
     }
 
     function renderHotels() {
@@ -1384,7 +1763,7 @@ const App = (function() {
                 </div>
 
                 <!-- Traveler Reviews -->
-                <h5 style="color: white; margin-bottom: 0.85rem; font-size: 0.95rem;">
+                <h5 style="color: var(--text-main); margin-bottom: 0.85rem; font-size: 0.95rem;">
                     <i class="fa-solid fa-comments" style="color: #38bdf8;"></i> ${isVi ? 'Nhận Xét Tiêu Biểu Từ Khách Quốc Tế' : 'Featured International Traveler Reviews'}
                 </h5>
                 <div class="traveler-reviews-list">
@@ -1846,17 +2225,16 @@ const App = (function() {
         const shareUrl = window.location.href;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shareUrl)}`;
 
+        const duration = Math.max(1, Math.min(7, state.durationDays || 5));
         const itineraryDays = generatePersonalizedItinerary({
             preferences: state.selectedInterests,
             budget: state.currentBudget,
-            lang: lang
+            lang: lang,
+            durationDays: duration,
+            days: duration
         });
 
-        const highlights = [
-            `${itineraryDays[0].label}: ${itineraryDays[0].title}`,
-            `${itineraryDays[1].label}: ${itineraryDays[1].title}`,
-            `${itineraryDays[2].label}: ${itineraryDays[2].title}`
-        ];
+        const highlights = itineraryDays.slice(0, 3).map(d => `${d.label}: ${d.title}`);
 
         const passSerial = `QN-${state.currentCountryKey.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`;
 
@@ -2051,7 +2429,14 @@ const App = (function() {
                 state.currentDestination = destKey;
                 if (elements.destinationSelect) elements.destinationSelect.value = destKey;
             }
+
+            // Nếu người dùng đã từng tạo kế hoạch, kiểm tra và gắn cờ không đồng bộ (stale)
+            if (state.hasGeneratedPlan) {
+                markPlanStale();
+            }
         },
+        renderItineraryContent: renderItineraryContent,
+        markPlanStale: markPlanStale,
         getState: function() { return state; }
     };
 })();

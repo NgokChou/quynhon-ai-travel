@@ -126,7 +126,7 @@
         }
     };
 
-    // 2. Definition of the 5 Selectable Vietnam Airports (Covering project data)
+    // 2. Definition of Selectable Vietnam Destination Airports (Phu Cat Airport UIH - Quy Nhon)
     const VIETNAM_DESTINATIONS = {
         UIH: {
             code: "UIH",
@@ -137,46 +137,6 @@
             coords: [109.0433, 13.9556],
             isHero: true,
             desc: { en: "Direct gateway to Ky Co beach, Eo Gio & Cham towers", vi: "Cửa ngõ trực tiếp tới biển Kỳ Co, Eo Gió & tháp Chàm Bình Định" }
-        },
-        PXU: {
-            code: "PXU",
-            name: { en: "Pleiku Airport", vi: "Sân bay Pleiku" },
-            city: { en: "Gia Lai", vi: "Gia Lai" },
-            title: { en: "Gia Lai – Central Highlands Pine Forests", vi: "Gia Lai – Đại Ngàn Tây Nguyên" },
-            badge: { en: "HIGHLANDS EXPLORATION", vi: "KHÁM PHÁ TÂY NGUYÊN" },
-            coords: [108.0167, 13.9833],
-            isHero: false,
-            desc: { en: "Explore T'Nung volcanic crater lake and vast pine forests", vi: "Khám phá Biển Hồ T'nưng và rừng thông đại ngàn Tây Nguyên" }
-        },
-        HAN: {
-            code: "HAN",
-            name: { en: "Noi Bai International Airport", vi: "Sân bay Quốc tế Nội Bài" },
-            city: { en: "Hanoi", vi: "Hà Nội" },
-            title: { en: "Hanoi – Millennium Heritage Capital", vi: "Hà Nội – Kinh Đô Di Sản" },
-            badge: { en: "CAPITAL HERITAGE", vi: "KINH ĐÔ DI SẢN" },
-            coords: [105.8072, 21.2212],
-            isHero: false,
-            desc: { en: "Thousand-year heritage capital, 36 old streets & Trang An gateway", vi: "Kinh đô nghìn năm văn hiến, 36 phố phường & di sản Tràng An" }
-        },
-        DAD: {
-            code: "DAD",
-            name: { en: "Da Nang International Airport", vi: "Sân bay Quốc tế Đà Nẵng" },
-            city: { en: "Da Nang", vi: "Đà Nẵng" },
-            title: { en: "Da Nang – Central Coast Tourism Hub", vi: "Đà Nẵng – Cửa Ngõ Miền Trung" },
-            badge: { en: "CENTRAL GATEWAY", vi: "CỬA NGÕ MIỀN TRUNG" },
-            coords: [108.2022, 16.0544],
-            isHero: false,
-            desc: { en: "Central coast coastal resort gateway, connection to Quy Nhon via luxury rail", vi: "Trung tâm du lịch biển miền Trung, kết nối tàu The Vietage đến Quy Nhơn" }
-        },
-        SGN: {
-            code: "SGN",
-            name: { en: "Tan Son Nhat International Airport", vi: "Sân bay Quốc tế Tân Sơn Nhất" },
-            city: { en: "Ho Chi Minh City", vi: "TP. Hồ Chí Minh" },
-            title: { en: "Ho Chi Minh City – Southern Metropolis", vi: "TP. Hồ Chí Minh – Đô Thị Phồn Hoa" },
-            badge: { en: "SOUTHERN GATEWAY", vi: "CỬA NGÕ MIỀN NAM" },
-            coords: [106.6297, 10.8231],
-            isHero: false,
-            desc: { en: "Largest international hub in Southern Vietnam with direct flights to Quy Nhon", vi: "Cửa ngõ quốc tế lớn nhất miền Nam, kết nối bay thẳng tới Quy Nhơn" }
         }
     };
 

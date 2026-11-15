@@ -364,6 +364,8 @@
                                                 <input type="text" inputmode="numeric" id="budget-number-input" class="budget-number-input" value="2,500" placeholder="2,500" autocomplete="off" />
                                                 <span class="budget-currency-badge" id="budget-cur-code">USD</span>
                                             </div>
+                                            <!-- Insufficient Budget Warning directly below budget input -->
+                                            <div id="budget-warning-message" class="budget-warning-message" style="display: none;"></div>
                                         </div>
                     
                                         <!-- Range Slider -->
@@ -554,6 +556,8 @@
                                     <span class="currency-label" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.8rem;">USD</span>
                                 </div>
                             </div>
+                            <!-- Insufficient Budget Warning in Planner Form -->
+                            <div id="planner-budget-warning-message" class="budget-warning-message" style="display: none;"></div>
                         </div>
 
                         <!-- Language -->

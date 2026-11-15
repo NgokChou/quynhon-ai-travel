@@ -1308,6 +1308,123 @@ const MOCK_COUNTRIES = {
                 ]
             }
         }
+    },
+    vietnam: {
+        id: "vietnam",
+        name: { en: "Vietnam", vi: "Việt Nam (Nội địa)" },
+        flag: "🇻🇳",
+        city: "Hanoi / Ho Chi Minh City",
+        airport: "Noi Bai / Tan Son Nhat (HAN/SGN)",
+        lat: 21.0285,
+        lng: 105.8542,
+        routes: {
+            fastest: {
+                id: "fastest",
+                title: { en: "Direct Domestic Flight", vi: "Chuyến bay thẳng nội địa" },
+                badge: { en: "FASTEST • DIRECT FLIGHT", vi: "NHANH NHẤT • BAY THẲNG" },
+                description: {
+                    en: "Non-stop domestic flight to Phu Cat Airport (UIH) followed by express transfer to Quy Nhon city center.",
+                    vi: "Chuyến bay thẳng nội địa đến Sân bay Phù Cát (UIH), kết hợp xe đưa đón về trung tâm thành phố Quy Nhơn."
+                },
+                totalDuration: "2h 15m",
+                priceRatio: 1.0,
+                baseTransitCost: 160,
+                carbonKg: 85,
+                carbonSavedPercent: 0,
+                transitHub: VIETNAM_AIRPORTS.HAN,
+                finalTransport: "uih-taxi",
+                steps: [
+                    {
+                        type: "domestic-flight",
+                        icon: "plane",
+                        title: { en: "Direct Flight to Phu Cat", vi: "Bay thẳng tới Sân bay Phù Cát" },
+                        from: "Hanoi (HAN) / Ho Chi Minh City (SGN)",
+                        to: "Phu Cat Airport (UIH)",
+                        fromCoords: [21.2212, 105.8072],
+                        toCoords: [13.9556, 109.0433],
+                        subInfo: {
+                            en: "Direct flight • 1h 35m • Vietnam Airlines / Bamboo Airways",
+                            vi: "Bay thẳng • 1h 35m • Vietnam Airlines / Bamboo Airways"
+                        },
+                        highlight: { en: "Quick direct domestic connection", vi: "Đường bay thẳng nội địa nhanh chóng" },
+                        duration: "1h 35m",
+                        stops: 0,
+                        dataSource: "verified",
+                        dataSourceLabel: { en: "Verified commercial route", vi: "Tuyến bay thương mại đã xác minh" }
+                    },
+                    {
+                        type: "transfer",
+                        icon: "car",
+                        title: { en: "Airport Taxi / Private Car", vi: "Taxi sân bay / Xe riêng về thành phố" },
+                        from: "Phu Cat Airport (UIH)",
+                        to: "Quy Nhon City Center",
+                        fromCoords: [13.9556, 109.0433],
+                        toCoords: [13.7820, 109.2197],
+                        subInfo: {
+                            en: "Express Highway • ~35 km • 40 minutes",
+                            vi: "Tuyến đường nối sân bay • ~35 km • Khoảng 40 phút"
+                        },
+                        highlight: { en: "Direct drop-off at your hotel / resort", vi: "Đưa đón tận nơi sảnh khách sạn / resort" },
+                        duration: "40m",
+                        dataSource: "verified",
+                        dataSourceLabel: { en: "Ground transport estimate", vi: "Ước tính trung chuyển mặt đất" }
+                    }
+                ]
+            },
+            bestValue: {
+                id: "best-value",
+                title: { en: "Economy Domestic Flight", vi: "Chuyến bay nội địa tiết kiệm" },
+                badge: { en: "BEST VALUE • ECONOMY", vi: "TIẾT KIỆM • PHỔ THÔNG" },
+                description: {
+                    en: "Affordable domestic flight to Phu Cat (UIH) paired with airport shuttle service to Quy Nhon.",
+                    vi: "Vé bay nội địa tiết kiệm đến Sân bay Phù Cát (UIH) kết hợp xe trung chuyển sân bay về Quy Nhơn."
+                },
+                totalDuration: "2h 20m",
+                priceRatio: 0.75,
+                baseTransitCost: 120,
+                carbonKg: 78,
+                carbonSavedPercent: 8,
+                transitHub: VIETNAM_AIRPORTS.SGN,
+                finalTransport: "uih-shuttle",
+                steps: [
+                    {
+                        type: "domestic-flight",
+                        icon: "plane",
+                        title: { en: "Economy Flight to Phu Cat", vi: "Bay tiết kiệm tới Phù Cát" },
+                        from: "Hanoi (HAN) / Ho Chi Minh City (SGN)",
+                        to: "Phu Cat Airport (UIH)",
+                        fromCoords: [10.8188, 106.6519],
+                        toCoords: [13.9556, 109.0433],
+                        subInfo: {
+                            en: "Economy flight • 1h 35m • Vietjet Air",
+                            vi: "Bay tiết kiệm • 1h 35m • Vietjet Air"
+                        },
+                        highlight: { en: "Best value domestic airfare", vi: "Vé bay nội địa giá tốt nhất" },
+                        duration: "1h 35m",
+                        stops: 0,
+                        dataSource: "verified",
+                        dataSourceLabel: { en: "Verified commercial route", vi: "Tuyến bay thương mại đã xác minh" }
+                    },
+                    {
+                        type: "transfer",
+                        icon: "bus",
+                        title: { en: "Airport Shuttle Bus", vi: "Xe buýt sân bay về Quy Nhơn" },
+                        from: "Phu Cat Airport (UIH)",
+                        to: "Quy Nhon City Center",
+                        fromCoords: [13.9556, 109.0433],
+                        toCoords: [13.7820, 109.2197],
+                        subInfo: {
+                            en: "Airport Shuttle • ~35 km • 45 minutes",
+                            vi: "Xe buýt trung chuyển • ~35 km • 45 phút"
+                        },
+                        highlight: { en: "Convenient & economical transfer", vi: "Trung chuyển thuận tiện và tiết kiệm" },
+                        duration: "45m",
+                        dataSource: "verified",
+                        dataSourceLabel: { en: "Ground transport estimate", vi: "Ước tính trung chuyển mặt đất" }
+                    }
+                ]
+            }
+        }
     }
 };
 
@@ -1349,6 +1466,11 @@ const ROUTE_CARBON_AND_COST_METRICS = {
         fastest: { baseTransitCost: 590, carbonKg: 310, carbonSavedPercent: 0, isEcoChoice: false, carbonNote: { en: "Est. based on ICAO East Asia flight + regional transfer. Benchmark for time-optimized route.", vi: "Ước tính theo phát thải đường bay Đông Á ICAO + xe sân bay. Mức chuẩn cho lộ trình tối ưu thời gian." } },
         bestValue: { baseTransitCost: 460, carbonKg: 248, carbonSavedPercent: 20, isEcoChoice: true, carbonNote: { en: "🌱 Lower-emission option: -20% CO₂e vs. all-air connection by utilizing coastal road coach.", vi: "🌱 Lựa chọn phát thải thấp: Giảm 20% CO₂e so với bay nối chuyến nhờ xe khách đường bộ ven biển." } },
         smartStopover: { baseTransitCost: 490, carbonKg: 192, carbonSavedPercent: 38, isEcoChoice: true, carbonNote: { en: "🌱 Eco Choice: -38% CO₂e vs. domestic flight by replacing air leg with scenic coastal railway.", vi: "🌱 Lựa chọn Xanh: Giảm 38% CO₂e so với bay nội địa nhờ thay thế bằng đường sắt ngắm cảnh ven biển." } }
+    },
+    vietnam: {
+        fastest: { baseTransitCost: 160, carbonKg: 85, carbonSavedPercent: 0, isEcoChoice: false, carbonNote: { en: "Direct domestic flight to Phu Cat Airport (UIH).", vi: "Chuyến bay thẳng nội địa đến Sân bay Phù Cát (UIH)." } },
+        bestValue: { baseTransitCost: 120, carbonKg: 78, carbonSavedPercent: 8, isEcoChoice: true, carbonNote: { en: "Economy domestic flight to Phu Cat Airport (UIH).", vi: "Chuyến bay nội địa tiết kiệm đến Sân bay Phù Cát (UIH)." } },
+        smartStopover: { baseTransitCost: 120, carbonKg: 78, carbonSavedPercent: 8, isEcoChoice: true, carbonNote: { en: "Economy domestic flight to Phu Cat Airport (UIH).", vi: "Chuyến bay nội địa tiết kiệm đến Sân bay Phù Cát (UIH)." } }
     }
 };
 
@@ -1362,6 +1484,101 @@ Object.keys(ROUTE_CARBON_AND_COST_METRICS).forEach(countryKey => {
         });
     }
 });
+
+// =========================================================================
+// ESTIMATED ROUND-TRIP AIRFARE BENCHMARKS & DYNAMIC MINIMUM BUDGET CALCULATOR
+// =========================================================================
+// Realistic estimated round-trip commercial airfares per traveler in USD to Phu Cat (UIH).
+// Prototype estimates based on airline schedules and route benchmarks.
+const ESTIMATED_ROUNDTRIP_AIRFARE_USD = {
+    VNM: { bestValue: 120, fastest: 160, standard: 140 },
+    SGP: { bestValue: 280, fastest: 380, standard: 320 },
+    CHN: { bestValue: 380, fastest: 500, standard: 420 },
+    KOR: { bestValue: 390, fastest: 520, standard: 450 },
+    JPN: { bestValue: 460, fastest: 590, standard: 520 },
+    AUS: { bestValue: 740, fastest: 920, standard: 820 },
+    BEL: { bestValue: 820, fastest: 1050, standard: 920 },
+    FRA: { bestValue: 810, fastest: 1020, standard: 900 },
+    DEU: { bestValue: 830, fastest: 1060, standard: 940 },
+    GBR: { bestValue: 880, fastest: 1150, standard: 990 },
+    USA: { bestValue: 1080, fastest: 1350, standard: 1200 },
+
+    // Lowercase key aliases
+    vietnam: { bestValue: 120, fastest: 160, standard: 140 },
+    singapore: { bestValue: 280, fastest: 380, standard: 320 },
+    china: { bestValue: 380, fastest: 500, standard: 420 },
+    korea: { bestValue: 390, fastest: 520, standard: 450 },
+    japan: { bestValue: 460, fastest: 590, standard: 520 },
+    australia: { bestValue: 740, fastest: 920, standard: 820 },
+    belgium: { bestValue: 820, fastest: 1050, standard: 920 },
+    france: { bestValue: 810, fastest: 1020, standard: 900 },
+    germany: { bestValue: 830, fastest: 1060, standard: 940 },
+    uk: { bestValue: 880, fastest: 1150, standard: 990 },
+    usa: { bestValue: 1080, fastest: 1350, standard: 1200 }
+};
+
+const MINIMUM_BUDGET_CONSTANTS = {
+    HOTEL_ROOM_NIGHT_USD: 60,      // $60 / room / night (standard 3-4 star boutique hotel in Quy Nhon)
+    FOOD_PER_PERSON_DAY_USD: 20,   // $20 / traveler / day (fresh seafood & authentic local cuisine)
+    LOCAL_TRANS_PERSON_DAY_USD: 5, // $5 / traveler / day (local transit / shared car / scooter rental)
+    ACTIVITIES_PERSON_DAY_USD: 10, // $10 / traveler / day (Eo Gio, Ky Co boat, Cham towers, Explorascience)
+    CONTINGENCY_RATE: 0.05         // 5% contingency reserve
+};
+
+/**
+ * Realistic Estimated Minimum Trip Cost Calculator (Single Source of Truth)
+ * Total budget for the entire travel group to Quy Nhon (UIH).
+ */
+function calculateDynamicMinimumBudget(countryIdentifier, guests = 1, days = 5, routeType = 'fastest') {
+    const g = Math.max(1, Math.min(8, Number(guests) || 1));
+    const d = Math.max(1, Math.min(7, Number(days) || 1));
+    const rooms = Math.ceil(g / 2);
+    const nights = Math.max(0, d - 1); // 1-day trip has 0 hotel nights
+
+    // Resolve country airfare benchmark
+    const cKey = String(countryIdentifier || 'DEU').trim();
+    const countryFares = ESTIMATED_ROUNDTRIP_AIRFARE_USD[cKey]
+        || ESTIMATED_ROUNDTRIP_AIRFARE_USD[cKey.toUpperCase()]
+        || ESTIMATED_ROUNDTRIP_AIRFARE_USD[cKey.toLowerCase()]
+        || ESTIMATED_ROUNDTRIP_AIRFARE_USD['DEU'];
+
+    const rType = (routeType === 'bestValue' || routeType === 'best-value') ? 'bestValue' : 'fastest';
+    const farePerPerson = countryFares[rType] || countryFares['fastest'] || countryFares['standard'] || 940;
+
+    const transportCost = farePerPerson * g;
+    const hotelCost = rooms * nights * MINIMUM_BUDGET_CONSTANTS.HOTEL_ROOM_NIGHT_USD;
+    const foodCost = g * d * MINIMUM_BUDGET_CONSTANTS.FOOD_PER_PERSON_DAY_USD;
+    const localTransportCost = g * d * MINIMUM_BUDGET_CONSTANTS.LOCAL_TRANS_PERSON_DAY_USD;
+    const activitiesCost = g * d * MINIMUM_BUDGET_CONSTANTS.ACTIVITIES_PERSON_DAY_USD;
+
+    const subtotal = transportCost + hotelCost + foodCost + localTransportCost + activitiesCost;
+    const contingencyCost = Math.round(subtotal * MINIMUM_BUDGET_CONSTANTS.CONTINGENCY_RATE);
+    const minimumBudgetUSD = subtotal + contingencyCost;
+
+    return {
+        farePerPerson,
+        transportCost,
+        hotelCost,
+        foodCost,
+        localTransportCost,
+        activitiesCost,
+        subtotal,
+        contingencyCost,
+        minimumBudgetUSD,
+        rooms,
+        nights,
+        guests: g,
+        days: d,
+        routeType: rType,
+        countryIdentifier: cKey
+    };
+}
+
+if (typeof window !== 'undefined') {
+    window.ESTIMATED_ROUNDTRIP_AIRFARE_USD = ESTIMATED_ROUNDTRIP_AIRFARE_USD;
+    window.MINIMUM_BUDGET_CONSTANTS = MINIMUM_BUDGET_CONSTANTS;
+    window.calculateDynamicMinimumBudget = calculateDynamicMinimumBudget;
+}
 
 // ==============================================================
 // VERIFIED FLIGHT SCHEDULES, AIRCRAFT & FARE TIERS (PHƯƠNG ÁN 1)
@@ -2247,6 +2464,9 @@ if (typeof module !== 'undefined' && module.exports) {
         MOCK_ACTIVITIES_POOL,
         MOCK_FUTURE_FEATURES,
         generateAISummary,
-        generatePersonalizedItinerary
+        generatePersonalizedItinerary,
+        calculateDynamicMinimumBudget,
+        ESTIMATED_ROUNDTRIP_AIRFARE_USD,
+        MINIMUM_BUDGET_CONSTANTS
     };
 }

@@ -1985,4 +1985,29 @@
             transform: scale(0.97);
             box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
         }
+
+        /* Insufficient Budget Warning directly below budget input */
+        .budget-warning-message {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 8px;
+            color: #ef4444;
+            font-size: 0.84rem;
+            font-weight: 500;
+            line-height: 1.4;
+            transition: all 0.2s ease;
+        }
+
+        .btn-disabled-insufficient {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            filter: grayscale(0.5);
+            pointer-events: auto !important;
+        }
+
     

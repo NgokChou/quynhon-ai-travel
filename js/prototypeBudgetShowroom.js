@@ -365,8 +365,8 @@
     class BudgetTripCalculator {
         static calculateAllocation(totalBudgetUSD, guests = 1, days = 5, originCountryCode = 'DEU') {
             const countryCfg = COUNTRY_BUDGET_LIMITS[originCountryCode] || COUNTRY_BUDGET_LIMITS['DEU'];
-            const minUSD = countryCfg ? countryCfg.minUSD : BUDGET_CONFIG.minUSD;
-            const B = clamp(totalBudgetUSD, minUSD, BUDGET_CONFIG.maxUSD);
+            // Preserve actual entered budget for allocation; do not artificially clamp upward
+            const B = clamp(totalBudgetUSD, 1, BUDGET_CONFIG.maxUSD);
             const g = clamp(guests, BUDGET_CONFIG.minGuests, BUDGET_CONFIG.maxGuests);
             const d = clamp(days, BUDGET_CONFIG.minDays, BUDGET_CONFIG.maxDays);
 
@@ -1983,6 +1983,7 @@
     window.CURRENCIES = CURRENCIES;
     window.TIERS = TIERS;
     window.ALLOCATION_CATEGORIES = ALLOCATION_CATEGORIES;
+    BudgetTripCalculator.calculateDynamicMinimumBudget = window.calculateDynamicMinimumBudget;
     window.BudgetTripCalculator = BudgetTripCalculator;
     window.PiggyBankModularBuilder = PiggyBankModularBuilder;
     window.AircraftModularBuilder = PiggyBankModularBuilder;

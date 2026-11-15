@@ -103,12 +103,9 @@
                     currentCountry = countryInfo;
                     currentDepartureAirport = countryInfo.airports[0];
 
-                    // Auto-select currency & dynamic minimum budget based on origin country
+                    // Auto-select currency based on origin country (preserve user entered budget)
                     const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryInfo.code]) || { minUSD: 500, currency: 'USD' };
                     currentCurrency = countryLimits.currency;
-                    if (currentBudgetUSD < countryLimits.minUSD) {
-                        currentBudgetUSD = countryLimits.minUSD;
-                    }
 
                     renderCurrencyChips();
                     updateActiveChip(countryInfo.code);
@@ -144,7 +141,10 @@
                     originAirport: currentDepartureAirport,
                     originCountryName: currentCountry.name,
                     originCountryVi: currentCountry.vi,
-                    isFallback: ['GBR', 'KOR', 'SGP', 'CHN', 'VNM'].includes(currentCountry.code)
+                    isFallback: ['GBR', 'KOR', 'SGP', 'CHN', 'VNM'].includes(currentCountry.code),
+                    travelers: currentGuests,
+                    durationDays: currentDays,
+                    currency: currentCurrency
                 };
                 if (window.App && typeof window.App.setPlannerData === 'function') {
                     const arrCode = currentDestination ? currentDestination.code : 'UIH';
@@ -474,11 +474,8 @@
                 budgetRangeSlider.addEventListener('input', (e) => {
                     const rawVal = parseFloat(e.target.value) || 2500;
                     const cur = window.CURRENCIES[currentCurrency] || window.CURRENCIES.USD;
-                    const countryCode = currentCountry ? currentCountry.code : 'DEU';
-                    const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500 };
-                    const minUSD = countryLimits.minUSD;
                     currentBudgetUSD = Math.round(rawVal / cur.rate);
-                    currentBudgetUSD = Math.max(minUSD, Math.min(50000, currentBudgetUSD));
+                    currentBudgetUSD = Math.max(1, Math.min(50000, currentBudgetUSD));
 
                     if (showroomViewport && showroomViewport.controller) {
                         showroomViewport.controller.setBudgetUSD(currentBudgetUSD, true);
@@ -493,12 +490,9 @@
                     if (!cleanStr) return;
                     let val = parseFloat(cleanStr) || 0;
                     const cur = window.CURRENCIES[currentCurrency] || window.CURRENCIES.USD;
-                    const countryCode = currentCountry ? currentCountry.code : 'DEU';
-                    const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500 };
-                    const minUSD = countryLimits.minUSD;
                     let targetUSD = Math.round(val / cur.rate);
                     if (targetUSD > 50000) targetUSD = 50000;
-                    if (targetUSD < minUSD) targetUSD = minUSD;
+                    if (targetUSD < 1) targetUSD = 1;
                     currentBudgetUSD = targetUSD;
 
                     if (showroomViewport && showroomViewport.controller) {
@@ -565,6 +559,20 @@
                     if (!currentDestination) {
                         showToast(isVi ? 'Vui lòng chọn điểm đến tại Việt Nam.' : 'Please select an arrival destination in Vietnam.');
                         goToStep2();
+                        return;
+                    }
+
+                    // Check Dynamic Minimum Budget Validation
+                    const validation = (typeof window.validateTripBudgetState === 'function')
+                        ? window.validateTripBudgetState()
+                        : (window.App && window.App.validateTripBudgetState && window.App.validateTripBudgetState());
+                    if (validation && !validation.valid) {
+                        const minFormatted = (typeof window.formatCurrency === 'function')
+                            ? window.formatCurrency(validation.minimumBudgetUSD, currentCurrency)
+                            : `$${validation.minimumBudgetUSD} USD`;
+                        showToast(isVi 
+                            ? `Ngân sách không đủ. Mức ngân sách tối thiểu ước tính cho chuyến đi này là ${minFormatted}.` 
+                            : `Your budget is insufficient. The estimated minimum budget for this trip is ${minFormatted}.`);
                         return;
                     }
 
@@ -659,13 +667,9 @@
                     budgetUsdPill.textContent = `≈ $${currentBudgetUSD.toLocaleString()} USD`;
                 }
 
-                // Dynamic country minimum budget bounds
-                const countryCode = currentCountry ? currentCountry.code : 'DEU';
-                const countryLimits = (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) || { minUSD: 500, currency: 'USD' };
-                const countryMinUSD = countryLimits.minUSD;
-
-                // Range slider bounds and value
-                const minSlider = Math.round(countryMinUSD * cur.rate);
+                // Base range slider bounds and value (supports entering from $150 USD up to $50,000 USD)
+                const baseMinUSD = (window.BUDGET_CONFIG && window.BUDGET_CONFIG.minUSD) || 150;
+                const minSlider = Math.round(baseMinUSD * cur.rate);
                 const maxSlider = Math.round(50000 * cur.rate);
                 budgetRangeSlider.min = minSlider;
                 budgetRangeSlider.max = maxSlider;
@@ -673,7 +677,7 @@
                 if (updateSlider) {
                     budgetRangeSlider.value = Math.round(converted);
                 }
-                sliderMinLabel.textContent = window.formatCurrency(countryMinUSD, currentCurrency);
+                sliderMinLabel.textContent = window.formatCurrency(baseMinUSD, currentCurrency);
                 sliderMaxLabel.textContent = window.formatCurrency(50000, currentCurrency);
 
                 // Update Preset Chips Active State
@@ -694,6 +698,7 @@
                 expTierCard.style.borderColor = '#' + curTier.colorHex.toString(16).padStart(6, '0') + '55';
 
                 // Calculate 6-Category Allocation with country airfare factor & exact 100% closure
+                const countryCode = currentCountry ? currentCountry.code : 'DEU';
                 const allocResult = window.BudgetTripCalculator.calculateAllocation(currentBudgetUSD, currentGuests, currentDays, countryCode);
 
                 const catNames = {
@@ -723,7 +728,21 @@
                     '</div>';
                 }).join('');
 
-                allocCheckPill.innerHTML = '<i class="fa-solid fa-check"></i> ' + (isVi ? '100% Khép kín' : '100% Balanced') + ' ($' + allocResult.totalUSD.toLocaleString() + ' USD)';
+                // Check Dynamic Minimum Budget Validation
+                const validation = (typeof window.validateTripBudgetState === 'function')
+                    ? window.validateTripBudgetState()
+                    : (window.App && window.App.validateTripBudgetState && window.App.validateTripBudgetState());
+
+                if (validation && !validation.valid) {
+                    const shortfallFormatted = window.formatCurrency ? window.formatCurrency(validation.shortfallUSD, currentCurrency) : `$${validation.shortfallUSD}`;
+                    allocCheckPill.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> ' + (isVi ? `Dưới mức tối thiểu (Thiếu ${shortfallFormatted})` : `Below Minimum (Short by ${shortfallFormatted})`);
+                    allocCheckPill.style.color = '#ef4444';
+                    allocCheckPill.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                } else {
+                    allocCheckPill.innerHTML = '<i class="fa-solid fa-check"></i> ' + (isVi ? '100% Khép kín' : '100% Balanced') + ' ($' + allocResult.totalUSD.toLocaleString() + ' USD)';
+                    allocCheckPill.style.color = '';
+                    allocCheckPill.style.borderColor = '';
+                }
 
                 // 3D Showroom HUD Overlay
                 if (hudTierTag) {
@@ -985,6 +1004,17 @@
                 }
             });
             window.updateWizardLanguage = updateWizardLanguage;
+
+            // Expose wizard state accessors for centralized validation
+            window.gameWizardState = {
+                get currentCountry() { return currentCountry; },
+                get currentDepartureAirport() { return currentDepartureAirport; },
+                get currentDestination() { return currentDestination; },
+                get currentGuests() { return currentGuests; },
+                get currentDays() { return currentDays; },
+                get currentBudgetUSD() { return currentBudgetUSD; },
+                get currentCurrency() { return currentCurrency; }
+            };
 
             // Trigger initial language sync
             const initialLang = (window.App && window.App.getState) ? window.App.getState().currentLang : ((typeof localStorage !== 'undefined' && localStorage.getItem('quynhon_language')) || 'en');

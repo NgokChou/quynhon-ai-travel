@@ -157,9 +157,13 @@ const App = (function() {
         const btnStaleRegen = document.getElementById('btn-stale-regenerate');
         if (btnStaleRegen) {
             btnStaleRegen.addEventListener('click', () => {
+                if (btnStaleRegen.disabled) return;
                 generateJourneyPlan(true);
             });
         }
+
+        // 14. Initial Dynamic Minimum Budget Validation
+        validateTripBudgetState();
     }
 
     /**
@@ -415,6 +419,9 @@ const App = (function() {
         // Cập nhật phân bổ ngân sách động (Feature 1C)
         renderBudgetAllocation();
 
+        // Thẩm định ngân sách tối thiểu động
+        validateTripBudgetState();
+
         // Đồng bộ trạng thái URL (Feature 4A)
         syncUrlState();
     }
@@ -573,11 +580,171 @@ const App = (function() {
     }
 
     /**
+     * Dynamic Minimum Budget Validation System
+     * Single source of truth: calculates minimum trip cost and manages warnings and button locking.
+     */
+    function validateTripBudgetState() {
+        const lang = state.currentLang || 'en';
+        const isVi = (lang === 'vi');
+
+        // 1. Resolve Country Code & Key
+        let countryCode = state.originIso || 'DEU';
+        let countryKey = state.currentCountryKey || 'germany';
+        if (window.gameWizardState && window.gameWizardState.currentCountry) {
+            countryCode = window.gameWizardState.currentCountry.code || countryCode;
+            countryKey = window.gameWizardState.currentCountry.id || countryKey;
+        } else if (elements.countrySelect && elements.countrySelect.value) {
+            countryKey = elements.countrySelect.value;
+            const cData = MOCK_COUNTRIES[countryKey];
+            if (cData && cData.code) countryCode = cData.code;
+        }
+
+        // 2. Resolve Route Type
+        const routeType = state.selectedRouteType || 'fastest';
+
+        // 3. Resolve Travelers & Duration Days
+        let guests = 1;
+        let days = 5;
+        if (window.gameWizardState) {
+            guests = Number(window.gameWizardState.currentGuests) || 1;
+            days = Number(window.gameWizardState.currentDays) || 5;
+        } else {
+            guests = Number(state.travelers) || 1;
+            days = Number(state.durationDays) || 5;
+        }
+        guests = Math.max(1, Math.min(8, guests));
+        days = Math.max(1, Math.min(7, days));
+
+        // 4. Resolve Currency
+        let currencyCode = 'USD';
+        if (window.gameWizardState && window.gameWizardState.currentCurrency) {
+            currencyCode = window.gameWizardState.currentCurrency;
+        } else if (state.currentCurrency) {
+            currencyCode = state.currentCurrency;
+        } else if (window.COUNTRY_BUDGET_LIMITS && window.COUNTRY_BUDGET_LIMITS[countryCode]) {
+            currencyCode = window.COUNTRY_BUDGET_LIMITS[countryCode].currency || 'USD';
+        }
+
+        // 5. Resolve Entered Budget in USD
+        let enteredBudgetUSD = 2500;
+        if (window.gameWizardState && typeof window.gameWizardState.currentBudgetUSD === 'number' && window.gameWizardState.currentBudgetUSD > 0) {
+            enteredBudgetUSD = window.gameWizardState.currentBudgetUSD;
+        } else if (typeof state.currentBudget === 'number' && state.currentBudget > 0) {
+            enteredBudgetUSD = state.currentBudget;
+        } else if (elements.budgetSelect) {
+            if (elements.budgetSelect.value === 'custom' && elements.customBudgetInput) {
+                const cleanStr = String(elements.customBudgetInput.value).replace(/[^0-9]/g, '');
+                const num = Number(cleanStr);
+                if (num > 0) enteredBudgetUSD = num;
+            } else if (elements.budgetSelect.value && elements.budgetSelect.value !== 'custom') {
+                const num = Number(elements.budgetSelect.value);
+                if (num > 0) enteredBudgetUSD = num;
+            }
+        }
+
+        // 6. Calculate Dynamic Minimum Budget
+        const calcFn = window.calculateDynamicMinimumBudget || (window.BudgetTripCalculator && window.BudgetTripCalculator.calculateDynamicMinimumBudget);
+        let calc = null;
+        if (typeof calcFn === 'function') {
+            calc = calcFn(countryCode, guests, days, routeType);
+        } else {
+            const fare = (routeType === 'bestValue') ? 820 : 1050;
+            const rooms = Math.ceil(guests / 2);
+            const nights = Math.max(0, days - 1);
+            const subtotal = (fare * guests) + (rooms * nights * 60) + (guests * days * 20) + (guests * days * 5) + (guests * days * 10);
+            calc = {
+                farePerPerson: fare,
+                transportCost: fare * guests,
+                hotelCost: rooms * nights * 60,
+                foodCost: guests * days * 20,
+                localTransportCost: guests * days * 5,
+                activitiesCost: guests * days * 10,
+                subtotal,
+                contingencyCost: Math.round(subtotal * 0.05),
+                minimumBudgetUSD: Math.round(subtotal * 1.05),
+                rooms,
+                nights,
+                guests,
+                days,
+                routeType,
+                countryIdentifier: countryCode
+            };
+        }
+
+        const minimumBudgetUSD = calc.minimumBudgetUSD;
+        const shortfallUSD = Math.max(0, minimumBudgetUSD - enteredBudgetUSD);
+        const valid = (enteredBudgetUSD >= minimumBudgetUSD);
+
+        // 7. Format minimum budget in selected display currency
+        const minFormatted = (typeof window.formatCurrency === 'function')
+            ? window.formatCurrency(minimumBudgetUSD, currencyCode)
+            : `$${minimumBudgetUSD.toLocaleString()} USD`;
+
+        const warningText = isVi
+            ? `Ngân sách không đủ. Mức ngân sách tối thiểu ước tính cho chuyến đi này là ${minFormatted}.`
+            : `Your budget is insufficient. The estimated minimum budget for this trip is ${minFormatted}.`;
+
+        // 8. Update Warning element in Wizard Step 3
+        const wizardWarningEl = document.getElementById('budget-warning-message');
+        if (wizardWarningEl) {
+            if (!valid) {
+                wizardWarningEl.style.display = 'flex';
+                wizardWarningEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>${warningText}</span>`;
+            } else {
+                wizardWarningEl.style.display = 'none';
+                wizardWarningEl.innerHTML = '';
+            }
+        }
+
+        // 9. Update Warning element in Planner Form
+        const plannerWarningEl = document.getElementById('planner-budget-warning-message');
+        if (plannerWarningEl) {
+            if (!valid) {
+                plannerWarningEl.style.display = 'flex';
+                plannerWarningEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>${warningText}</span>`;
+            } else {
+                plannerWarningEl.style.display = 'none';
+                plannerWarningEl.innerHTML = '';
+            }
+        }
+
+        // 10. Update All 4 Generate Plan Buttons
+        const isAnalyzing = Boolean(state.isAnalyzing);
+        const shouldDisable = (!valid || isAnalyzing);
+
+        const buttons = [
+            document.getElementById('btn-launch-final-plan'),
+            elements.planBtn || document.getElementById('btn-plan-journey'),
+            elements.btnGenerateItinerary || document.getElementById('btn-generate-itinerary'),
+            document.getElementById('btn-stale-regenerate')
+        ];
+
+        buttons.forEach(btn => {
+            if (!btn) return;
+            btn.disabled = shouldDisable;
+            btn.classList.toggle('btn-disabled-insufficient', !valid && !isAnalyzing);
+            btn.title = !valid ? warningText : '';
+        });
+
+        return {
+            valid,
+            minimumBudgetUSD,
+            enteredBudgetUSD,
+            shortfallUSD,
+            guests,
+            days,
+            countryCode,
+            routeType,
+            currencyCode,
+            calculation: calc
+        };
+    }
+
+    /**
      * Khởi tạo quá trình mô phỏng phân tích lộ trình AI
      */
     function generateJourneyPlan(shouldScroll = true) {
-        if (state.isAnalyzing) return;
-        state.isAnalyzing = true;
+        if (state.isAnalyzing) return false;
 
         const countryKey = elements.countrySelect.value || state.currentCountryKey;
         state.currentCountryKey = countryKey;
@@ -593,7 +760,19 @@ const App = (function() {
                 if (selectVal > 0) state.currentBudget = selectVal;
             }
         }
-        const countryData = MOCK_COUNTRIES[countryKey] || MOCK_COUNTRIES.belgium;
+
+        // MANDATORY GUARD: Dynamic Minimum Budget Validation
+        const validation = validateTripBudgetState();
+        if (!validation.valid) {
+            console.warn('[Validation Guard] Generation blocked: budget is below minimum', validation);
+            const wizardWarning = document.getElementById('budget-warning-message');
+            if (wizardWarning && shouldScroll) {
+                wizardWarning.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+
+        state.isAnalyzing = true;
         const lang = state.currentLang;
 
         // Snapshot input parameters for this plan run
@@ -805,6 +984,7 @@ const App = (function() {
                 state.selectedRouteType = key;
                 renderTimeline(countryData);
                 renderBudgetAllocation();
+                validateTripBudgetState();
                 syncUrlState();
 
                 // Cập nhật lại bản đồ theo phương án được chọn
@@ -1800,13 +1980,17 @@ const App = (function() {
         const lang = state.currentLang;
         const isVi = lang === 'vi';
         const budget = Number(state.currentBudget) || 2000;
-        const countryData = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
-        const routeData = countryData?.routes?.[state.selectedRouteType] || countryData?.routes?.fastest;
+        const countryCode = state.originIso || (elements.countrySelect ? elements.countrySelect.value : 'DEU') || 'DEU';
+        const guests = Math.max(1, Math.min(8, Number(state.travelers) || 1));
+        const days = Math.max(1, Math.min(7, Number(state.durationDays) || 5));
+        const routeType = state.selectedRouteType || 'fastest';
 
-        const transitCost = (routeData && routeData.baseTransitCost) ? routeData.baseTransitCost : 850;
-        
-        // Estimated 3 nights hotel & daily dining in Quy Nhon (~$120/night + $50/day dining = $510)
-        const stayDiningCost = 510;
+        const calc = (typeof window.calculateDynamicMinimumBudget === 'function')
+            ? window.calculateDynamicMinimumBudget(countryCode, guests, days, routeType)
+            : null;
+
+        const transitCost = calc ? calc.transportCost : 850;
+        const stayDiningCost = calc ? (calc.hotelCost + calc.foodCost + calc.localTransportCost + calc.activitiesCost + calc.contingencyCost) : 510;
         const totalEstimatedExpenses = transitCost + stayDiningCost;
         const remaining = budget - totalEstimatedExpenses;
 
@@ -1834,7 +2018,7 @@ const App = (function() {
                 <div class="budget-alert-box alert-warning">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <div>
-                        <strong>${t('budgetShortfallLabel', lang)}: -$${shortfall.toLocaleString()} USD</strong> — ${t('budgetShortfallNotice', lang)}
+                        <strong>${t('budgetShortfallLabel', lang)}: -$${shortfall.toLocaleString()} USD</strong> — ${isVi ? `Ngân sách ước tính tối thiểu cho ${guests} khách (${days} ngày) là $${totalRequired.toLocaleString()} USD.` : `Estimated minimum budget for ${guests} traveler(s), ${days} days is $${totalRequired.toLocaleString()} USD.`}
                     </div>
                 </div>
             `;
@@ -2215,10 +2399,19 @@ const App = (function() {
         const country = MOCK_COUNTRIES[state.currentCountryKey] || MOCK_COUNTRIES.belgium;
         const routeData = country.routes[state.selectedRouteType] || country.routes.fastest;
 
-        const transitCost = routeData.baseTransitCost || 850;
+        const countryCode = state.originIso || 'DEU';
+        const guests = Math.max(1, Math.min(8, Number(state.travelers) || 1));
+        const days = Math.max(1, Math.min(7, Number(state.durationDays) || 5));
+        const routeType = state.selectedRouteType || 'fastest';
+
+        const calc = (typeof window.calculateDynamicMinimumBudget === 'function')
+            ? window.calculateDynamicMinimumBudget(countryCode, guests, days, routeType)
+            : null;
+
+        const transitCost = calc ? calc.transportCost : (routeData.baseTransitCost || 850);
         const carbonKg = routeData.carbonKg || 550;
-        const budget = state.currentBudget;
-        const stayCost = 510;
+        const budget = state.currentBudget || (calc ? calc.minimumBudgetUSD : 2000);
+        const stayCost = calc ? (calc.hotelCost + calc.foodCost + calc.localTransportCost + calc.activitiesCost + calc.contingencyCost) : 510;
         const remaining = budget - transitCost - stayCost;
 
         syncUrlState();
@@ -2404,11 +2597,14 @@ const App = (function() {
                 if (elements.countrySelect) elements.countrySelect.value = countryKey;
             }
             if (extraMeta) {
-                state.originIso = extraMeta.originIso || null;
-                state.originAirport = extraMeta.originAirport || null;
-                state.originCountryName = extraMeta.originCountryName || null;
-                state.originCountryVi = extraMeta.originCountryVi || null;
+                state.originIso = extraMeta.originIso || state.originIso;
+                state.originAirport = extraMeta.originAirport || state.originAirport;
+                state.originCountryName = extraMeta.originCountryName || state.originCountryName;
+                state.originCountryVi = extraMeta.originCountryVi || state.originCountryVi;
                 state.isFallback = Boolean(extraMeta.isFallback);
+                if (extraMeta.travelers) state.travelers = Number(extraMeta.travelers);
+                if (extraMeta.durationDays) state.durationDays = Number(extraMeta.durationDays);
+                if (extraMeta.currency) state.currentCurrency = extraMeta.currency;
             }
             if (budget) {
                 const cleanBudget = Number(String(budget).replace(/[^0-9]/g, '')) || 2000;
@@ -2434,9 +2630,13 @@ const App = (function() {
             if (state.hasGeneratedPlan) {
                 markPlanStale();
             }
+
+            // Synchronize Dynamic Minimum Budget Validation
+            validateTripBudgetState();
         },
         renderItineraryContent: renderItineraryContent,
         markPlanStale: markPlanStale,
+        validateTripBudgetState: validateTripBudgetState,
         getState: function() { return state; }
     };
 })();
@@ -2444,4 +2644,5 @@ const App = (function() {
 // Export App globally
 if (typeof window !== 'undefined') {
     window.App = App;
+    window.validateTripBudgetState = App.validateTripBudgetState;
 }
